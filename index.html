@@ -418,7 +418,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-700 pb-3">
                     <div>
                         <h3 class="text-lg font-bold text-gold-400">Pratica guidata: Liu Zi Jue (六字訣) — sequenza Health Qigong</h3>
-                        <p class="text-[11px] text-stone-400">Musica ufficiale senza voce guida (15:02). Il manichino segue la fase in corso. <span class="evi evi-trad">Tradizione</span> per corrispondenze organo/suono, <span class="evi evi-sci">Evidenza</span> per i dati clinici.</p>
+                        <p class="text-[11px] text-stone-400">Traccia ufficiale HQA, con voce guida in cinese o solo musica. Sottotitoli in italiano a tempo con ogni comando; il manichino segue la fase in corso. <span class="evi evi-trad">Tradizione</span> per corrispondenze organo/suono, <span class="evi evi-sci">Evidenza</span> per i dati clinici.</p>
                     </div>
                     <label class="flex items-center gap-2 text-xs text-stone-300 cursor-pointer select-none">
                         <input type="checkbox" id="lzj-sync" checked class="accent-amber-500"> Sincronizza manichino
@@ -440,7 +440,7 @@
                 </div>
 
                 <div id="lzj-chapters" class="flex flex-wrap gap-1.5"></div>
-                <p class="text-[11px] text-stone-500">Non senti nulla? Alza il volume multimediale del telefono (non quello della suoneria). Se l'audio non parte, <a id="lzj-audio-link" href="https://andrea76b.github.io/QIGONG/audio/liu_zi_jue_96k.mp3" target="_blank" rel="noopener" class="underline text-amber-300">apri il file audio da solo</a>: se lì si sente, il problema è nella pagina e me lo puoi segnalare.</p>
+                <p class="text-[11px] text-stone-500">Non senti nulla? Alza il volume multimediale del telefono (non quello della suoneria). Se l'audio non parte, <a id="lzj-audio-link" href="https://andrea76b.github.io/QIGONG/audio/liu_zi_jue_voce_96k.mp3" target="_blank" rel="noopener" class="underline text-amber-300">apri il file audio da solo</a>: se lì si sente, il problema è nella pagina e me lo puoi segnalare.</p>
 
                 <!-- Viso animato: occhi, bocca e sottotitoli sincronizzati con la musica -->
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
@@ -491,6 +491,7 @@
                     </div>
                     <div class="md:col-span-8 flex flex-col gap-2 min-w-0">
                         <div class="bg-black/80 rounded-xl border border-stone-700 px-4 py-3 min-h-[86px] flex flex-col justify-center">
+                            <p id="sub-zh" class="text-[11px] text-amber-300/80 mb-1"></p>
                             <p id="sub-main" class="text-base sm:text-lg font-semibold text-white leading-snug">Premi ▶ per iniziare la pratica guidata.</p>
                             <p id="sub-detail" class="text-xs sm:text-sm text-amber-200/90 leading-snug mt-1"></p>
                         </div>
@@ -523,13 +524,12 @@
                         <p class="font-bold text-gold-400">Fase respiratoria</p>
                         <div class="h-3 rounded bg-stone-900 overflow-hidden border border-stone-700"><div id="lzj-breathbar" class="h-full bg-emerald-500 transition-[width] duration-200" style="width:0%"></div></div>
                         <p id="lzj-breathlabel" class="text-stone-300">—</p>
-                        <p class="font-bold text-gold-400 pt-2">Calibrazione minutaggi</p>
-                        <p class="text-[11px] text-stone-400 leading-relaxed">La musica è fatta di frasi da 18,5 s e ogni suono ne occupa 7: una di ingresso e 6 ripetizioni. Gli inizi sono ricavati da questa griglia. Xu, Hu, Xi e la chiusura sono confermati da più indizi; He, Si e Chui potrebbero essere spostati di una frase. Se non coincidono con la tua pratica, mettiti sul punto giusto e premi:</p>
-                        <div class="flex flex-wrap gap-1.5">
-                            <select id="lzj-calib-seg" class="bg-stone-900 border border-stone-600 rounded p-1 text-[11px] flex-1 min-w-0"></select>
-                            <button onclick="lzjCalibrate()" class="px-2 py-1 bg-sage-700 hover:bg-sage-600 rounded text-[11px] font-bold">Imposta qui</button>
-                            <button onclick="lzjResetCalib()" class="px-2 py-1 bg-stone-700 hover:bg-stone-600 rounded text-[11px]">Ripristina</button>
+                        <p class="font-bold text-gold-400 pt-2">Traccia audio</p>
+                        <div class="grid grid-cols-2 gap-1.5">
+                            <button id="lzj-tr-voce" onclick="lzjSetTrack('voce')" class="px-2 py-1.5 rounded text-[11px] font-bold border">Con voce guida</button>
+                            <button id="lzj-tr-musica" onclick="lzjSetTrack('musica')" class="px-2 py-1.5 rounded text-[11px] font-bold border">Solo musica</button>
                         </div>
+                        <p id="lzj-track-note" class="text-[11px] text-stone-400 leading-relaxed"></p>
                     </div>
                 </div>
             </div>
@@ -622,7 +622,7 @@
                     <li><span class="evi evi-sci">Evidenza</span> Network meta-analysis su 57 studi e 4.294 pazienti BPCO (<a class="underline text-sage-700" href="https://link.springer.com/article/10.1186/s12906-024-04609-9" target="_blank" rel="noopener">BMC Complement Med Ther, 2024</a>): il Liu Zi Jue è risultato il più efficace su FEV1% nei casi moderati e gravi, con pratica di almeno 3 volte a settimana. Limite: studi prevalentemente cinesi, di qualità metodologica variabile.</li>
                     <li><span class="evi evi-spec">Non verificato</span> Le corrispondenze suono → frequenza in Hz e gli effetti "vibrazionali" sui singoli organi non hanno riscontro né nei classici né nella letteratura sperimentale.</li>
                 </ul>
-                <p class="text-[11px] text-stone-500">Modello 3D: manichino procedurale. I punti seguono la nomenclatura standard OMS (DU20, RN17, RN8, RN4, RN1, DU4, DU14, PC8, KI1) e sono posizionati per proporzioni approssimative, non sono una mappa anatomica di precisione. Audio: traccia ufficiale HQA. Prima di pubblicare la pagina verificare i diritti d'uso.</p>
+                <p class="text-[11px] text-stone-500">Modello 3D: manichino procedurale. I punti seguono la nomenclatura standard OMS (DU20, RN17, RN8, RN4, RN1, DU4, DU14, PC8, KI1) e sono posizionati per proporzioni approssimative, non sono una mappa anatomica di precisione. Audio: tracce ufficiali HQA distribuite dall'IHQA (con voce guida e solo musica). Sottotitoli: i comandi in cinese sono stati trascritti dalla traccia con voce guida con un riconoscimento vocale e verificati sul lessico ufficiale HQA; le due musiche sono state allineate per correlazione del segnale.</p>
             </div>
 </section>
 
@@ -2081,15 +2081,215 @@
                 move: "Mani sovrapposte sull'ombelico. Nella tradizione HQA gli uomini mettono la sinistra a contatto con l'addome e le donne la destra. Si massaggia l'addome con piccoli cerchi, 6 in un senso e 6 nell'altro, poi si torna con le braccia lungo i fianchi.",
                 mouth: '', breath: 'Respiro naturale, attenzione al basso ventre.', tcm: '' }
         };
-        // Inizio di ogni fase (secondi). Stimato da analisi spettrale (novelty) della traccia.
-        // La musica è costruita su frasi di 18,51 s. Ogni suono = 7 frasi: 1 di ingresso + 6 ripetizioni (una per frase).
-        // Inizi ricavati dalla griglia delle frasi (t0 = 86,1 s) e confermati da cali di energia e cambi di melodia.
-        const LZJ_PHRASE = 18.51;
-        const LZJ_DEFAULT_START = { prep: 0, qishi: 47, xu: 86.1, he: 215.7, hu: 345.2, si: 474.8, chui: 604.4, xi: 734.0, shou: 863.5 };
+        // ==========================================
+        // TEMPI DAI COMANDI VOCALI UFFICIALI (traccia IHQA «with oral prompt»)
+        // I comandi (口令词) sono stati trascritti con riconoscimento vocale (SenseVoice) e corretti con il
+        // lessico ufficiale HQA. Tempi in secondi sulla traccia CON voce. Dove la voce non era abbastanza
+        // chiara il tempo è stimato dal ritmo delle ripetizioni vicine (cinese vuoto = comando non udito).
+        // kind: sec = inizio sezione · in = inspirazione · out = espirazione con suono · nat = respiro naturale · mv = indicazione
+        // ==========================================
+        const LZJ_CUES = [
+            [10.2, '健身气功·六字诀', 'jiànshēn qìgōng · liù zì jué', 'Health Qigong · Liu Zi Jue', 'mv'],
+            [16.9, '预备势', 'yùbèi shì', 'Preparazione', 'sec'],
+            [21.4, '两脚分开', 'liǎng jiǎo fēnkāi', 'Piedi paralleli, alla larghezza delle spalle', 'mv'],
+            [25.2, '松静站立', 'sōng jìng zhànlì', 'In piedi, rilassati e quieti', 'mv'],
+            [29.2, '目视前下方', 'mù shì qián xiàfāng', 'Sguardo avanti e verso il basso', 'mv'],
+            [33.3, '呼吸自然', 'hūxī zìrán', 'Respiro naturale', 'nat'],
+            [36.0, '面带微笑', 'miàn dài wēixiào', 'Un leggero sorriso', 'mv'],
+            [43.5, '起势', 'qǐ shì', 'Apertura', 'sec'],
+            [47.1, '两掌缓缓上托', 'liǎng zhǎng huǎnhuǎn shàng tuō', 'Inspira: i palmi salgono lentamente fino al petto', 'in'],
+            [59.9, '下按', 'xià àn', 'Espira: i palmi premono verso il basso fino all\'ombelico', 'out'],
+            [67.8, '拨掌', 'bō zhǎng', 'I palmi spingono in avanti, ginocchia morbide', 'out'],
+            [77.0, '收回', 'shōuhuí', 'Inspira: le mani tornano davanti all\'ombelico', 'in'],
+            [84.7, '静养', 'jìng yǎng', 'Resta in quiete, respiro naturale', 'nat'],
+            [101.7, '嘘字诀', 'xū zì jué', 'Suono Xu · Fegato', 'sec'],
+            [104.9, '两手松开', 'liǎng shǒu sōngkāi', 'Rilascia le mani', 'mv'],
+            [109.1, '', '', 'Mani ai fianchi, palmi in su', 'in'],
+            [113.0, '穿右掌', 'chuān yòu zhǎng', 'Ruota a sinistra: la mano destra scorre in avanti', 'out'],
+            [116.6, '吐嘘', 'tǔ xū', 'Espira «xū…», occhi spalancati', 'out'],
+            [124.0, '右掌收回', 'yòu zhǎng shōuhuí', 'Inspira: la mano destra torna al fianco', 'in'],
+            [128.4, '身体转正', 'shēntǐ zhuǎn zhèng', 'Il busto torna di fronte', 'in'],
+            [137.1, '穿左掌 吐嘘', 'chuān zuǒ zhǎng · tǔ xū', 'Ruota a destra: la mano sinistra scorre in avanti. Espira «xū…»', 'out'],
+            [148.5, '左掌收回 身体转正', 'zuǒ zhǎng shōuhuí · shēntǐ zhuǎn zhèng', 'Inspira: la mano sinistra torna al fianco, busto di fronte', 'in'],
+            [161.5, '穿右掌', 'chuān yòu zhǎng', 'Ruota a sinistra: la mano destra scorre in avanti. Espira «xū…»', 'out'],
+            [170.4, '右掌收回', 'yòu zhǎng shōuhuí', 'Inspira: la mano destra torna, busto di fronte', 'in'],
+            [184.3, '穿左掌', 'chuān zuǒ zhǎng', 'Ruota a destra: la mano sinistra scorre in avanti. Espira «xū…»', 'out'],
+            [196.0, '左掌收回', 'zuǒ zhǎng shōuhuí', 'Inspira: la mano sinistra torna, busto di fronte', 'in'],
+            [207.2, '', '', 'Ruota a sinistra: la mano destra scorre in avanti. Espira «xū…»', 'out'],
+            [218.8, '右掌收回', 'yòu zhǎng shōuhuí', 'Inspira: la mano destra torna, busto di fronte', 'in'],
+            [230.0, '穿左掌', 'chuān zuǒ zhǎng', 'Ruota a destra: la mano sinistra scorre in avanti. Espira «xū…»', 'out'],
+            [239.1, '左掌收回', 'zuǒ zhǎng shōuhuí', 'Inspira: la mano sinistra torna, busto di fronte', 'in'],
+            [252.7, '呵字诀', 'hē zì jué', 'Suono He · Cuore', 'sec'],
+            [256.5, '', '', 'Mani ai fianchi, mignoli che sfiorano la vita', 'in'],
+            [259.7, '插掌', 'chā zhǎng', 'Ginocchia morbide: le mani scendono in avanti in diagonale', 'mv'],
+            [263.2, '捧掌', 'pěng zhǎng', 'Palmi uniti a coppa, come a raccogliere acqua', 'in'],
+            [266.4, '目视掌心', 'mù shì zhǎngxīn', 'Guarda i palmi', 'in'],
+            [270.4, '屈肘', 'qū zhǒu', 'Inspira: piega i gomiti, le mani salgono al petto', 'in'],
+            [274.6, '翻掌', 'fān zhǎng', 'Gomiti larghi, dorsi delle mani a contatto', 'in'],
+            [278.6, '插掌 吐呵', 'chā zhǎng · tǔ hē', 'Espira «hē…»: le mani scendono davanti al corpo', 'out'],
+            [287.8, '拨掌', 'bō zhǎng', 'Le mani spingono in avanti, braccia a cerchio', 'out'],
+            [293.0, '捧掌', 'pěng zhǎng', 'Inspira: palmi in su davanti all\'ombelico', 'in'],
+            [297.1, '屈肘', 'qū zhǒu', 'Le mani salgono al petto', 'in'],
+            [301.9, '翻掌', 'fān zhǎng', 'Dorsi delle mani a contatto', 'in'],
+            [306.6, '插掌 吐呵', 'chā zhǎng · tǔ hē', 'Espira «hē…»: le mani scendono', 'out'],
+            [313.2, '拨掌', 'bō zhǎng', 'Le mani spingono in avanti, braccia a cerchio', 'out'],
+            [316.5, '捧掌', 'pěng zhǎng', 'Inspira: palmi in su davanti all\'ombelico', 'in'],
+            [320.3, '屈肘', 'qū zhǒu', 'Le mani salgono al petto', 'in'],
+            [326.5, '翻掌', 'fān zhǎng', 'Dorsi delle mani a contatto', 'in'],
+            [330.4, '插掌 吐呵', 'chā zhǎng · tǔ hē', 'Espira «hē…»: le mani scendono', 'out'],
+            [337.7, '拨掌', 'bō zhǎng', 'Le mani spingono in avanti, braccia a cerchio', 'out'],
+            [341.4, '捧掌', 'pěng zhǎng', 'Inspira: palmi in su davanti all\'ombelico', 'in'],
+            [345.5, '屈肘', 'qū zhǒu', 'Le mani salgono al petto', 'in'],
+            [350.2, '翻掌', 'fān zhǎng', 'Dorsi delle mani a contatto', 'in'],
+            [354.2, '', '', 'Espira «hē…»: le mani scendono', 'out'],
+            [361.5, '', '', 'Le mani spingono in avanti, braccia a cerchio', 'out'],
+            [363.3, '捧掌', 'pěng zhǎng', 'Inspira: palmi in su davanti all\'ombelico', 'in'],
+            [367.1, '屈肘', 'qū zhǒu', 'Le mani salgono al petto', 'in'],
+            [372.0, '翻掌', 'fān zhǎng', 'Dorsi delle mani a contatto', 'in'],
+            [375.9, '插掌 吐呵', 'chā zhǎng · tǔ hē', 'Espira «hē…»: le mani scendono', 'out'],
+            [382.5, '拨掌', 'bō zhǎng', 'Le mani spingono in avanti, braccia a cerchio', 'out'],
+            [385.8, '捧掌', 'pěng zhǎng', 'Inspira: palmi in su davanti all\'ombelico', 'in'],
+            [389.0, '屈肘', 'qū zhǒu', 'Le mani salgono al petto', 'in'],
+            [393.0, '翻掌', 'fān zhǎng', 'Dorsi delle mani a contatto', 'in'],
+            [396.7, '插掌 吐呵', 'chā zhǎng · tǔ hē', 'Espira «hē…»: le mani scendono', 'out'],
+            [402.2, '拨掌', 'bō zhǎng', 'Le mani spingono in avanti, braccia a cerchio', 'out'],
+            [406.8, '呼字诀', 'hū zì jué', 'Suono Hu · Milza', 'sec'],
+            [410.8, '转掌心向内', 'zhuǎn zhǎngxīn xiàng nèi', 'Gira i palmi verso l\'addome', 'in'],
+            [414.0, '收回', 'shōuhuí', 'Inspira: le mani si avvicinano all\'ombelico', 'in'],
+            [419.7, '外开 吐呼', 'wài kāi · tǔ hū', 'Espira «hū…»: le mani si allontanano, braccia rotonde', 'out'],
+            [427.2, '收回', 'shōuhuí', 'Inspira: le mani tornano verso l\'ombelico', 'in'],
+            [432.1, '', '', 'Espira «hū…»: le mani si allontanano', 'out'],
+            [439.8, '收回', 'shōuhuí', 'Inspira: le mani tornano verso l\'ombelico', 'in'],
+            [446.1, '', '', 'Espira «hū…»: le mani si allontanano', 'out'],
+            [452.6, '收回', 'shōuhuí', 'Inspira: le mani tornano verso l\'ombelico', 'in'],
+            [459.0, '', '', 'Espira «hū…»: le mani si allontanano', 'out'],
+            [465.2, '收回', 'shōuhuí', 'Inspira: le mani tornano verso l\'ombelico', 'in'],
+            [471.2, '', '', 'Espira «hū…»: le mani si allontanano', 'out'],
+            [477.1, '收回', 'shōuhuí', 'Inspira: le mani tornano verso l\'ombelico', 'in'],
+            [482.8, '', '', 'Espira «hū…»: le mani si allontanano', 'out'],
+            [488.4, '呬字诀', 'sī zì jué', 'Suono Si · Polmone', 'sec'],
+            [491.7, '两臂垂落 两掌缓缓上托', 'liǎng bì chuíluò · liǎng zhǎng huǎnhuǎn shàng tuō', 'Inspira: braccia giù, poi i palmi salgono lentamente al petto', 'in'],
+            [502.5, '落肘夹肋 展肩扩胸 藏头缩项', 'luò zhǒu jiā lèi · zhǎn jiān kuò xiōng · cáng tóu suō xiàng', 'Gomiti stretti ai fianchi, petto aperto, testa leggermente indietro', 'in'],
+            [510.8, '两掌前推 吐呬', 'liǎng zhǎng qián tuī · tǔ sī', 'Espira «sī…»: i palmi spingono in avanti', 'out'],
+            [515.1, '两掌收回', 'liǎng zhǎng shōuhuí', 'Inspira: le mani tornano al petto', 'in'],
+            [523.7, '落肘夹肋 展肩扩胸 藏头缩项', 'luò zhǒu jiā lèi · zhǎn jiān kuò xiōng · cáng tóu suō xiàng', 'Gomiti stretti ai fianchi, petto aperto, testa leggermente indietro', 'in'],
+            [529.8, '吐呬', 'tǔ sī', 'Espira «sī…»: i palmi spingono in avanti', 'out'],
+            [535.1, '两掌收回', 'liǎng zhǎng shōuhuí', 'Inspira: le mani tornano al petto', 'in'],
+            [541.7, '落肘夹肋 展肩扩胸 藏头缩项', 'luò zhǒu jiā lèi · zhǎn jiān kuò xiōng · cáng tóu suō xiàng', 'Gomiti stretti ai fianchi, petto aperto, testa leggermente indietro', 'in'],
+            [548.4, '吐呬', 'tǔ sī', 'Espira «sī…»: i palmi spingono in avanti', 'out'],
+            [554.1, '两掌收回', 'liǎng zhǎng shōuhuí', 'Inspira: le mani tornano al petto', 'in'],
+            [561.2, '落肘夹肋 展肩扩胸 藏头缩项', 'luò zhǒu jiā lèi · zhǎn jiān kuò xiōng · cáng tóu suō xiàng', 'Gomiti stretti ai fianchi, petto aperto, testa leggermente indietro', 'in'],
+            [567.8, '吐呬', 'tǔ sī', 'Espira «sī…»: i palmi spingono in avanti', 'out'],
+            [573.5, '两掌收回', 'liǎng zhǎng shōuhuí', 'Inspira: le mani tornano al petto', 'in'],
+            [580.3, '落肘夹肋 展肩扩胸 藏头缩项', 'luò zhǒu jiā lèi · zhǎn jiān kuò xiōng · cáng tóu suō xiàng', 'Gomiti stretti ai fianchi, petto aperto, testa leggermente indietro', 'in'],
+            [586.7, '吐呬', 'tǔ sī', 'Espira «sī…»: i palmi spingono in avanti', 'out'],
+            [592.4, '两掌收回', 'liǎng zhǎng shōuhuí', 'Inspira: le mani tornano al petto', 'in'],
+            [598.4, '落肘夹肋 展肩扩胸 藏头缩项', 'luò zhǒu jiā lèi · zhǎn jiān kuò xiōng · cáng tóu suō xiàng', 'Gomiti stretti ai fianchi, petto aperto, testa leggermente indietro', 'in'],
+            [605.1, '吐呬', 'tǔ sī', 'Espira «sī…»: i palmi spingono in avanti', 'out'],
+            [609.9, '吹字诀', 'chuī zì jué', 'Suono Chui · Rene', 'sec'],
+            [612.4, '松腕伸掌 两臂外开', 'sōng wàn shēn zhǎng · liǎng bì wài kāi', 'Inspira: dita distese, le braccia si aprono ai lati', 'in'],
+            [617.9, '划弧至后腰部', 'huà hú zhì hòu yāo bù', 'Disegna un arco e porta le mani dietro, sui reni', 'in'],
+            [622.6, '两掌下滑 前摆', 'liǎng zhǎng xià huá · qián bǎi', 'Scendi: le mani scivolano lungo glutei e cosce', 'out'],
+            [626.2, '吹', 'chuī', 'Espira «chuī…»', 'out'],
+            [631.3, '两掌收回', 'liǎng zhǎng shōuhuí', 'Inspira: risali, le mani tornano all\'addome', 'in'],
+            [636.7, '摩带脉', 'mó dài mài', 'Massaggia la vita (Dai Mai) portando le mani ai reni', 'in'],
+            [641.9, '吹', 'chuī', 'Espira «chuī…» scendendo, mani lungo le gambe', 'out'],
+            [647.1, '收回', 'shōuhuí', 'Inspira: risali, le mani tornano all\'addome', 'in'],
+            [653.0, '摩带脉', 'mó dài mài', 'Massaggia la vita portando le mani ai reni', 'in'],
+            [657.6, '吹', 'chuī', 'Espira «chuī…» scendendo, mani lungo le gambe', 'out'],
+            [663.7, '收回', 'shōuhuí', 'Inspira: risali, le mani tornano all\'addome', 'in'],
+            [668.4, '摩带脉', 'mó dài mài', 'Massaggia la vita portando le mani ai reni', 'in'],
+            [672.4, '吹', 'chuī', 'Espira «chuī…» scendendo, mani lungo le gambe', 'out'],
+            [678.1, '收回', 'shōuhuí', 'Inspira: risali, le mani tornano all\'addome', 'in'],
+            [682.3, '摩带脉', 'mó dài mài', 'Massaggia la vita portando le mani ai reni', 'in'],
+            [687.1, '吹', 'chuī', 'Espira «chuī…» scendendo, mani lungo le gambe', 'out'],
+            [692.5, '收回', 'shōuhuí', 'Inspira: risali, le mani tornano all\'addome', 'in'],
+            [697.5, '摩带脉', 'mó dài mài', 'Massaggia la vita portando le mani ai reni', 'in'],
+            [701.5, '吹', 'chuī', 'Espira «chuī…» scendendo, mani lungo le gambe', 'out'],
+            [707.0, '嘻字诀', 'xī zì jué', 'Suono Xi · Triplo Riscaldatore', 'sec'],
+            [710.0, '两臂垂落', 'liǎng bì chuíluò', 'Braccia rilassate in basso, dorsi delle mani affiancati', 'in'],
+            [716.8, '提肘带手', 'tí zhǒu dài shǒu', 'Inspira: solleva i gomiti, le mani salgono davanti al viso', 'in'],
+            [721.6, '外开', 'wài kāi', 'Le mani si aprono in alto e ai lati', 'in'],
+            [725.6, '收回', 'shōuhuí', 'Le mani scendono davanti al petto', 'in'],
+            [729.1, '吐嘻', 'tǔ xī', 'Espira «xī…»: premi verso il basso e apri ai lati', 'out'],
+            [734.7, '两臂垂落', 'liǎng bì chuíluò', 'Braccia rilassate in basso', 'in'],
+            [738.0, '提肘带手', 'tí zhǒu dài shǒu', 'Inspira: solleva i gomiti, le mani salgono davanti al viso', 'in'],
+            [742.1, '外开', 'wài kāi', 'Le mani si aprono in alto e ai lati', 'in'],
+            [745.4, '收回', 'shōuhuí', 'Le mani scendono davanti al petto', 'in'],
+            [749.4, '吐嘻', 'tǔ xī', 'Espira «xī…»: premi verso il basso e apri ai lati', 'out'],
+            [755.5, '两臂垂落', 'liǎng bì chuíluò', 'Braccia rilassate in basso', 'in'],
+            [758.4, '提肘带手', 'tí zhǒu dài shǒu', 'Inspira: solleva i gomiti, le mani salgono davanti al viso', 'in'],
+            [762.5, '外开', 'wài kāi', 'Le mani si aprono in alto e ai lati', 'in'],
+            [765.4, '收回', 'shōuhuí', 'Le mani scendono davanti al petto', 'in'],
+            [769.5, '吐嘻', 'tǔ xī', 'Espira «xī…»: premi verso il basso e apri ai lati', 'out'],
+            [775.4, '两臂垂落', 'liǎng bì chuíluò', 'Braccia rilassate in basso', 'in'],
+            [778.1, '提肘带手', 'tí zhǒu dài shǒu', 'Inspira: solleva i gomiti, le mani salgono davanti al viso', 'in'],
+            [780.9, '外开', 'wài kāi', 'Le mani si aprono in alto e ai lati', 'in'],
+            [784.4, '收回', 'shōuhuí', 'Le mani scendono davanti al petto', 'in'],
+            [789.6, '吐嘻', 'tǔ xī', 'Espira «xī…»: premi verso il basso e apri ai lati', 'out'],
+            [794.6, '两臂垂落', 'liǎng bì chuíluò', 'Braccia rilassate in basso', 'in'],
+            [797.3, '提肘带手', 'tí zhǒu dài shǒu', 'Inspira: solleva i gomiti, le mani salgono davanti al viso', 'in'],
+            [800.2, '外开', 'wài kāi', 'Le mani si aprono in alto e ai lati', 'in'],
+            [803.2, '收回', 'shōuhuí', 'Le mani scendono davanti al petto', 'in'],
+            [807.5, '吐嘻', 'tǔ xī', 'Espira «xī…»: premi verso il basso e apri ai lati', 'out'],
+            [813.2, '两臂垂落', 'liǎng bì chuíluò', 'Braccia rilassate in basso', 'in'],
+            [816.1, '提肘带手', 'tí zhǒu dài shǒu', 'Inspira: solleva i gomiti, le mani salgono davanti al viso', 'in'],
+            [820.1, '外开', 'wài kāi', 'Le mani si aprono in alto e ai lati', 'in'],
+            [823.2, '收回', 'shōuhuí', 'Le mani scendono davanti al petto', 'in'],
+            [826.6, '吐嘻', 'tǔ xī', 'Espira «xī…»: premi verso il basso e apri ai lati', 'out'],
+            [832.7, '收势', 'shōu shì', 'Chiusura', 'sec'],
+            [834.9, '翻掌', 'fān zhǎng', 'Gira i palmi verso l\'addome', 'mv'],
+            [837.7, '缓缓收回', 'huǎnhuǎn shōuhuí', 'Le mani si posano lentamente sull\'ombelico', 'mv'],
+            [844.4, '静养', 'jìng yǎng', 'Resta in quiete, respiro naturale', 'nat'],
+            [854.5, '顺时针', 'shùn shízhēn', 'Massaggia l\'addome in senso orario: 6 giri', 'mv'],
+            [867.2, '逆时针', 'nì shízhēn', 'Ora in senso antiorario: 6 giri', 'mv'],
+            [876.1, '两手松开 还原体侧', 'liǎng shǒu sōngkāi · huányuán tǐ cè', 'Mani lungo i fianchi', 'mv'],
+            [881.7, '练功结束', 'liàngōng jiéshù', 'Fine della pratica. Buona salute e serenità.', 'mv']
+        ];
+        // Inizio delle sezioni e delle 6 espirazioni di ogni suono, sulla traccia con voce (secondi)
+        const LZJ_SEC_V = { prep: 0, qishi: 43.5, xu: 101.7, he: 252.7, hu: 406.8, si: 488.4, chui: 609.9, xi: 707.0, shou: 832.7 };
+        const LZJ_EXH_V = {
+            xu: [113.0, 137.1, 161.5, 184.3, 207.2, 230.0],
+            he: [278.6, 306.6, 330.4, 354.2, 375.9, 396.7],
+            hu: [419.7, 432.1, 446.1, 459.0, 471.2, 482.8],
+            si: [510.8, 529.8, 548.4, 567.8, 586.7, 605.1],
+            chui: [626.2, 641.9, 657.6, 672.4, 687.1, 701.5],
+            xi: [729.1, 749.4, 769.5, 789.6, 807.5, 826.6]
+        };
+        // Apertura: istante di ogni comando → punto del movimento animato (0-1)
+        const LZJ_QISHI_V = [[47.1, 0], [59.9, 0.3], [67.8, 0.55], [77.0, 0.75], [84.7, 0.9]];
+        // Traccia con voce → traccia solo musica. Da 282,6 s (con voce) in poi le due musiche sono identiche,
+        // sfasate di 19,6 s (correlazione del segnale 0,4-0,9). Prima la musica è montata in modo diverso:
+        // corrispondenza stimata sulle linee di basso, precisione di qualche secondo.
+        const LZJ_V2N = [[0, 0], [16.9, 16.0], [43.5, 43.8], [76.0, 70.7], [101.7, 95.7], [252.7, 234.7], [282.6, 263.0], [1000, 980.4]];
+        const lzjInterp = (pairs, t, a, b) => {
+            for (let i = 1; i < pairs.length; i++) if (t <= pairs[i][a] || i === pairs.length - 1) {
+                const p = pairs[i - 1], q = pairs[i];
+                return p[b] + (t - p[a]) * (q[b] - p[b]) / (q[a] - p[a]);
+            }
+        };
+        const LZJ_TRACKS = {
+            voce: { label: 'con voce guida', file: 'audio/liu_zi_jue_voce_96k.mp3', dur: 924.8, toTrack: t => t, toVoice: t => t,
+                note: 'Comandi ufficiali in cinese (口令). I sottotitoli traducono ogni comando nel momento esatto in cui viene detto.' },
+            musica: { label: 'solo musica', file: 'audio/liu_zi_jue_96k.mp3', dur: 902.8, toTrack: t => lzjInterp(LZJ_V2N, t, 0, 1), toVoice: t => lzjInterp(LZJ_V2N, t, 1, 0),
+                note: 'Stessi sottotitoli, senza voce. Tempi esatti da He in poi; in preparazione, apertura e Xu possono scostarsi di qualche secondo, perché in questa versione la musica è montata diversamente.' }
+        };
+        const LZJ_OUT_FRAC = { xu: 0, he: 0.55, hu: 0, si: 0.48, chui: 0, xi: 0.58 };
         const LZJ_ORDER = ['prep', 'qishi', 'xu', 'he', 'hu', 'si', 'chui', 'xi', 'shou'];
         const LZJ_COLORS = { prep: '#57534e', qishi: '#78716c', xu: '#2f9e5a', he: '#c2412d', hu: '#c9962a', si: '#a8a29e', chui: '#2c5fa8', xi: '#8b5cc6', shou: '#78716c' };
-        let lzjStart = Object.assign({}, LZJ_DEFAULT_START);
-        try { Object.assign(lzjStart, JSON.parse(localStorage.getItem('lzjStart2') || '{}')); } catch (e) {}
+        let lzjTrack = 'voce';
+        try { const s = localStorage.getItem('lzjTrack'); if (s && LZJ_TRACKS[s]) lzjTrack = s; } catch (e) {}
+        let lzjStart = {}, lzjExh = {}, lzjCues = [], lzjQishi = [];
+        function lzjBuildTimeline() {
+            const f = LZJ_TRACKS[lzjTrack].toTrack;
+            lzjStart = {};
+            for (const k in LZJ_SEC_V) lzjStart[k] = Math.max(0, f(LZJ_SEC_V[k]));
+            lzjExh = {};
+            for (const k in LZJ_EXH_V) lzjExh[k] = LZJ_EXH_V[k].map(f);
+            lzjCues = LZJ_CUES.map(c => [f(c[0])].concat(c.slice(1)));
+            lzjQishi = LZJ_QISHI_V.map(([t, x]) => [f(t), x]);
+        }
+        lzjBuildTimeline();
         let lzjAudio = null, lzjCurSeg = null;
 
         function lzjFmt(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
@@ -2100,16 +2300,49 @@
             const end = i + 1 < LZJ_ORDER.length ? lzjStart[LZJ_ORDER[i + 1]] : dur;
             return { id, start: lzjStart[id], end };
         }
+        // Ripetizione in corso: il ciclo animato è allineato in modo che l'espirazione cominci
+        // esattamente quando la voce dà il comando di espirare
+        function lzjRepAt(id, t) {
+            const E = lzjExh[id];
+            if (!E) return null;
+            const avg = (E[E.length - 1] - E[0]) / (E.length - 1);
+            const P = E.map((e, i) => i + 1 < E.length ? E[i + 1] - e : avg);
+            const S = E.map((e, i) => e - LZJ_OUT_FRAC[id] * P[i]);
+            if (t < S[0]) return { intro: true, rep: 0, frac: 0 };
+            let k = 0;
+            for (let i = 0; i < S.length; i++) if (t >= S[i]) k = i;
+            const frac = (t - S[k]) / P[k];
+            if (frac >= 1) return { done: true, rep: k, frac: 0.999 };
+            return { rep: k, frac };
+        }
+        // Respiro guidato dai comandi vocali: fase (in/out/nat) e riempimento dei polmoni (0-1)
+        function lzjBreathAt(t) {
+            let i = -1;
+            for (let j = 0; j < lzjCues.length && lzjCues[j][0] <= t + 0.1; j++) if (lzjCues[j][4] !== 'mv') i = j;
+            if (i < 0) return { breath: 'nat', lung: 0.5 };
+            const k = lzjCues[i][4];
+            if (k === 'nat' || k === 'sec') return { breath: 'nat', lung: 0.5 };
+            let t1 = null;
+            for (let j = i + 1; j < lzjCues.length; j++) if (lzjCues[j][4] !== 'mv' && lzjCues[j][4] !== k) { t1 = lzjCues[j][0]; break; }
+            let t0 = lzjCues[i][0];
+            for (let j = i - 1; j >= 0 && lzjCues[j][4] === k; j--) t0 = lzjCues[j][0];
+            const dur = Math.min(8, Math.max(2, (t1 === null ? t0 + 6 : t1) - t0));
+            const f = Math.max(0, Math.min(1, (t - t0) / dur));
+            return { breath: k, lung: k === 'in' ? smooth(f) : 1 - smooth(f) };
+        }
+        function lzjCueAt(t) {
+            let c = null;
+            for (const x of lzjCues) { if (x[0] <= t + 0.1) c = x; else break; }
+            return c;
+        }
 
         function initLzjPlayer() {
             lzjAudio = document.getElementById('lzj-audio');
             if (!lzjAudio) return;
             lzjInitAudio();
-            const dur = () => (isFinite(lzjAudio.duration) && lzjAudio.duration) || 902.7;
+            const dur = () => (isFinite(lzjAudio.duration) && lzjAudio.duration) || LZJ_TRACKS[lzjTrack].dur;
             const tl = document.getElementById('lzj-timeline');
             const chap = document.getElementById('lzj-chapters');
-            const sel = document.getElementById('lzj-calib-seg');
-            sel.innerHTML = LZJ_ORDER.slice(1).map(k => `<option value="${k}">${LZJ_INFO[k].name}</option>`).join('');
 
             const render = () => {
                 const D = dur();
@@ -2118,9 +2351,18 @@
                     return `<div title="${LZJ_INFO[k].name}" style="position:absolute;top:0;bottom:0;left:${s / D * 100}%;width:${(e - s) / D * 100}%;background:${LZJ_COLORS[k]};opacity:.55;border-right:1px solid #0c0a09;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;overflow:hidden">${LZJ_INFO[k].hanzi}</div>`;
                 }).join('') + '<div id="lzj-head" style="position:absolute;top:0;bottom:0;width:2px;background:#fde68a;box-shadow:0 0 6px #fde68a;left:0"></div>';
                 chap.innerHTML = LZJ_ORDER.map(k => `<button data-k="${k}" onclick="lzjSeek(${lzjStart[k]})" class="lzj-chip px-2 py-1 rounded text-[11px] font-semibold border border-stone-700 bg-stone-800 hover:bg-stone-700" style="border-left:3px solid ${LZJ_COLORS[k]}">${LZJ_INFO[k].hanzi} ${LZJ_INFO[k].name.split(' — ')[0].split(' (')[0]} <span class="text-stone-500 font-mono">${lzjFmt(lzjStart[k])}</span></button>`).join('');
+                document.getElementById('lzj-dur').innerText = lzjFmt(D);
+                ['voce', 'musica'].forEach(k => {
+                    const b = document.getElementById('lzj-tr-' + k);
+                    if (b) b.className = 'px-2 py-1.5 rounded text-[11px] font-bold border ' + (k === lzjTrack ? 'bg-amber-500 text-stone-900 border-amber-500' : 'bg-stone-900 text-stone-200 border-stone-600 hover:border-amber-400');
+                });
+                const n = document.getElementById('lzj-track-note');
+                if (n) n.textContent = LZJ_TRACKS[lzjTrack].note;
+                const link = document.getElementById('lzj-audio-link');
+                if (link) link.href = 'https://andrea76b.github.io/QIGONG/' + LZJ_TRACKS[lzjTrack].file;
             };
             render();
-            lzjAudio.addEventListener('loadedmetadata', () => { document.getElementById('lzj-dur').innerText = lzjFmt(dur()); render(); });
+            lzjAudio.addEventListener('loadedmetadata', render);
             tl.addEventListener('click', e => { const r = tl.getBoundingClientRect(); lzjSeek((e.clientX - r.left) / r.width * dur()); });
             document.getElementById('lzj-vol').addEventListener('input', e => { lzjAudio.volume = +e.target.value; });
             lzjAudio.volume = 0.8;
@@ -2139,50 +2381,77 @@
                 const seg = lzjSegAt(t, D);
                 if (seg.id !== lzjCurSeg) lzjShowSeg(seg.id);
                 const info = LZJ_INFO[seg.id], m = LZJ_MOVES[seg.id];
-                let rep, frac;
-                let intro = false;
+                let r, repTxt;
                 if (info.reps) {
-                    const per = Math.min(LZJ_PHRASE, (seg.end - seg.start) / (info.reps + 1));
-                    const x = (t - seg.start) / per - 1;
-                    if (x < 0) {
-                        intro = true; rep = 0; frac = 0;
-                        document.getElementById('lzj-rep').innerText = 'Ingresso nel movimento';
-                    } else {
-                        rep = Math.min(info.reps - 1, Math.floor(x)); frac = Math.min(0.999, x - rep);
-                        document.getElementById('lzj-rep').innerText = `Ripetizione ${rep + 1}/${info.reps}`;
-                    }
+                    const rp = lzjRepAt(seg.id, t);
+                    r = lzjPoseAt(seg.id, rp.frac, rp.rep);
+                    if (rp.intro || rp.done) { r.pose = m.keys[0][1]; r.breath = 'nat'; r.lung = 0.5; }
+                    repTxt = rp.intro ? 'Ingresso nel movimento' : rp.done ? 'Fine del suono' : `Ripetizione ${rp.rep + 1}/${info.reps}`;
+                } else if (seg.id === 'qishi') {
+                    const Q = lzjQishi;
+                    let x = 0;
+                    if (t >= Q[Q.length - 1][0]) x = 0.9;
+                    else if (t >= Q[0][0]) x = lzjInterp(Q, t, 0, 1);
+                    r = lzjPoseAt('qishi', x, 0);
+                    if (t < Q[0][0] || x >= 0.9) { r.breath = 'nat'; r.lung = 0.5; }
+                    repTxt = `${lzjFmt(t - seg.start)} / ${lzjFmt(seg.end - seg.start)}`;
                 } else {
                     const per = m.period || 12;
-                    const x = (t - seg.start) / per; rep = Math.floor(x); frac = x - rep;
-                    document.getElementById('lzj-rep').innerText = `${lzjFmt(t - seg.start)} / ${lzjFmt(seg.end - seg.start)}`;
+                    const x = (t - seg.start) / per, rep = Math.floor(x);
+                    r = lzjPoseAt(seg.id, x - rep, rep);
+                    r.breath = 'nat';
+                    const last = lzjCues[lzjCues.length - 2];
+                    if (seg.id === 'shou' && t >= last[0]) r.pose = P({ lL: LEG_SOFT });
+                    repTxt = `${lzjFmt(t - seg.start)} / ${lzjFmt(seg.end - seg.start)}`;
                 }
-                const r = lzjPoseAt(seg.id, frac, rep);
-                if (intro) {
-                    const q = (t - seg.start) / LZJ_PHRASE;
-                    r.pose = LZJ_MOVES[seg.id].keys[0][1];
-                    r.breath = q < 0.5 ? 'in' : 'out';
-                    r.lung = q < 0.5 ? smooth(q * 2) : 1 - smooth((q - 0.5) * 2);
-                }
+                document.getElementById('lzj-rep').innerText = repTxt;
+                if (seg.id !== 'prep') { const g = lzjBreathAt(t); r.breath = g.breath; r.lung = g.lung; }
                 const bl = document.getElementById('lzj-breathlabel'), bb = document.getElementById('lzj-breathbar');
                 bb.style.width = (r.lung * 100) + '%';
                 bb.style.background = r.breath === 'out' ? '#e07a5f' : r.breath === 'in' ? '#34d399' : '#a8a29e';
-                bl.innerText = r.breath === 'in' ? '↑ Inspira dal naso' : r.breath === 'out' ? (info.reps ? `↓ Espira dalla bocca: «${info.name.split(' ')[0]}»` : '↓ Espira') : '· Pausa';
-                if (lzjAudio.currentTime > 0) {
+                bl.innerText = r.breath === 'in' ? '↑ Inspira dal naso' : r.breath === 'out' ? (info.reps ? `↓ Espira dalla bocca: «${info.name.split(' ')[0]}»` : '↓ Espira') : r.breath === 'nat' ? '· Respiro naturale' : '· Pausa';
+                if (t > 0) {
                     faceSetTarget(seg.id, r.breath);
-                    if (performance.now() >= facePrevUntil) {
-                        if (intro) {
-                            faceTarget = FACE_SHAPES.inhale;
-                            setSubtitles(['Preparati: ' + info.name, 'Porta le mani nella posizione di partenza e respira tranquillo dal naso. Il suono parte con la prossima frase musicale.', 'Normali', 'Chiusa', 'Al palato', 'Nessuno']);
-                        } else setSubtitles(LZJ_SUBS[seg.id][r.breath === 'out' ? 'out' : 'in']);
-                    }
+                    if (performance.now() >= facePrevUntil) lzjShowCue(seg.id, lzjCueAt(t), r.breath);
                 }
                 const syncOn = document.getElementById('lzj-sync').checked;
-                if (syncOn && (!lzjAudio.paused || lzjAudio.currentTime > 0)) {
+                if (syncOn && (!lzjAudio.paused || t > 0)) {
                     lzjDrive = { pose: r.pose, lung: r.lung, id: seg.id };
-                    setBreathLabel3D(r.breath);
+                    setBreathLabel3D(r.breath === 'nat' ? 'pause' : r.breath);
                 }
             };
             tick();
+        }
+        // Sottotitoli: comando cinese con pinyin, traduzione italiana e indicazioni per occhi, bocca, lingua
+        function lzjShowCue(segId, cue, breath) {
+            const subs = LZJ_SUBS[segId][breath === 'out' ? 'out' : 'in'];
+            const zh = document.getElementById('sub-zh');
+            if (!cue) { setSubtitles(subs); if (zh) zh.textContent = ''; return; }
+            const main = cue[3];
+            let detail = subs[1];
+            if (cue[4] === 'sec') detail = LZJ_INFO[segId].meta;
+            setSubtitles([main, detail, subs[2], subs[3], subs[4], subs[5]]);
+            if (zh) {
+                const txt = cue[1] ? `口令 ${cue[1]} · ${cue[2]}` : '';
+                if (zh.textContent !== txt) zh.textContent = txt;
+            }
+        }
+        function lzjSetTrack(k) {
+            if (!LZJ_TRACKS[k] || k === lzjTrack) return;
+            const wasPlaying = lzjAudio && !lzjAudio.paused;
+            const tVoice = lzjAudio ? LZJ_TRACKS[lzjTrack].toVoice(lzjAudio.currentTime || 0) : 0;
+            lzjTrack = k;
+            try { localStorage.setItem('lzjTrack', k); } catch (e) {}
+            lzjBuildTimeline();
+            lzjCurSeg = null;
+            lzjLoadSource(0);
+            const target = Math.max(0, LZJ_TRACKS[k].toTrack(tVoice));
+            const seekWhenReady = () => { lzjAudio.currentTime = target; lzjAudio.removeEventListener('loadedmetadata', seekWhenReady); };
+            lzjAudio.addEventListener('loadedmetadata', seekWhenReady);
+            if (wasPlaying) lzjPlay();
+            window._lzjRender();
+            const link = document.getElementById('lzj-audio-link');
+            if (link) link.href = 'https://andrea76b.github.io/QIGONG/' + LZJ_TRACKS[k].file;
         }
         function lzjShowSeg(id) {
             lzjCurSeg = id;
@@ -2201,12 +2470,11 @@
             if (lzjAudio && !lzjAudio.paused && t) { t.innerText = i.name; d.innerText = i.move; }
         }
         // Fonti dell'audio, in ordine: se una non si carica si passa alla successiva
-        const LZJ_AUDIO_SOURCES = [
-            ['questa pagina', 'audio/liu_zi_jue_96k.mp3'],
-            ['GitHub Pages', 'https://andrea76b.github.io/QIGONG/audio/liu_zi_jue_96k.mp3'],
-            ['jsDelivr', 'https://cdn.jsdelivr.net/gh/andrea76b/QIGONG@gh-pages/audio/liu_zi_jue_96k.mp3'],
-            ['GitHack', 'https://raw.githack.com/andrea76b/QIGONG/gh-pages/audio/liu_zi_jue_96k.mp3']
-        ];
+        const lzjSources = () => {
+            const f = LZJ_TRACKS[lzjTrack].file;
+            return [['questa pagina', f], ['GitHub Pages', 'https://andrea76b.github.io/QIGONG/' + f],
+                ['jsDelivr', 'https://cdn.jsdelivr.net/gh/andrea76b/QIGONG@gh-pages/' + f], ['GitHack', 'https://raw.githack.com/andrea76b/QIGONG/gh-pages/' + f]];
+        };
         let lzjSrcIdx = 0, lzjWantPlay = false;
         function lzjStatus(msg, kind) {
             const el = document.getElementById('lzj-audio-status');
@@ -2216,23 +2484,24 @@
         }
         function lzjLoadSource(i) {
             lzjSrcIdx = i;
-            lzjAudio.src = LZJ_AUDIO_SOURCES[i][1];
+            const src = lzjSources()[i];
+            lzjAudio.src = src[1];
             lzjAudio.load();
-            lzjStatus(`caricamento da ${LZJ_AUDIO_SOURCES[i][0]}…`);
+            lzjStatus(`caricamento della traccia ${LZJ_TRACKS[lzjTrack].label} da ${src[0]}…`);
         }
         function lzjInitAudio() {
             lzjAudio.addEventListener('error', () => {
                 const code = lzjAudio.error ? lzjAudio.error.code : '?';
-                if (lzjSrcIdx + 1 < LZJ_AUDIO_SOURCES.length) {
+                if (lzjSrcIdx + 1 < lzjSources().length) {
                     lzjLoadSource(lzjSrcIdx + 1);
                     if (lzjWantPlay) lzjPlay();
                 } else {
                     lzjStatus(`nessuna fonte raggiungibile da questo browser (errore ${code}). Usa il link «apri il file audio da solo» qui sotto.`, 'err');
                 }
             });
-            lzjAudio.addEventListener('loadedmetadata', () => lzjStatus(`pronto (${lzjFmt(lzjAudio.duration)}, da ${LZJ_AUDIO_SOURCES[lzjSrcIdx][0]})`, 'ok'));
+            lzjAudio.addEventListener('loadedmetadata', () => lzjStatus(`pronto, traccia ${LZJ_TRACKS[lzjTrack].label} (${lzjFmt(lzjAudio.duration)}, da ${lzjSources()[lzjSrcIdx][0]})`, 'ok'));
             lzjAudio.addEventListener('waiting', () => lzjStatus('carico la musica…'));
-            lzjAudio.addEventListener('playing', () => lzjStatus(`in riproduzione (da ${LZJ_AUDIO_SOURCES[lzjSrcIdx][0]})`, 'ok'));
+            lzjAudio.addEventListener('playing', () => lzjStatus(`in riproduzione, traccia ${LZJ_TRACKS[lzjTrack].label} (da ${lzjSources()[lzjSrcIdx][0]})`, 'ok'));
             lzjLoadSource(0);
         }
         function lzjPlay() {
@@ -2252,21 +2521,6 @@
             if (lzjAudio.paused) lzjPlay(); else { lzjWantPlay = false; lzjAudio.pause(); }
         }
         function lzjSeek(s) { if (lzjAudio) lzjAudio.currentTime = Math.max(0, s); }
-        function lzjCalibrate() {
-            const k = document.getElementById('lzj-calib-seg').value;
-            lzjStart[k] = Math.round(lzjAudio.currentTime * 10) / 10;
-            // mantiene l'ordine: le fasi successive non possono iniziare prima
-            const i = LZJ_ORDER.indexOf(k);
-            for (let j = i + 1; j < LZJ_ORDER.length; j++) if (lzjStart[LZJ_ORDER[j]] <= lzjStart[k]) lzjStart[LZJ_ORDER[j]] = lzjStart[k] + 5;
-            for (let j = i - 1; j > 0; j--) if (lzjStart[LZJ_ORDER[j]] >= lzjStart[k]) lzjStart[LZJ_ORDER[j]] = Math.max(0, lzjStart[k] - 5);
-            try { localStorage.setItem('lzjStart2', JSON.stringify(lzjStart)); } catch (e) {}
-            window._lzjRender(); lzjCurSeg = null;
-        }
-        function lzjResetCalib() {
-            lzjStart = Object.assign({}, LZJ_DEFAULT_START);
-            try { localStorage.removeItem('lzjStart2'); } catch (e) {}
-            window._lzjRender(); lzjCurSeg = null;
-        }
 
         // ==========================================
         // VISO ANIMATO + SOTTOTITOLI (sincronizzati con il player Liu Zi Jue)
