@@ -1,5 +1,7 @@
 # Qigong — Corpus delle Scienze Bioenergetiche
 
+**Sito pubblico:** https://andrea76b.github.io/QIGONG/ (GitHub Pages, ramo `gh-pages`). Il ramo `gh-pages` va aggiornato a ogni modifica con `git push origin HEAD:gh-pages`.
+
 Pagina HTML unica (`index.html`) con un manichino 3D in Three.js e un player del Liu Zi Jue sincronizzato con la musica (`audio/liu_zi_jue.mp3`, sequenza Health Qigong, 15:02).
 
 - **Avvio locale:** il player ha bisogno di un server che supporti le richieste HTTP Range, altrimenti non si può spostare il punto di ascolto. Va bene `npx http-server` o GitHub Pages; `python -m http.server` no.

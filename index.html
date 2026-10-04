@@ -128,21 +128,22 @@
     <!-- Header Navigation -->
     <header class="bg-stone-900 text-stone-100 sticky top-0 z-50 shadow-lg border-b border-stone-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-3">
+            <div class="flex items-center justify-between gap-2 h-16">
+                <div class="flex items-center space-x-3 min-w-0">
                     <span class="text-2xl text-terracotta-600">☯</span>
-                    <div>
-                        <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">Corpus delle Scienze Bioenergetiche</h1>
+                    <div class="min-w-0">
+                        <h1 class="text-base sm:text-lg font-bold tracking-tight text-white truncate">Corpus delle Scienze Bioenergetiche</h1>
                         <p class="text-xs text-stone-400 hidden sm:block">Dal Qi Gong Alchemico al Biocomputer Umano & Acustica Vibrazionale</p>
                     </div>
                 </div>
                 <div class="hidden xl:flex space-x-1 text-xs font-semibold">
+                    <button onclick="switchTab('obiettivi')" id="tab-obiettivi" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">★ Pratica per Obiettivo</button>
+                    <button onclick="switchTab('model3d')" id="tab-model3d" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Liu Zi Jue & 3D</button>
+                    <button onclick="switchTab('zhoutian')" id="tab-zhoutian" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Respirazione Circolare</button>
+                    <span class="w-px bg-stone-700 mx-1 self-stretch"></span>
                     <button onclick="switchTab('ontologia')" id="tab-ontologia" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition active">Ontologia</button>
                     <button onclick="switchTab('sicurezza')" id="tab-sicurezza" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Sicurezza</button>
                     <button onclick="switchTab('corpus')" id="tab-corpus" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Corpus Pratiche</button>
-                    <button onclick="switchTab('model3d')" id="tab-model3d" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Modello 3D Posizioni</button>
-                    <button onclick="switchTab('obiettivi')" id="tab-obiettivi" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Pratica per Obiettivo</button>
-                    <button onclick="switchTab('zhoutian')" id="tab-zhoutian" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Respirazione Circolare</button>
                     <button onclick="switchTab('audio')" id="tab-audio" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Acustica & Audio Synth</button>
                     <button onclick="switchTab('simulatore')" id="tab-simulatore" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Simulatore Campo</button>
                     <button onclick="switchTab('classici')" id="tab-classici" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Testi Classici</button>
@@ -151,18 +152,23 @@
                 </div>
                 <!-- Mobile Select Nav -->
                 <div class="xl:hidden">
-                    <select onchange="switchTab(this.value)" class="bg-stone-800 text-stone-200 text-xs rounded-md px-3 py-1.5 border border-stone-700 focus:outline-none">
-                        <option value="ontologia">1. Ontologia & Livelli Stupen</option>
-                        <option value="sicurezza">2. Sicurezza & Pronto Soccorso</option>
-                        <option value="corpus">3. Corpus Pratiche e Finalità</option>
-                        <option value="model3d">4. Modelli 3D Posizioni e Respirazione</option>
-                        <option value="obiettivi">★ Pratica per Obiettivo</option>
-                        <option value="zhoutian">★ Respirazione Circolare (Zhou Tian)</option>
-                        <option value="audio">5. Teoria Acustica & Generatore Audio Sonoro</option>
-                        <option value="simulatore">6. Simulatore Campo Energetico</option>
-                        <option value="classici">7. Testi Classici & Xingqi</option>
-                        <option value="neuro">8. Neurofisiologia & Oscilloscopio EEG</option>
-                        <option value="archivio">9. Archivio & Fonti Video</option>
+                    <select id="nav-select" onchange="switchTab(this.value)" class="bg-stone-800 text-stone-200 text-xs rounded-md px-3 py-1.5 border border-stone-700 focus:outline-none max-w-[44vw]">
+                        <optgroup label="Pratica">
+                            <option value="protocollo">★ Protocollo trasversale</option>
+                            <option value="obiettivi">Pratica per obiettivo</option>
+                            <option value="model3d">Liu Zi Jue guidato e modello 3D</option>
+                            <option value="zhoutian">Respirazione circolare (Zhou Tian)</option>
+                        </optgroup>
+                        <optgroup label="Studio e teoria">
+                            <option value="ontologia" selected>Ontologia e livelli Stupen</option>
+                            <option value="sicurezza">Sicurezza e pronto soccorso</option>
+                            <option value="corpus">Corpus delle pratiche</option>
+                            <option value="audio">Acustica e generatore audio</option>
+                            <option value="simulatore">Simulatore del campo</option>
+                            <option value="classici">Testi classici e Xingqi</option>
+                            <option value="neuro">Neurofisiologia ed EEG</option>
+                            <option value="archivio">Archivio fonti</option>
+                        </optgroup>
                     </select>
                 </div>
             </div>
@@ -419,7 +425,8 @@
                     </label>
                 </div>
 
-                <audio id="lzj-audio" preload="metadata" src="audio/liu_zi_jue_96k.mp3"></audio>
+                <audio id="lzj-audio" preload="metadata" playsinline></audio>
+                <p id="lzj-audio-status" class="text-[11px] text-stone-400">Audio: in caricamento…</p>
 
                 <div class="flex items-center gap-3">
                     <button id="lzj-play" onclick="lzjToggle()" class="w-11 h-11 shrink-0 rounded-full bg-terracotta-600 hover:bg-terracotta-700 text-white text-lg font-bold shadow" aria-label="Play/Pausa">▶</button>
@@ -433,6 +440,7 @@
                 </div>
 
                 <div id="lzj-chapters" class="flex flex-wrap gap-1.5"></div>
+                <p class="text-[11px] text-stone-500">Non senti nulla? Alza il volume multimediale del telefono (non quello della suoneria). Se l'audio non parte, <a id="lzj-audio-link" href="https://andrea76b.github.io/QIGONG/audio/liu_zi_jue_96k.mp3" target="_blank" rel="noopener" class="underline text-amber-300">apri il file audio da solo</a>: se lì si sente, il problema è nella pagina e me lo puoi segnalare.</p>
 
                 <!-- Viso animato: occhi, bocca e sottotitoli sincronizzati con la musica -->
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
@@ -2096,6 +2104,7 @@
         function initLzjPlayer() {
             lzjAudio = document.getElementById('lzj-audio');
             if (!lzjAudio) return;
+            lzjInitAudio();
             const dur = () => (isFinite(lzjAudio.duration) && lzjAudio.duration) || 902.7;
             const tl = document.getElementById('lzj-timeline');
             const chap = document.getElementById('lzj-chapters');
@@ -2191,9 +2200,56 @@
             const t = document.getElementById('3d-posture-title'), d = document.getElementById('3d-posture-desc');
             if (lzjAudio && !lzjAudio.paused && t) { t.innerText = i.name; d.innerText = i.move; }
         }
+        // Fonti dell'audio, in ordine: se una non si carica si passa alla successiva
+        const LZJ_AUDIO_SOURCES = [
+            ['questa pagina', 'audio/liu_zi_jue_96k.mp3'],
+            ['GitHub Pages', 'https://andrea76b.github.io/QIGONG/audio/liu_zi_jue_96k.mp3'],
+            ['jsDelivr', 'https://cdn.jsdelivr.net/gh/andrea76b/QIGONG@gh-pages/audio/liu_zi_jue_96k.mp3'],
+            ['GitHack', 'https://raw.githack.com/andrea76b/QIGONG/gh-pages/audio/liu_zi_jue_96k.mp3']
+        ];
+        let lzjSrcIdx = 0, lzjWantPlay = false;
+        function lzjStatus(msg, kind) {
+            const el = document.getElementById('lzj-audio-status');
+            if (!el) return;
+            el.textContent = 'Audio: ' + msg;
+            el.className = 'text-[11px] ' + (kind === 'err' ? 'text-red-300 font-semibold' : kind === 'ok' ? 'text-emerald-300' : 'text-stone-400');
+        }
+        function lzjLoadSource(i) {
+            lzjSrcIdx = i;
+            lzjAudio.src = LZJ_AUDIO_SOURCES[i][1];
+            lzjAudio.load();
+            lzjStatus(`caricamento da ${LZJ_AUDIO_SOURCES[i][0]}…`);
+        }
+        function lzjInitAudio() {
+            lzjAudio.addEventListener('error', () => {
+                const code = lzjAudio.error ? lzjAudio.error.code : '?';
+                if (lzjSrcIdx + 1 < LZJ_AUDIO_SOURCES.length) {
+                    lzjLoadSource(lzjSrcIdx + 1);
+                    if (lzjWantPlay) lzjPlay();
+                } else {
+                    lzjStatus(`nessuna fonte raggiungibile da questo browser (errore ${code}). Usa il link «apri il file audio da solo» qui sotto.`, 'err');
+                }
+            });
+            lzjAudio.addEventListener('loadedmetadata', () => lzjStatus(`pronto (${lzjFmt(lzjAudio.duration)}, da ${LZJ_AUDIO_SOURCES[lzjSrcIdx][0]})`, 'ok'));
+            lzjAudio.addEventListener('waiting', () => lzjStatus('carico la musica…'));
+            lzjAudio.addEventListener('playing', () => lzjStatus(`in riproduzione (da ${LZJ_AUDIO_SOURCES[lzjSrcIdx][0]})`, 'ok'));
+            lzjLoadSource(0);
+        }
+        function lzjPlay() {
+            if (!lzjAudio) return;
+            lzjWantPlay = true;
+            if (lzjAudio.error) lzjLoadSource(lzjSrcIdx);
+            const p = lzjAudio.play();
+            if (p && p.catch) p.catch(e => {
+                // AbortError/NotSupportedError: fonte in cambio o non caricabile, se ne occupa il gestore 'error'
+                if (e && (e.name === 'AbortError' || e.name === 'NotSupportedError')) return;
+                lzjStatus(`il browser non ha avviato la musica (${e && e.name ? e.name : 'errore'}). Tocca di nuovo ▶.`, 'err');
+            });
+            if (!is3DInitialized) { try { init3DMannequin(); } catch (e) {} }
+        }
         function lzjToggle() {
             if (!lzjAudio) return;
-            if (lzjAudio.paused) { lzjAudio.play(); if (!is3DInitialized) init3DMannequin(); } else lzjAudio.pause();
+            if (lzjAudio.paused) lzjPlay(); else { lzjWantPlay = false; lzjAudio.pause(); }
         }
         function lzjSeek(s) { if (lzjAudio) lzjAudio.currentTime = Math.max(0, s); }
         function lzjCalibrate() {
@@ -2452,11 +2508,176 @@
               care: 'Nessuna in particolare. Non praticare a stomaco pieno.',
               go: [['Avvia Zhou Tian 5/5', "goalGo('zt','5,5')"]] }
         ];
-        let goalSel = 'stress';
+        // ==========================================
+        // PROTOCOLLO TRASVERSALE: tutte le pratiche del sito in un'unica scala
+        // eff = forza delle prove per l'obiettivo meglio documentato (0-5)
+        // ease = facilità (5 = subito, 1 = richiede livelli precedenti o un insegnante)
+        // order = fase di esecuzione: 0 apertura, 1 riscaldamento, 2 in piedi dinamico,
+        //         3 in piedi statico, 4 lavoro sulle mani, 5 seduti/respiro, 6 seduti/mente, 9 chiusura
+        // ==========================================
+        const TR_SRC = { trad: ['Qigong cinese', 'evi-trad'], lzj: ['Liu Zi Jue HQA', 'evi-trad'], cl: ['Testo classico', 'evi-class'], bron: ['Metodo Bronnikov', 'evi-spec'], mod: ['Respiro moderno', 'evi-sci'] };
+        const PRACTICES = [
+            { id: 'wuji', name: 'Preparazione Wu Ji', zh: '無極', src: 'trad', goals: ['all'], eff: 1, effTxt: 'Nessuna prova specifica: serve a entrare nella pratica.', ease: 5, min: 2, order: 0, fixed: 'start',
+              how: 'In piedi, piedi paralleli alla larghezza delle spalle, ginocchia morbide: 10 respiri naturali osservando il corpo dai piedi alla testa.', go: "goalGo('lzj','prep')" },
+            { id: 'lento', name: 'Respiro lento addominale (6 al minuto)', zh: '', src: 'mod', goals: ['stress', 'sleep', 'bp', 'focus'], eff: 4, effTxt: 'Moderata: il respiro a circa 6 cicli al minuto aumenta l\'HRV e riduce ansia e pressione.', ease: 5, min: 5, order: 5,
+              how: 'Seduti, una mano sul ventre: 4 s di inspirazione e 6 s di espirazione dal naso. Solo respiro, senza circuito.', go: "goalGo('zt','4,6')" },
+            { id: 'lzj', name: 'Liu Zi Jue completo', zh: '六字訣', src: 'lzj', goals: ['breath', 'organs', 'bp', 'stress'], eff: 5, effTxt: 'Buona per la BPCO: due meta-analisi (2020, 2024) su funzione polmonare, dispnea e qualità della vita.', ease: 3, min: 15, order: 2, contains: ['xu', 'he', 'hu', 'si', 'chui', 'xi'],
+              how: 'Segui il player: musica, viso animato e sottotitoli guidano i 6 suoni, ognuno ripetuto 6 volte.', go: "goalGo('lzj','qishi')" },
+            { id: 'xu', name: 'Suono Xu (Fegato)', zh: '噓', src: 'lzj', goals: ['organs', 'stress', 'eyes'], eff: 2, effTxt: 'Bassa: il suono isolato non è stato studiato. Agisce come un\'espirazione lenta.', ease: 4, min: 2, order: 2,
+              how: 'Mani ai fianchi: ruota il busto ed espira «xu» con gli occhi spalancati. 3 volte per lato.', go: "goalGo('lzj','xu')" },
+            { id: 'he', name: 'Suono He (Cuore)', zh: '呵', src: 'lzj', goals: ['sleep', 'stress', 'organs'], eff: 2, effTxt: 'Bassa: il suono isolato non è stato studiato. Agisce come un\'espirazione lenta.', ease: 4, min: 2, order: 2,
+              how: 'Raccogli con le mani fino al petto, poi espira «he» premendo verso il basso. 6 volte.', go: "goalGo('lzj','he')" },
+            { id: 'hu', name: 'Suono Hu (Milza)', zh: '呼', src: 'lzj', goals: ['organs'], eff: 2, effTxt: 'Bassa: il suono isolato non è stato studiato. Agisce come un\'espirazione lenta.', ease: 4, min: 2, order: 2,
+              how: 'Mani davanti all\'ombelico: espira «hu» allontanandole, come ad abbracciare una palla. 6 volte.', go: "goalGo('lzj','hu')" },
+            { id: 'si', name: 'Suono Si (Polmone)', zh: '呬', src: 'lzj', goals: ['breath', 'organs'], eff: 2, effTxt: 'Bassa da solo. Le prove sulla BPCO riguardano la sequenza completa.', ease: 4, min: 2, order: 2,
+              how: 'Apri il petto portando i gomiti indietro, poi espira «si» spingendo avanti i palmi. 6 volte.', go: "goalGo('lzj','si')" },
+            { id: 'chui', name: 'Suono Chui (Rene)', zh: '吹', src: 'lzj', goals: ['sleep', 'energy', 'organs'], eff: 2, effTxt: 'Bassa: il suono isolato non è stato studiato. Il piegamento rinforza le gambe.', ease: 4, min: 2, order: 2,
+              how: 'Mani ai reni: espira «chui» scendendo e facendo scorrere le mani sulle gambe. 6 volte.', go: "goalGo('lzj','chui')" },
+            { id: 'xi', name: 'Suono Xi (Triplo Riscaldatore)', zh: '嘻', src: 'lzj', goals: ['organs', 'stress'], eff: 2, effTxt: 'Bassa: il suono isolato non è stato studiato. Agisce come un\'espirazione lenta.', ease: 4, min: 2, order: 2,
+              how: 'Mani in alto, poi giù ai lati delle anche: espira «xi» con un leggero sorriso. 6 volte.', go: "goalGo('lzj','xi')" },
+            { id: 'zhanzhuang', name: 'Zhan Zhuang (abbracciare l\'albero)', zh: '站樁', src: 'trad', goals: ['energy', 'focus', 'stress'], eff: 2, effTxt: 'Bassa: pochi studi piccoli sul qigong statico; effetto di esercizio isometrico leggero.', ease: 4, min: 5, order: 3,
+              how: 'Ginocchia morbide, braccia arrotondate davanti al petto. Parti da 3 minuti e aggiungi 1 minuto a settimana.', go: "goalGo('pose','zhanzhuang')" },
+            { id: 'mabu', name: 'Ma Bu (posizione del cavaliere)', zh: '馬步', src: 'trad', goals: ['bp', 'energy'], eff: 3, effTxt: 'Moderata per analogia: l\'esercizio isometrico delle gambe (squat al muro) è tra i più efficaci per abbassare la pressione (Edwards et al., BJSM 2023). Ma Bu non è stato studiato direttamente.', ease: 2, min: 3, order: 3, caution: 'Respira sempre, niente apnea. Con pressione non controllata o ginocchia doloranti solo dopo il parere del medico.',
+              how: '4 serie da 30–45 s a gambe piegate quanto basta per sentire fatica, 1 minuto di pausa tra le serie.', go: "goalGo('pose','mabu')" },
+            { id: 'zhoutian', name: 'Xiao Zhou Tian (circuito completo)', zh: '小周天', src: 'trad', goals: ['stress', 'focus', 'energy', 'bp'], eff: 3, effTxt: 'Moderata per il respiro lento che contiene. Nessuna prova per il circuito in sé.', ease: 2, min: 10, order: 5, contains: ['lento'],
+              how: 'Inspirando l\'attenzione sale lungo la schiena, espirando scende davanti fino al Dantian. Richiede le fasi di apprendimento.', go: "goalGo('zt','4,6','fire')" },
+            { id: 'jingzuo', name: 'Jing Zuo / Tai Xi (meditazione seduta)', zh: '靜坐 · 胎息', src: 'cl', goals: ['stress', 'sleep', 'focus'], eff: 3, effTxt: 'Moderata per la meditazione in generale su ansia e stress. Nessuna prova specifica per il Tai Xi.', ease: 3, min: 10, order: 6,
+              how: 'Seduti, attenzione al Dantian: il respiro si fa sempre più sottile senza forzarlo, finché quasi non si avverte più.', go: "goalGo('pose','jingzuo')" },
+            { id: 'xingqi', name: 'Xingqi Yupei Ming (circolazione guidata)', zh: '行氣銘', src: 'cl', goals: ['stress', 'focus'], eff: 2, effTxt: 'Bassa: è un respiro lento e profondo descritto in un testo antico, mai studiato come tale.', ease: 3, min: 5, order: 5,
+              how: 'Inspirazione profonda che scende al Dantian e al perineo, poi risalita lungo la schiena con l\'espirazione.', go: "goalGo('corpus','Xingqi')" },
+            { id: 'pesantezza', name: 'Pesantezza e leggerezza', zh: 'Тяжесть и Лёгкость', src: 'bron', goals: ['stress', 'sleep'], eff: 3, effTxt: 'Moderata per analogia: somiglia al training autogeno di Schultz (pesantezza e calore), che ha prove moderate su ansia e stress.', ease: 4, min: 5, order: 6,
+              how: 'In piedi o seduti, rilassati: senti il corpo diventare pesante dall\'alto verso il basso, poi leggero dal basso verso l\'alto.', go: "goalGo('corpus','Pesantezza')" },
+            { id: 'tibet', name: 'Massaggio secco tibetano', zh: 'Сухой тибетский массаж', src: 'bron', goals: ['energy', 'stress'], eff: 2, effTxt: 'Bassa: l\'automassaggio ha qualche prova sul rilassamento, nessuna su questa sequenza.', ease: 5, min: 3, order: 1,
+              how: 'Strofina i palmi finché sono caldi, poi massaggia occhi, viso, orecchie, collo e zona lombare.', go: "goalGo('corpus','Tibetano')" },
+            { id: 'palla', name: 'Palla energetica', zh: 'Энергетический Шар', src: 'bron', goals: ['focus'], eff: 1, effTxt: 'Nessuna prova controllata. Allena l\'attenzione alle sensazioni delle mani.', ease: 4, min: 3, order: 4,
+              how: 'Strofina i palmi, tienili a 15–20 cm e avvicinali e allontanali lentamente, come una fisarmonica.', go: "goalGo('pose','bronnikov_ball')" },
+            { id: 'dragone', name: 'Esercizio del Dragone', zh: 'Дракон', src: 'bron', goals: ['energy'], eff: 1, effTxt: 'Nessuna prova controllata. Come mobilità dolce della colonna è utile.', ease: 3, min: 3, order: 2,
+              how: 'Gambe piegate: onda morbida di bacino e colonna che sale dal basso verso l\'alto.', go: "goalGo('corpus','Dragone')" },
+            { id: 'splash', name: 'Splash (inserimento energetico)', zh: 'Всплеск', src: 'bron', goals: ['energy'], eff: 0, effTxt: 'Nessuna prova.', ease: 3, min: 2, order: 2,
+              how: 'Raccogli l\'attenzione al Dantian, poi falla salire di colpo lungo la colonna fino alla sommità della testa.', go: "goalGo('corpus','Splash')" },
+            { id: 'visione', name: 'Immaginazione visiva a occhi chiusi', zh: '', src: 'mod', goals: ['eyes', 'focus'], eff: 1, effTxt: 'La «visione senza occhi» è speculativa. L\'allenamento dell\'immaginazione visiva ha qualche prova su vividezza e memoria visiva.', ease: 4, min: 5, order: 6,
+              how: 'Osserva un oggetto per 1 minuto, chiudi gli occhi e ricostruiscilo nei dettagli, poi riapri e confronta.', go: "goalGo('goal','eyes')" },
+            { id: 'sensibilita', name: 'Sensibilità palmare', zh: '', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Nessuna prova controllata.', ease: 4, min: 5, order: 4, partner: true,
+              how: 'In coppia: palmi riscaldati, distanza crescente fino a 1 m, si descrivono le sensazioni.', go: "goalGo('corpus','Sensibilità')" },
+            { id: 'raggio', name: 'Raggio energetico', zh: 'Лучик', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Nessuna prova controllata.', ease: 3, min: 5, order: 4, partner: true,
+              how: 'In coppia: attenzione sui polpastrelli, «raggio» verso il palmo del partner, che dice «C\'è» quando sente qualcosa.', go: "goalGo('corpus','Raggio')" },
+            { id: 'campana', name: 'Campana energetica', zh: 'Колокол', src: 'bron', goals: ['bp', 'stress'], eff: 0, effTxt: 'Nessuna prova controllata per l\'effetto sulla pressione.', ease: 3, min: 5, order: 4, partner: true,
+              how: 'Con un operatore: si immagina un cono attorno al corpo con il vertice sulla testa.', go: "goalGo('pose','bronnikov_bell')" },
+            { id: 'sostanze', name: 'Sostanze primordiali', zh: '', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Nessuna prova controllata.', ease: 3, min: 10, order: 6, partner: true,
+              how: 'Si evocano le sensazioni di terra, acqua, fuoco e cielo: densità, fluidità, calore, leggerezza.', go: "goalGo('corpus','Sostanze')" },
+            { id: 'prochacka', name: 'Pompaggio (Prochacka)', zh: '', src: 'bron', goals: ['bp'], eff: 0, effTxt: 'Nessuna prova. Non sostituisce il soccorso medico.', ease: 2, min: 10, order: 5, partner: true,
+              how: 'Un operatore esegue passaggi lungo la colonna della persona distesa.', go: "goalGo('corpus','Pompaggio')" },
+            { id: 'ekran', name: 'Schermo mentale (Ekran)', zh: '', src: 'bron', goals: ['eyes', 'focus'], eff: 0, effTxt: 'Speculativo.', ease: 1, min: 15, order: 6, adv: true,
+              how: 'Livello 2: con la benda si costruisce uno «schermo» interiore luminoso.', go: "goalGo('corpus','Schermo')" },
+            { id: 'cera', name: 'Corpo di cera', zh: '', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Speculativo.', ease: 1, min: 15, order: 6, adv: true,
+              how: 'Livello 2: percezione di un «doppio» interiore denso come la cera.', go: "goalGo('corpus','Cera')" },
+            { id: 'fantom', name: 'Fantom e proiezione', zh: '', src: 'bron', goals: ['eyes'], eff: 0, effTxt: 'Speculativo.', ease: 1, min: 15, order: 6, adv: true,
+              how: 'Livello 3: «proiezione» del corpo energetico per percepire oggetti a occhi bendati.', go: "goalGo('corpus','Fante')" },
+            { id: 'diretta', name: 'Visione diretta a occhi bendati', zh: '', src: 'bron', goals: ['eyes'], eff: 0, effTxt: 'Speculativo: nessuno studio controllato pubblicato.', ease: 1, min: 15, order: 6, adv: true,
+              how: 'Livello 3: lettura di testi e colori con la benda.', go: "goalGo('corpus','Visione Diretta')" },
+            { id: 'telepatia', name: 'Telepatia e sintonia remota', zh: '', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Speculativo: nessuna prova.', ease: 1, min: 15, order: 6, adv: true,
+              how: 'Livello 4: trasmissione di immagini tra operatori a distanza.', go: "goalGo('corpus','Telepatia')" },
+            { id: 'shou', name: 'Chiusura Shou Shi e automassaggio', zh: '收勢', src: 'trad', goals: ['all'], eff: 1, effTxt: 'Nessuna prova specifica: serve a chiudere la sessione con calma.', ease: 5, min: 2, order: 9, fixed: 'end',
+              how: 'Mani sull\'ombelico, 6 cerchi in un senso e 6 nell\'altro. Strofina i palmi e massaggia viso, orecchie e reni.', go: "goalGo('lzj','shou')" }
+        ];
+        let tr = { by: 'eff', budget: 20, goal: 'all' };
+        function trSorted(list) {
+            const a = tr.by === 'eff' ? 'eff' : 'ease', b = tr.by === 'eff' ? 'ease' : 'eff';
+            return list.map((p, i) => ({ p, i })).sort((x, y) => (y.p[a] - x.p[a]) || (y.p[b] - x.p[b]) || (x.i - y.i)).map(x => x.p);
+        }
+        function trMatches(p) { return tr.goal === 'all' || p.goals.includes('all') || p.goals.includes(tr.goal); }
+        function trSession() {
+            const start = PRACTICES.find(p => p.fixed === 'start'), end = PRACTICES.find(p => p.fixed === 'end');
+            let rem = tr.budget - start.min - end.min;
+            const chosen = [];
+            const overlaps = (p, q) => (p.contains || []).includes(q.id) || (q.contains || []).includes(p.id);
+            for (const p of trSorted(PRACTICES.filter(p => !p.fixed && !p.adv && !p.partner && trMatches(p)))) {
+                if (p.min <= rem && !chosen.some(q => overlaps(p, q))) { chosen.push(p); rem -= p.min; }
+            }
+            const rank = new Map(trSorted(PRACTICES).map((p, i) => [p.id, i]));
+            chosen.sort((x, y) => (x.order - y.order) || (rank.get(x.id) - rank.get(y.id)));
+            return [start, ...chosen, end];
+        }
+        const trDots = (n, max, color) => Array.from({ length: max }, (_, i) => `<span class="inline-block w-2 h-2 rounded-full mr-0.5" style="background:${i < n ? color : '#e7e5e4'}"></span>`).join('');
+        function trGoalChips(p) {
+            if (p.goals.includes('all')) return '<span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-600">tutti gli obiettivi</span>';
+            return p.goals.map(id => { const g = GOALS.find(x => x.id === id); return `<span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-600 whitespace-nowrap">${g.icon} ${g.name}</span>`; }).join(' ');
+        }
+        function trSet(k, v) { tr[k] = v; renderGoals(); }
+        function renderTrasversale() {
+            const btn = (k, v, label) => `<button onclick="trSet('${k}', ${typeof v === 'number' ? v : `'${v}'`})" class="px-3 py-1.5 rounded-lg text-xs font-bold border ${tr[k] === v ? 'bg-sage-800 text-white border-sage-800' : 'bg-white text-stone-700 border-stone-300 hover:border-sage-600'}">${label}</button>`;
+            const sess = trSession();
+            let t = 0;
+            const steps = sess.map((p, i) => {
+                const from = t; t += p.min;
+                return `<li class="flex gap-3 items-start p-3 rounded-lg ${i % 2 ? 'bg-white' : 'bg-stone-50'} border border-stone-200">
+                    <span class="shrink-0 w-7 h-7 rounded-full bg-terracotta-600 text-white text-xs font-bold flex items-center justify-center">${i + 1}</span>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-stone-900">${p.name} ${p.zh ? `<span class="text-stone-500 font-normal">${p.zh}</span>` : ''} <span class="text-[11px] font-mono text-stone-500 ml-1">${from}–${t} min</span></p>
+                        <p class="text-xs text-stone-600 leading-relaxed mt-0.5">${p.how}</p>
+                        ${p.caution ? `<p class="text-[11px] text-red-800 mt-1">${p.caution}</p>` : ''}
+                    </div>
+                    <button onclick="${p.go}" class="shrink-0 px-2.5 py-1.5 rounded-lg bg-terracotta-600 hover:bg-terracotta-700 text-white text-[11px] font-bold">Avvia →</button>
+                </li>`;
+            }).join('');
+            const all = trSorted(PRACTICES.filter(trMatches));
+            const rows = all.map((p, i) => `
+                <li class="p-3 border-b border-stone-100 flex flex-col sm:flex-row sm:items-center gap-2">
+                    <div class="flex items-start gap-3 flex-1 min-w-0">
+                        <span class="shrink-0 w-7 text-right font-mono text-sm font-bold text-stone-400">${i + 1}</span>
+                        <div class="min-w-0">
+                            <p class="text-sm font-bold text-stone-900">${p.name} ${p.zh ? `<span class="text-stone-500 font-normal">${p.zh}</span>` : ''}
+                                <span class="evi ${TR_SRC[p.src][1]} ml-1">${TR_SRC[p.src][0]}</span>
+                                ${p.partner ? '<span class="evi evi-class ml-1">in coppia</span>' : ''}${p.adv ? '<span class="evi evi-spec ml-1">avanzata</span>' : ''}</p>
+                            <p class="text-[11px] text-stone-600 mt-0.5">${p.effTxt}</p>
+                            <div class="flex flex-wrap gap-1 mt-1">${trGoalChips(p)}</div>
+                        </div>
+                    </div>
+                    <div class="flex sm:flex-col items-center sm:items-end gap-x-4 gap-y-1 pl-10 sm:pl-0 shrink-0 text-[10px] text-stone-500">
+                        <span title="Efficacia">Efficacia ${trDots(p.eff, 5, '#2f7d56')}</span>
+                        <span title="Facilità">Facilità ${trDots(p.ease, 5, '#c86d51')}</span>
+                        <span class="font-mono">${p.min} min</span>
+                    </div>
+                    <button onclick="${p.go}" class="shrink-0 ml-10 sm:ml-0 px-2.5 py-1.5 rounded-lg border border-sage-700 text-sage-800 hover:bg-sage-800 hover:text-white text-[11px] font-bold">Studia →</button>
+                </li>`).join('');
+            const goalOpts = [['all', 'Tutti gli obiettivi']].concat(GOALS.map(g => [g.id, g.icon + ' ' + g.name]))
+                .map(([v, l]) => `<option value="${v}" ${tr.goal === v ? 'selected' : ''}>${l}</option>`).join('');
+            return `
+                <div class="p-5 sm:p-6 border-b border-stone-200 space-y-2">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <h3 class="text-xl font-bold text-sage-800">★ Protocollo trasversale</h3>
+                        <span class="evi evi-sci">Tutte le pratiche in un'unica scala</span>
+                    </div>
+                    <p class="text-sm text-stone-700 leading-relaxed">Qui compaiono insieme tutte le pratiche del sito, anche quelle che si ripetono negli altri obiettivi. Scegli come ordinarle, quanto tempo hai e, se vuoi, un obiettivo: la sessione si compone da sola nell'ordine giusto di esecuzione (apertura → in piedi → seduti → chiusura). Per studiare una pratica a fondo usa «Studia», che ti porta alla sua pagina.</p>
+                    <div class="flex flex-wrap items-center gap-x-5 gap-y-3 pt-2">
+                        <div class="flex items-center gap-1.5"><span class="text-[11px] uppercase tracking-wide text-stone-500 font-bold mr-1">Ordina per</span>${btn('by', 'eff', 'Efficacia')}${btn('by', 'ease', 'Facilità')}</div>
+                        <div class="flex items-center gap-1.5"><span class="text-[11px] uppercase tracking-wide text-stone-500 font-bold mr-1">Tempo</span>${[10, 20, 30, 45].map(m => btn('budget', m, m + ' min')).join('')}</div>
+                        <label class="flex items-center gap-1.5"><span class="text-[11px] uppercase tracking-wide text-stone-500 font-bold mr-1">Obiettivo</span>
+                            <select id="tr-goal" onchange="trSet('goal', this.value)" class="border border-stone-300 rounded-lg px-2 py-1.5 text-xs bg-white">${goalOpts}</select></label>
+                    </div>
+                </div>
+                <div class="p-5 sm:p-6 border-b border-stone-200 bg-amber-50/40">
+                    <p class="text-[11px] uppercase tracking-wide text-terracotta-600 font-bold mb-2">La tua sessione · ${t} minuti · ordinata per ${tr.by === 'eff' ? 'efficacia' : 'facilità'}</p>
+                    ${t < tr.budget - 3 ? `<p class="text-[11px] text-stone-600 mb-2">La sessione dura meno del tempo scelto perché per questo obiettivo non ci sono altre pratiche adatte da fare da soli. Puoi ripetere la pratica principale.</p>` : ''}
+                    <ol class="space-y-2">${steps}</ol>
+                    <p class="text-[11px] text-stone-500 mt-3">Nella sessione automatica entrano solo pratiche da fare da soli e adatte all'inizio. Quelle in coppia e quelle avanzate (livelli 2–4 di Bronnikov) restano nella classifica qui sotto.</p>
+                </div>
+                <div class="p-5 sm:p-6">
+                    <p class="text-[11px] uppercase tracking-wide text-terracotta-600 font-bold mb-1">Classifica completa · ${all.length} pratiche · per ${tr.by === 'eff' ? 'efficacia' : 'facilità'}</p>
+                    <ol class="divide-y divide-stone-100">${rows}</ol>
+                    <div class="mt-4 p-3 rounded-lg bg-stone-50 border border-stone-200 text-[11px] text-stone-600 leading-relaxed space-y-1">
+                        <p><strong>Efficacia</strong> = forza delle prove scientifiche per l'obiettivo meglio documentato, non quanto una pratica «funziona» in assoluto. 5: più meta-analisi concordi · 4: prove moderate e coerenti · 3: prove moderate ma indirette (su pratiche simili) · 2: prove scarse · 1: nessuna prova, ma utile come cornice · 0: nessuna prova o affermazione speculativa.</p>
+                        <p><strong>Facilità</strong> = 5: si fa subito · 3: richiede qualche settimana o una guida · 1: richiede i livelli precedenti e un insegnante.</p>
+                    </div>
+                </div>`;
+        }
+
+        let goalSel = 'trasversale';
         function renderGoals() {
             const chips = document.getElementById('goal-chips');
             if (!chips) return;
-            chips.innerHTML = GOALS.map(g => `<button onclick="goalSel='${g.id}';renderGoals()" class="px-3 py-2 rounded-lg text-sm font-semibold border transition ${g.id === goalSel ? 'bg-sage-800 text-white border-sage-800' : 'bg-white text-stone-700 border-stone-300 hover:border-sage-600'}">${g.icon} ${g.name}</button>`).join('');
+            chips.innerHTML = `<button onclick="goalSel='trasversale';renderGoals()" class="px-3 py-2 rounded-lg text-sm font-bold border transition ${goalSel === 'trasversale' ? 'bg-terracotta-600 text-white border-terracotta-600' : 'bg-amber-50 text-terracotta-700 border-terracotta-600 hover:bg-amber-100'}">★ Protocollo trasversale</button>` + GOALS.map(g => `<button onclick="goalSel='${g.id}';renderGoals()" class="px-3 py-2 rounded-lg text-sm font-semibold border transition ${g.id === goalSel ? 'bg-sage-800 text-white border-sage-800' : 'bg-white text-stone-700 border-stone-300 hover:border-sage-600'}">${g.icon} ${g.name}</button>`).join('');
+            if (goalSel === 'trasversale') { document.getElementById('goal-card').innerHTML = renderTrasversale(); return; }
             const g = GOALS.find(x => x.id === goalSel);
             const ev = { sci: 'evi-sci', trad: 'evi-trad', spec: 'evi-spec' }[g.evi[0]];
             document.getElementById('goal-card').innerHTML = `
@@ -2478,7 +2699,10 @@
         function goalGo(kind, a, b) {
             if (kind === 'lzj') {
                 switchTab('model3d');
-                setTimeout(() => { document.getElementById('lzj-sync').checked = true; lzjSeek(lzjStart[a]); lzjAudio.play(); document.getElementById('lzj-audio').scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 150);
+                document.getElementById('lzj-sync').checked = true;
+                lzjSeek(lzjStart[a]);
+                lzjPlay();
+                setTimeout(() => document.getElementById('lzj-play').scrollIntoView({ block: 'center', behavior: 'smooth' }), 150);
             } else if (kind === 'zt') {
                 switchTab('zhoutian');
                 document.getElementById('zt-rhythm').value = a;
@@ -2486,7 +2710,17 @@
                 setTimeout(() => document.getElementById('zt-svg').scrollIntoView({ block: 'center', behavior: 'smooth' }), 100);
             } else if (kind === 'pose') {
                 switchTab('model3d');
-                setTimeout(() => { document.getElementById('lzj-sync').checked = false; lzjDrive = null; document.getElementById('select-3d-posture').value = a; change3DPosture(a); }, 150);
+                setTimeout(() => { document.getElementById('lzj-sync').checked = false; lzjDrive = null; document.getElementById('select-3d-posture').value = a; change3DPosture(a); document.getElementById('three-canvas-container').scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 150);
+            } else if (kind === 'corpus') {
+                switchTab('corpus');
+                document.getElementById('corpus-search').value = a;
+                document.getElementById('corpus-filter-cat').value = 'all';
+                document.getElementById('corpus-filter-eyes').value = 'all';
+                renderCorpus();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (kind === 'goal') {
+                goalSel = a; renderGoals();
+                document.getElementById('goal-card').scrollIntoView({ block: 'start', behavior: 'smooth' });
             }
         }
 
@@ -3021,6 +3255,9 @@
         // NAVIGATION & XINGQI STEPPER LOGIC
         // ==========================================
         function switchTab(tabId) {
+            if (tabId === 'protocollo') { goalSel = 'trasversale'; tabId = 'obiettivi'; renderGoals(); }
+            const nav = document.getElementById('nav-select');
+            if (nav) nav.value = (tabId === 'obiettivi' && goalSel === 'trasversale') ? 'protocollo' : tabId;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
