@@ -418,7 +418,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-700 pb-3">
                     <div>
                         <h3 class="text-lg font-bold text-gold-400">Pratica guidata: Liu Zi Jue (六字訣) — sequenza Health Qigong</h3>
-                        <p class="text-[11px] text-stone-400">Traccia ufficiale HQA, con voce guida in cinese o solo musica. Sottotitoli in italiano a tempo con ogni comando; il manichino segue la fase in corso. <span class="evi evi-trad">Tradizione</span> per corrispondenze organo/suono, <span class="evi evi-sci">Evidenza</span> per i dati clinici.</p>
+                        <p class="text-[11px] text-stone-400">Musica ufficiale HQA senza voce; a richiesta, la versione con i comandi in cinese. Sottotitoli in italiano a tempo con ogni comando; il manichino segue la fase in corso. <span class="evi evi-trad">Tradizione</span> per corrispondenze organo/suono, <span class="evi evi-sci">Evidenza</span> per i dati clinici.</p>
                     </div>
                     <label class="flex items-center gap-2 text-xs text-stone-300 cursor-pointer select-none">
                         <input type="checkbox" id="lzj-sync" checked class="accent-amber-500"> Sincronizza manichino
@@ -440,7 +440,7 @@
                 </div>
 
                 <div id="lzj-chapters" class="flex flex-wrap gap-1.5"></div>
-                <p class="text-[11px] text-stone-500">Non senti nulla? Alza il volume multimediale del telefono (non quello della suoneria). Se l'audio non parte, <a id="lzj-audio-link" href="https://andrea76b.github.io/QIGONG/audio/liu_zi_jue_voce_96k.mp3" target="_blank" rel="noopener" class="underline text-amber-300">apri il file audio da solo</a>: se lì si sente, il problema è nella pagina e me lo puoi segnalare.</p>
+                <p class="text-[11px] text-stone-500">Non senti nulla? Alza il volume multimediale del telefono (non quello della suoneria). Se l'audio non parte, <a id="lzj-audio-link" href="https://andrea76b.github.io/QIGONG/audio/liu_zi_jue_musica_sync_96k.mp3" target="_blank" rel="noopener" class="underline text-amber-300">apri il file audio da solo</a>: se lì si sente, il problema è nella pagina e me lo puoi segnalare.</p>
 
                 <!-- Viso animato: occhi, bocca e sottotitoli sincronizzati con la musica -->
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
@@ -526,8 +526,8 @@
                         <p id="lzj-breathlabel" class="text-stone-300">—</p>
                         <p class="font-bold text-gold-400 pt-2">Traccia audio</p>
                         <div class="grid grid-cols-2 gap-1.5">
-                            <button id="lzj-tr-voce" onclick="lzjSetTrack('voce')" class="px-2 py-1.5 rounded text-[11px] font-bold border">Con voce guida</button>
                             <button id="lzj-tr-musica" onclick="lzjSetTrack('musica')" class="px-2 py-1.5 rounded text-[11px] font-bold border">Solo musica</button>
+                            <button id="lzj-tr-voce" onclick="lzjSetTrack('voce')" class="px-2 py-1.5 rounded text-[11px] font-bold border">Con voce guida (cinese)</button>
                         </div>
                         <p id="lzj-track-note" class="text-[11px] text-stone-400 leading-relaxed"></p>
                     </div>
@@ -622,7 +622,7 @@
                     <li><span class="evi evi-sci">Evidenza</span> Network meta-analysis su 57 studi e 4.294 pazienti BPCO (<a class="underline text-sage-700" href="https://link.springer.com/article/10.1186/s12906-024-04609-9" target="_blank" rel="noopener">BMC Complement Med Ther, 2024</a>): il Liu Zi Jue è risultato il più efficace su FEV1% nei casi moderati e gravi, con pratica di almeno 3 volte a settimana. Limite: studi prevalentemente cinesi, di qualità metodologica variabile.</li>
                     <li><span class="evi evi-spec">Non verificato</span> Le corrispondenze suono → frequenza in Hz e gli effetti "vibrazionali" sui singoli organi non hanno riscontro né nei classici né nella letteratura sperimentale.</li>
                 </ul>
-                <p class="text-[11px] text-stone-500">Modello 3D: manichino procedurale. I punti seguono la nomenclatura standard OMS (DU20, RN17, RN8, RN4, RN1, DU4, DU14, PC8, KI1) e sono posizionati per proporzioni approssimative, non sono una mappa anatomica di precisione. Audio: tracce ufficiali HQA distribuite dall'IHQA (con voce guida e solo musica). Sottotitoli: i comandi in cinese sono stati trascritti dalla traccia con voce guida con un riconoscimento vocale e verificati sul lessico ufficiale HQA; le due musiche sono state allineate per correlazione del segnale.</p>
+                <p class="text-[11px] text-stone-500">Modello 3D: manichino procedurale. I punti seguono la nomenclatura standard OMS (DU20, RN17, RN8, RN4, RN1, DU4, DU14, PC8, KI1) e sono posizionati per proporzioni approssimative, non sono una mappa anatomica di precisione. Audio: tracce ufficiali HQA distribuite dall'IHQA. Sottotitoli: i comandi in cinese sono stati trascritti dalla traccia con voce guida con un riconoscimento vocale e verificati sul lessico ufficiale HQA. La traccia «solo musica» è ricavata dalla versione con voce: per i primi 4:50 la voce è stata tolta con un modello di separazione (UVR-MDX-NET), dopo è la musica originale senza voce, che lì coincide nota per nota. Così sottotitoli e musica hanno gli stessi tempi.</p>
             </div>
 </section>
 
@@ -2258,30 +2258,29 @@
         };
         // Apertura: istante di ogni comando → punto del movimento animato (0-1)
         const LZJ_QISHI_V = [[47.1, 0], [59.9, 0.3], [67.8, 0.55], [77.0, 0.75], [84.7, 0.9]];
-        // Traccia con voce → traccia solo musica. Da 282,6 s (con voce) in poi le due musiche sono identiche,
-        // sfasate di 19,6 s (correlazione del segnale 0,4-0,9). Prima la musica è montata in modo diverso:
-        // corrispondenza stimata sulle linee di basso, precisione di qualche secondo.
-        const LZJ_V2N = [[0, 0], [16.9, 16.0], [43.5, 43.8], [76.0, 70.7], [101.7, 95.7], [252.7, 234.7], [282.6, 263.0], [1000, 980.4]];
         const lzjInterp = (pairs, t, a, b) => {
             for (let i = 1; i < pairs.length; i++) if (t <= pairs[i][a] || i === pairs.length - 1) {
                 const p = pairs[i - 1], q = pairs[i];
                 return p[b] + (t - p[a]) * (q[b] - p[b]) / (q[a] - p[a]);
             }
         };
+        // Due tracce con la stessa linea temporale: la «solo musica» è ricavata dalla traccia con voce guida
+        // togliendo la voce (separazione UVR-MDX-NET nei primi 4:50, poi musica originale senza voce, che da lì
+        // coincide con la versione con voce a meno di 19,6 s di sfasamento). I tempi dei comandi valgono per entrambe.
         const LZJ_TRACKS = {
-            voce: { label: 'con voce guida', file: 'audio/liu_zi_jue_voce_96k.mp3', dur: 924.8, toTrack: t => t, toVoice: t => t,
-                note: 'Comandi ufficiali in cinese (口令). I sottotitoli traducono ogni comando nel momento esatto in cui viene detto.' },
-            musica: { label: 'solo musica', file: 'audio/liu_zi_jue_96k.mp3', dur: 902.8, toTrack: t => lzjInterp(LZJ_V2N, t, 0, 1), toVoice: t => lzjInterp(LZJ_V2N, t, 1, 0),
-                note: 'Stessi sottotitoli, senza voce. Tempi esatti da He in poi; in preparazione, apertura e Xu possono scostarsi di qualche secondo, perché in questa versione la musica è montata diversamente.' }
+            musica: { label: 'solo musica', file: 'audio/liu_zi_jue_musica_sync_96k.mp3', dur: 922.4,
+                note: 'Musica senza voce. I sottotitoli seguono i comandi ufficiali al momento esatto per tutta la pratica.' },
+            voce: { label: 'con voce guida', file: 'audio/liu_zi_jue_voce_96k.mp3', dur: 924.8,
+                note: 'Comandi ufficiali in cinese (口令). Utile per imparare i comandi originali: i sottotitoli li traducono mentre vengono detti.' }
         };
         const LZJ_OUT_FRAC = { xu: 0, he: 0.55, hu: 0, si: 0.48, chui: 0, xi: 0.58 };
         const LZJ_ORDER = ['prep', 'qishi', 'xu', 'he', 'hu', 'si', 'chui', 'xi', 'shou'];
         const LZJ_COLORS = { prep: '#57534e', qishi: '#78716c', xu: '#2f9e5a', he: '#c2412d', hu: '#c9962a', si: '#a8a29e', chui: '#2c5fa8', xi: '#8b5cc6', shou: '#78716c' };
-        let lzjTrack = 'voce';
-        try { const s = localStorage.getItem('lzjTrack'); if (s && LZJ_TRACKS[s]) lzjTrack = s; } catch (e) {}
+        let lzjTrack = 'musica';
+        try { const s = localStorage.getItem('lzjTrack2'); if (s && LZJ_TRACKS[s]) lzjTrack = s; } catch (e) {}
         let lzjStart = {}, lzjExh = {}, lzjCues = [], lzjQishi = [];
         function lzjBuildTimeline() {
-            const f = LZJ_TRACKS[lzjTrack].toTrack;
+            const f = t => t;   // stessa linea temporale per le due tracce
             lzjStart = {};
             for (const k in LZJ_SEC_V) lzjStart[k] = Math.max(0, f(LZJ_SEC_V[k]));
             lzjExh = {};
@@ -2352,7 +2351,7 @@
                 }).join('') + '<div id="lzj-head" style="position:absolute;top:0;bottom:0;width:2px;background:#fde68a;box-shadow:0 0 6px #fde68a;left:0"></div>';
                 chap.innerHTML = LZJ_ORDER.map(k => `<button data-k="${k}" onclick="lzjSeek(${lzjStart[k]})" class="lzj-chip px-2 py-1 rounded text-[11px] font-semibold border border-stone-700 bg-stone-800 hover:bg-stone-700" style="border-left:3px solid ${LZJ_COLORS[k]}">${LZJ_INFO[k].hanzi} ${LZJ_INFO[k].name.split(' — ')[0].split(' (')[0]} <span class="text-stone-500 font-mono">${lzjFmt(lzjStart[k])}</span></button>`).join('');
                 document.getElementById('lzj-dur').innerText = lzjFmt(D);
-                ['voce', 'musica'].forEach(k => {
+                ['musica', 'voce'].forEach(k => {
                     const b = document.getElementById('lzj-tr-' + k);
                     if (b) b.className = 'px-2 py-1.5 rounded text-[11px] font-bold border ' + (k === lzjTrack ? 'bg-amber-500 text-stone-900 border-amber-500' : 'bg-stone-900 text-stone-200 border-stone-600 hover:border-amber-400');
                 });
@@ -2439,13 +2438,13 @@
         function lzjSetTrack(k) {
             if (!LZJ_TRACKS[k] || k === lzjTrack) return;
             const wasPlaying = lzjAudio && !lzjAudio.paused;
-            const tVoice = lzjAudio ? LZJ_TRACKS[lzjTrack].toVoice(lzjAudio.currentTime || 0) : 0;
+            const pos = lzjAudio ? (lzjAudio.currentTime || 0) : 0;
             lzjTrack = k;
-            try { localStorage.setItem('lzjTrack', k); } catch (e) {}
+            try { localStorage.setItem('lzjTrack2', k); } catch (e) {}
             lzjBuildTimeline();
             lzjCurSeg = null;
             lzjLoadSource(0);
-            const target = Math.max(0, LZJ_TRACKS[k].toTrack(tVoice));
+            const target = Math.min(pos, LZJ_TRACKS[k].dur - 1);
             const seekWhenReady = () => { lzjAudio.currentTime = target; lzjAudio.removeEventListener('loadedmetadata', seekWhenReady); };
             lzjAudio.addEventListener('loadedmetadata', seekWhenReady);
             if (wasPlaying) lzjPlay();
