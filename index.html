@@ -516,7 +516,7 @@
                         <div class="h-3 rounded bg-stone-900 overflow-hidden border border-stone-700"><div id="lzj-breathbar" class="h-full bg-emerald-500 transition-[width] duration-200" style="width:0%"></div></div>
                         <p id="lzj-breathlabel" class="text-stone-300">—</p>
                         <p class="font-bold text-gold-400 pt-2">Calibrazione minutaggi</p>
-                        <p class="text-[11px] text-stone-400 leading-relaxed">I punti d'inizio sono stati stimati dall'analisi spettrale della musica (affidabili ±5 s per Xu, He, Hu; meno per Si, Chui, Xi). Se non coincidono con la tua pratica, mettiti sul punto giusto e premi:</p>
+                        <p class="text-[11px] text-stone-400 leading-relaxed">La musica è fatta di frasi da 18,5 s e ogni suono ne occupa 7: una di ingresso e 6 ripetizioni. Gli inizi sono ricavati da questa griglia. Xu, Hu, Xi e la chiusura sono confermati da più indizi; He, Si e Chui potrebbero essere spostati di una frase. Se non coincidono con la tua pratica, mettiti sul punto giusto e premi:</p>
                         <div class="flex flex-wrap gap-1.5">
                             <select id="lzj-calib-seg" class="bg-stone-900 border border-stone-600 rounded p-1 text-[11px] flex-1 min-w-0"></select>
                             <button onclick="lzjCalibrate()" class="px-2 py-1 bg-sage-700 hover:bg-sage-600 rounded text-[11px] font-bold">Imposta qui</button>
@@ -2074,11 +2074,14 @@
                 mouth: '', breath: 'Respiro naturale, attenzione al basso ventre.', tcm: '' }
         };
         // Inizio di ogni fase (secondi). Stimato da analisi spettrale (novelty) della traccia.
-        const LZJ_DEFAULT_START = { prep: 0, qishi: 47, xu: 86, he: 221, hu: 349, si: 466, chui: 586, xi: 732, shou: 866 };
+        // La musica è costruita su frasi di 18,51 s. Ogni suono = 7 frasi: 1 di ingresso + 6 ripetizioni (una per frase).
+        // Inizi ricavati dalla griglia delle frasi (t0 = 86,1 s) e confermati da cali di energia e cambi di melodia.
+        const LZJ_PHRASE = 18.51;
+        const LZJ_DEFAULT_START = { prep: 0, qishi: 47, xu: 86.1, he: 215.7, hu: 345.2, si: 474.8, chui: 604.4, xi: 734.0, shou: 863.5 };
         const LZJ_ORDER = ['prep', 'qishi', 'xu', 'he', 'hu', 'si', 'chui', 'xi', 'shou'];
         const LZJ_COLORS = { prep: '#57534e', qishi: '#78716c', xu: '#2f9e5a', he: '#c2412d', hu: '#c9962a', si: '#a8a29e', chui: '#2c5fa8', xi: '#8b5cc6', shou: '#78716c' };
         let lzjStart = Object.assign({}, LZJ_DEFAULT_START);
-        try { Object.assign(lzjStart, JSON.parse(localStorage.getItem('lzjStart') || '{}')); } catch (e) {}
+        try { Object.assign(lzjStart, JSON.parse(localStorage.getItem('lzjStart2') || '{}')); } catch (e) {}
         let lzjAudio = null, lzjCurSeg = null;
 
         function lzjFmt(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
@@ -2128,24 +2131,41 @@
                 if (seg.id !== lzjCurSeg) lzjShowSeg(seg.id);
                 const info = LZJ_INFO[seg.id], m = LZJ_MOVES[seg.id];
                 let rep, frac;
+                let intro = false;
                 if (info.reps) {
-                    const per = (seg.end - seg.start) / info.reps;
-                    const x = (t - seg.start) / per;
-                    rep = Math.min(info.reps - 1, Math.floor(x)); frac = Math.min(0.999, x - rep);
-                    document.getElementById('lzj-rep').innerText = `Ripetizione ${rep + 1}/${info.reps}`;
+                    const per = Math.min(LZJ_PHRASE, (seg.end - seg.start) / (info.reps + 1));
+                    const x = (t - seg.start) / per - 1;
+                    if (x < 0) {
+                        intro = true; rep = 0; frac = 0;
+                        document.getElementById('lzj-rep').innerText = 'Ingresso nel movimento';
+                    } else {
+                        rep = Math.min(info.reps - 1, Math.floor(x)); frac = Math.min(0.999, x - rep);
+                        document.getElementById('lzj-rep').innerText = `Ripetizione ${rep + 1}/${info.reps}`;
+                    }
                 } else {
                     const per = m.period || 12;
                     const x = (t - seg.start) / per; rep = Math.floor(x); frac = x - rep;
                     document.getElementById('lzj-rep').innerText = `${lzjFmt(t - seg.start)} / ${lzjFmt(seg.end - seg.start)}`;
                 }
                 const r = lzjPoseAt(seg.id, frac, rep);
+                if (intro) {
+                    const q = (t - seg.start) / LZJ_PHRASE;
+                    r.pose = LZJ_MOVES[seg.id].keys[0][1];
+                    r.breath = q < 0.5 ? 'in' : 'out';
+                    r.lung = q < 0.5 ? smooth(q * 2) : 1 - smooth((q - 0.5) * 2);
+                }
                 const bl = document.getElementById('lzj-breathlabel'), bb = document.getElementById('lzj-breathbar');
                 bb.style.width = (r.lung * 100) + '%';
                 bb.style.background = r.breath === 'out' ? '#e07a5f' : r.breath === 'in' ? '#34d399' : '#a8a29e';
                 bl.innerText = r.breath === 'in' ? '↑ Inspira dal naso' : r.breath === 'out' ? (info.reps ? `↓ Espira dalla bocca: «${info.name.split(' ')[0]}»` : '↓ Espira') : '· Pausa';
                 if (lzjAudio.currentTime > 0) {
                     faceSetTarget(seg.id, r.breath);
-                    if (performance.now() >= facePrevUntil) setSubtitles(LZJ_SUBS[seg.id][r.breath === 'out' ? 'out' : 'in']);
+                    if (performance.now() >= facePrevUntil) {
+                        if (intro) {
+                            faceTarget = FACE_SHAPES.inhale;
+                            setSubtitles(['Preparati: ' + info.name, 'Porta le mani nella posizione di partenza e respira tranquillo dal naso. Il suono parte con la prossima frase musicale.', 'Normali', 'Chiusa', 'Al palato', 'Nessuno']);
+                        } else setSubtitles(LZJ_SUBS[seg.id][r.breath === 'out' ? 'out' : 'in']);
+                    }
                 }
                 const syncOn = document.getElementById('lzj-sync').checked;
                 if (syncOn && (!lzjAudio.paused || lzjAudio.currentTime > 0)) {
@@ -2183,12 +2203,12 @@
             const i = LZJ_ORDER.indexOf(k);
             for (let j = i + 1; j < LZJ_ORDER.length; j++) if (lzjStart[LZJ_ORDER[j]] <= lzjStart[k]) lzjStart[LZJ_ORDER[j]] = lzjStart[k] + 5;
             for (let j = i - 1; j > 0; j--) if (lzjStart[LZJ_ORDER[j]] >= lzjStart[k]) lzjStart[LZJ_ORDER[j]] = Math.max(0, lzjStart[k] - 5);
-            try { localStorage.setItem('lzjStart', JSON.stringify(lzjStart)); } catch (e) {}
+            try { localStorage.setItem('lzjStart2', JSON.stringify(lzjStart)); } catch (e) {}
             window._lzjRender(); lzjCurSeg = null;
         }
         function lzjResetCalib() {
             lzjStart = Object.assign({}, LZJ_DEFAULT_START);
-            try { localStorage.removeItem('lzjStart'); } catch (e) {}
+            try { localStorage.removeItem('lzjStart2'); } catch (e) {}
             window._lzjRender(); lzjCurSeg = null;
         }
 
