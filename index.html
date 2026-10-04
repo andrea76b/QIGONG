@@ -93,6 +93,8 @@
             font-size: 9px; line-height: 1; padding: 1px 4px; border-radius: 4px;
             background: rgba(12, 10, 9, .72); color: #fde68a; border: 1px solid rgba(212, 175, 55, .35);
         }
+        .bron-card, #goal-card, #lzj-play, #zt-svg, #three-canvas-container { scroll-margin-top: 88px; }
+        .bron-card summary::-webkit-details-marker { display: none; }
         .sub3d { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); max-width: 92%; text-align: center; font-size: 13px; font-weight: 600; color: #fff; background: rgba(0,0,0,.62); padding: 4px 10px; border-radius: 6px; pointer-events: none; z-index: 5; }
         .sub3d:empty { display: none; }
         .evi { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; vertical-align: middle; }
@@ -140,6 +142,7 @@
                     <button onclick="switchTab('obiettivi')" id="tab-obiettivi" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">★ Pratica per Obiettivo</button>
                     <button onclick="switchTab('model3d')" id="tab-model3d" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Liu Zi Jue & 3D</button>
                     <button onclick="switchTab('zhoutian')" id="tab-zhoutian" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Respirazione Circolare</button>
+                    <button onclick="switchTab('bronnikov')" id="tab-bronnikov" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Metodo Bronnikov</button>
                     <span class="w-px bg-stone-700 mx-1 self-stretch"></span>
                     <button onclick="switchTab('ontologia')" id="tab-ontologia" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition active">Ontologia</button>
                     <button onclick="switchTab('sicurezza')" id="tab-sicurezza" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Sicurezza</button>
@@ -158,6 +161,7 @@
                             <option value="obiettivi">Pratica per obiettivo</option>
                             <option value="model3d">Liu Zi Jue guidato e modello 3D</option>
                             <option value="zhoutian">Respirazione circolare (Zhou Tian)</option>
+                            <option value="bronnikov">Metodo Bronnikov: pratica ed esercizi</option>
                         </optgroup>
                         <optgroup label="Studio e teoria">
                             <option value="ontologia" selected>Ontologia e livelli Stupen</option>
@@ -368,6 +372,7 @@
                 <p class="text-stone-700 leading-relaxed text-base sm:text-lg mb-4">
                     In questa sezione è catalogato l'elenco sistematico di tutte le pratiche bioenergetiche codificate nei testi antichi e nei protocolli russi moderni (Stupen I-IV). Per ciascuna tecnica sono chiarite la <strong>meccanica esecutiva</strong>, la <strong>finalità fisiologico-neurobiologica</strong> e la <strong>finalità energetico-cognitiva</strong>.
                 </p>
+                <p class="mb-4"><button onclick="switchTab('bronnikov')" class="px-3 py-2 rounded-lg bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-bold">Metodo Bronnikov: pratica guidata e schede complete degli esercizi →</button></p>
                 <!-- Search and Filters -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-stone-100 p-4 rounded-xl border border-stone-200">
                     <div class="md:col-span-1">
@@ -935,6 +940,178 @@
                     <p>Prudenza, e meglio farlo con un insegnante, in caso di psicosi o disturbi dissociativi, epilessia, gravidanza o ipertensione non controllata. Con la pressione alta si preferisce il ritmo «calmante» e la via dell'acqua.</p>
                 </div>
                 <p class="text-[11px] text-stone-500">Fonti: Zhang Boduan, <em>Wuzhen Pian</em> 悟真篇 (1075); Wu Shouyang, <em>Tianxian Zhengli</em> 天仙正理 (XVII sec.); Liu Huayang, <em>Huiming Jing</em> 慧命經 (1794), con il celebre diagramma della circolazione; Zaccaro A. et al., «How Breath-Control Can Change Your Life», <em>Front. Hum. Neurosci.</em> 12:353 (2018).</p>
+            </div>
+        </section>
+
+        <!-- SECTION: METODO BRONNIKOV (pratica guidata, catalogo completo, verifiche, fonti) -->
+        <section id="sec-bronnikov" class="tab-content hidden fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200 space-y-3">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800">Metodo Bronnikov</h2>
+                <p class="text-stone-700 leading-relaxed">Il metodo di Vjačeslav Michajlovič Bronnikov, «Sviluppo informazionale dell'uomo», è un percorso a livelli (ступени). Si parte da esercizi di sensibilità e respiro e si arriva, nei livelli alti, alla «visione diretta» a occhi bendati e alla telepatia. Qui trovi il <strong>quadro teorico</strong> del metodo, una <strong>pratica guidata</strong> del primo livello da fare da soli, il <strong>catalogo completo</strong> degli esercizi ricavato dalle fonti del documento e dalla ricerca in rete, le <strong>regole di sicurezza</strong> e le <strong>verifiche indipendenti</strong>.</p>
+                <p class="text-xs text-stone-500"><span class="evi evi-trad">Modello del metodo</span> per come il metodo spiega sé stesso · <span class="evi evi-sci">Prove indirette</span> quando un esercizio somiglia a una tecnica studiata · <span class="evi evi-spec">Nessuna prova</span> quando le affermazioni non sono state verificate o non hanno retto ai controlli.</p>
+            </div>
+
+            <!-- Quadro teorico -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <h3 class="text-base font-bold text-sage-800">1. Come il metodo spiega sé stesso <span class="evi evi-trad">Modello</span></h3>
+                    <ul class="text-xs text-stone-600 leading-relaxed space-y-1 list-disc pl-4">
+                        <li>L'uomo è attraversato da due flussi verticali: <strong>energia solare</strong> (dall'alto) ed <strong>energia cosmica</strong> (dal basso). Due «valvole», al centro della testa e al centro del perineo, ne regolano l'ingresso.</li>
+                        <li>Il corpo ha un <strong>biocampo</strong> che per il metodo dovrebbe estendersi per 7 m o più. Si «misura» con le mani all'inizio di ogni incontro.</li>
+                        <li>La superficie esterna del corpo cede energia e quella interna la riceve; la schiena è l'uscita e l'addome l'entrata. Il metodo identifica l'«anello dell'immortalità» con la Piccola circolazione daoista (Du Mai e Ren Mai).</li>
+                        <li>Dal 2° livello il cervello diventa un <strong>biocomputer</strong> che risponde su uno schermo interiore; al 3° si «vede» senza occhi; al 4° si accede a una «coscienza universale».</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <h3 class="text-base font-bold text-sage-800">2. Cosa si spiega senza ipotesi energetiche <span class="evi evi-sci">Fisiologia</span></h3>
+                    <ul class="text-xs text-stone-600 leading-relaxed space-y-1 list-disc pl-4">
+                        <li><strong>Formicolio e calore nei palmi:</strong> l'attenzione rende percepibili le sensazioni del microcircolo e della pelle che di solito restano sotto soglia. L'aspettativa le amplifica.</li>
+                        <li><strong>Pesantezza e leggerezza:</strong> sono le stesse formule del training autogeno di Schultz, che ha prove moderate su ansia e stress.</li>
+                        <li><strong>Respiri «con i palmi», «tre centri», «dragone»:</strong> respiro lento con attenzione che scorre nel corpo, cioè respiro lento più body scan.</li>
+                        <li><strong>Schermo interiore:</strong> allenamento dell'immaginazione visiva, che con la pratica diventa più vivida e stabile.</li>
+                        <li><strong>Massaggio tibetano:</strong> automassaggio vigoroso che riscalda e rilassa.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <h3 class="text-base font-bold text-sage-800">3. Dove le prove mancano <span class="evi evi-spec">Nessuna prova</span></h3>
+                    <ul class="text-xs text-stone-600 leading-relaxed space-y-1 list-disc pl-4">
+                        <li>Nessuno strumento ha misurato un «biocampo» di metri, né flussi solare e cosmico.</li>
+                        <li>La «visione diretta» a occhi bendati non ha superato le verifiche controllate. Nel 2005 il direttore dell'Istituto del cervello umano dell'Accademia delle Scienze russa (RAN) l'ha ricondotta a sbirciate dai bordi della maschera; vedi la cronologia più sotto.</li>
+                        <li>Telepatia, diagnosi a distanza e «pronto soccorso energetico» non hanno studi controllati.</li>
+                        <li>Lettura pratica: i primi due livelli sono un buon allenamento di attenzione, rilassamento e immaginazione. Le promesse dei livelli alti vanno trattate come ipotesi del metodo, non come risultati.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- I livelli -->
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-stone-200 shadow-sm">
+                <h3 class="text-lg font-bold text-sage-800 mb-3">I livelli del percorso</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+                    <div class="p-3 rounded-lg bg-stone-50 border border-stone-200"><p class="font-bold text-stone-900">Preparatorio</p><p class="text-stone-500">Подготовительная ступень</p><p class="text-stone-600 mt-1">10 esercizi di base nella versione recente del sistema («Начало-Начал»).</p></div>
+                    <div class="p-3 rounded-lg bg-stone-50 border border-stone-200"><p class="font-bold text-stone-900">1ª Stupen</p><p class="text-stone-500">Гармонизация функций организма</p><p class="text-stone-600 mt-1">Salute e autoregolazione: sensibilità, respiro, pesantezza e leggerezza, campane, dragone. 10 incontri da 2 ore.</p></div>
+                    <div class="p-3 rounded-lg bg-stone-50 border border-stone-200"><p class="font-bold text-stone-900">2ª Stupen</p><p class="text-stone-500">Внутреннее видение</p><p class="text-stone-600 mt-1">Schermo interiore e «biocomputer»: lavoro con l'immaginazione a occhi chiusi.</p></div>
+                    <div class="p-3 rounded-lg bg-stone-50 border border-stone-200"><p class="font-bold text-stone-900">3ª Stupen</p><p class="text-stone-500">Прямое видение</p><p class="text-stone-600 mt-1">«Visione diretta» a occhi bendati, diagnosi e correzione. Non verificata.</p></div>
+                    <div class="p-3 rounded-lg bg-stone-50 border border-stone-200"><p class="font-bold text-stone-900">4ª Stupen</p><p class="text-stone-500">Мировое сознание</p><p class="text-stone-600 mt-1">Coscienza universale, telepatia. Non verificata.</p></div>
+                </div>
+            </div>
+
+            <!-- Pratica guidata -->
+            <div class="bg-stone-900 p-5 sm:p-6 rounded-2xl text-stone-100 shadow-xl border border-stone-800 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-700 pb-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-gold-400">Pratica guidata · 1ª Stupen da soli</h3>
+                        <p class="text-[11px] text-stone-400">Sequenza della lezione tipo del primo livello, con i soli esercizi da fare senza partner. Occhi aperti, tranne nello Splash.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <button onclick="bsSetKind('breve')" id="bs-k-breve" class="px-3 py-1.5 rounded border border-stone-600 bg-stone-800 font-bold">Breve · 15 min</button>
+                        <button onclick="bsSetKind('completa')" id="bs-k-completa" class="px-3 py-1.5 rounded border border-stone-600 bg-stone-800 font-bold">Completa · 31 min</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                    <div class="lg:col-span-8 bg-black/70 rounded-xl border border-stone-700 p-4 space-y-3 min-w-0">
+                        <p id="bs-title" class="text-xl font-bold text-white">1. Posizione dell'osservatore</p>
+                        <p id="bs-text" class="text-base text-amber-100 leading-relaxed min-h-[3.5rem]"></p>
+                        <div class="h-2 bg-stone-800 rounded overflow-hidden"><div id="bs-bar" class="h-full bg-emerald-400" style="width:0%"></div></div>
+                        <div class="flex flex-wrap justify-between gap-2 text-[11px] text-stone-400 font-mono"><span id="bs-clock"></span><span id="bs-next"></span></div>
+                        <div class="flex flex-wrap items-center gap-2 pt-1">
+                            <button onclick="bsJump(-1)" class="px-3 py-2 rounded-lg bg-stone-700 hover:bg-stone-600 text-xs font-bold" aria-label="Esercizio precedente">⏮</button>
+                            <button id="bs-play" onclick="bsToggle()" class="px-4 py-2 rounded-lg bg-terracotta-600 hover:bg-terracotta-700 text-sm font-bold">▶ Avvia</button>
+                            <button onclick="bsJump(1)" class="px-3 py-2 rounded-lg bg-stone-700 hover:bg-stone-600 text-xs font-bold" aria-label="Esercizio successivo">⏭</button>
+                            <button id="bs-card" onclick="bsOpenCard()" class="px-3 py-2 rounded-lg bg-stone-800 border border-stone-600 hover:border-amber-400 text-xs">Scheda dell'esercizio</button>
+                            <label class="flex items-center gap-1.5 text-xs text-stone-300 ml-auto"><input id="bs-voice" type="checkbox" onchange="bs.voice=this.checked" class="accent-amber-500"> Guida vocale in italiano</label>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-4 bg-stone-800/80 rounded-xl border border-stone-700 p-4 text-xs space-y-2">
+                        <p class="font-bold text-gold-400">Sequenza</p>
+                        <ol id="bs-steps" class="list-decimal pl-5 space-y-1"></ol>
+                        <p class="text-[11px] text-stone-400 pt-2">Il metodo prevede un giorno di pratica e uno di riposo. Se compaiono mal di testa, pressione alla testa o agli occhi, accorcia o sospendi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catalogo -->
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-stone-200 shadow-sm space-y-3">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 class="text-xl font-bold text-sage-800">Tutti gli esercizi</h3>
+                    <p class="text-[11px] text-stone-500">Tocca un esercizio per aprire posizione, passaggi, scopo, lettura scientifica, attenzioni e fonti.</p>
+                </div>
+                <div id="bron-filters" class="flex flex-wrap items-center gap-2"></div>
+                <div id="bron-catalog" class="space-y-3"></div>
+            </div>
+
+            <!-- Sicurezza -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <h3 class="text-base font-bold text-sage-800">Regole del metodo <span class="evi evi-trad">Modello</span></h3>
+                    <ul class="text-xs text-stone-600 leading-relaxed space-y-1 list-disc pl-4">
+                        <li>Tutti gli esercizi del 1° livello si fanno a <strong>occhi aperti</strong>, salvo indicazione diversa.</li>
+                        <li>Tutti i movimenti in <strong>senso orario</strong>.</li>
+                        <li>Posizione dell'<strong>osservatore</strong>: attenzione alle sensazioni, confronto tra un esercizio e l'altro, resoconto all'insegnante.</li>
+                        <li>Parola di controllo: un «<strong>Есть / C'è</strong>» chiaro quando si avverte la sensazione.</li>
+                        <li>Allievo e insegnante <strong>non usano immagini mentali</strong> (мыслеформы): si lavora solo con le sensazioni.</li>
+                        <li>Con dolore o altre manifestazioni sgradevoli si <strong>accorcia</strong> l'esercizio o lo si sospende.</li>
+                        <li>Ritmo: 10 incontri per livello, 2 a settimana; giorno di pratica alternato a giorno di riposo.</li>
+                    </ul>
+                </div>
+                <div class="bg-red-50 p-5 rounded-xl border border-red-200 space-y-2">
+                    <h3 class="text-base font-bold text-red-900">Regole aggiunte per praticare con prudenza</h3>
+                    <ul class="text-xs text-red-900 leading-relaxed space-y-1 list-disc pl-4">
+                        <li>Febbre alta, svenimento, pressione molto alta o molto bassa sono <strong>urgenze mediche</strong>: prima il 112 o il medico, poi eventualmente gli esercizi.</li>
+                        <li>Con <strong>pressione alta non controllata, glaucoma o problemi alla retina</strong>: niente Splash e campane solo per 1–2 minuti.</li>
+                        <li>Con <strong>psicosi, disturbi dissociativi o epilessia</strong>, gli esercizi con benda, schermo e «percezioni sottili» vanno evitati o fatti solo con un professionista.</li>
+                        <li><strong>Bambini e persone non vedenti:</strong> diffidare di promesse di «vista senza occhi» e di corsi costosi che le garantiscono.</li>
+                        <li>Nessun esercizio <strong>sostituisce terapie</strong>, farmaci o diagnosi.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Verifiche indipendenti -->
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-stone-200 shadow-sm space-y-3">
+                <h3 class="text-lg font-bold text-sage-800">Verifiche indipendenti sulla «visione diretta»</h3>
+                <ol class="relative border-l border-stone-300 ml-2 space-y-3 text-xs text-stone-700">
+                    <li class="pl-4"><span class="font-mono font-bold text-terracotta-700">1997</span> · La rivista «Огонёк» pubblica un'inchiesta giornalistica secondo cui la «visione con la benda» è un trucco.</li>
+                    <li class="pl-4"><span class="font-mono font-bold text-terracotta-700">2001–2002</span> · Il gruppo di N. P. Bechtereva all'Istituto del cervello umano della RAN pubblica su <em>Human Physiology</em> uno studio che interpreta i risultati degli allievi come conferma della «visione alternativa».</li>
+                    <li class="pl-4"><span class="font-mono font-bold text-terracotta-700">2005</span> · Il direttore dell'Istituto, S. V. Medvedev, ripete le prove in modo più controllato. Nell'intervista a «Химия и жизнь» (n. 10) racconta che gli allievi guardavano dallo spiraglio tra guancia e maschera: quando un cartoncino ha impedito di vedere lo schermo da quello spiraglio, l'allieva ha smesso di «vedere».</li>
+                    <li class="pl-4"><span class="font-mono font-bold text-terracotta-700">anni 2000</span> · E. Kruglyakov, presidente della Commissione della RAN contro la pseudoscienza, definisce il metodo una frode.</li>
+                    <li class="pl-4"><span class="font-mono font-bold text-terracotta-700">2010</span> · Nel programma «Derren Brown Investigates: The Men with X-Ray Eyes» (Channel 4), Bronnikov rifiuta di dire cosa c'è in una scatola sigillata.</li>
+                </ol>
+                <div class="p-3 rounded-lg bg-stone-50 border border-stone-200 text-xs text-stone-700 leading-relaxed">
+                    <p class="font-bold text-sage-800 mb-1">Come verificare da sé, onestamente</p>
+                    <p>Una benda, anche fatta bene, lascia quasi sempre uno spiraglio verso il basso, lungo il naso. Per una prova vera: il testo o il colore va in una <strong>busta opaca sigillata</strong>, scelta a caso da una persona che poi esce dalla stanza; chi conduce la prova non deve sapere cosa c'è dentro; si annotano tutte le risposte, giuste e sbagliate, e si confrontano con il caso. Se una capacità esiste, regge questa prova.</p>
+                </div>
+            </div>
+
+            <!-- Fonti -->
+            <div class="bg-white p-5 sm:p-6 rounded-2xl border border-stone-200 shadow-sm space-y-3 text-xs text-stone-700">
+                <h3 class="text-lg font-bold text-sage-800">Fonti</h3>
+                <p class="font-bold text-stone-900">Dal documento originale</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://studfile.net/preview/5109553/">Studfile: Bronnikov V.M., «Метод Бронникова»</a>, dispensa del 1° livello, con la pagina <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://studfile.net/preview/5109553/page:5/">«Общая техника безопасности»</a></li>
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/plst/153059/">RUTUBE: «Метод Бронникова, Подготовительная ступень»</a> (playlist)</li>
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/plst/283547/">RUTUBE: «Метод Бронникова. Базовые практики»</a> (playlist)</li>
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/plst/151780/">RUTUBE: corso d'autore della 2ª ступень (2005)</a></li>
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/plst/148931/">RUTUBE: conferenze di San Pietroburgo (2005)</a></li>
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/video/30fde166acae2316f880476646a974e2/">RUTUBE: tutorial della 1ª ступень, canale di N. Bakalin</a></li>
+                </ul>
+                <p class="font-bold text-stone-900 pt-2">Trovate con la ricerca in rete</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://www.bronnikov.com.ua/bronnikov-v-m-vse-uprazhneniya-po-pervoj-stupeni/">bronnikov.com.ua: «Все упражнения по первой ступени»</a> e il <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://www.bronnikov.com.ua/wp-content/uploads/2021/04/Podgotovitelnaya-1-stupen-sayt_compressed.pdf">PDF del sistema «Начало-Начал»</a></li>
+                    <li>pbcvalley.ru (sito ufficiale): <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://pbcvalley.ru/obuchenie/podgotovitelnaya-stupen-uprazhneni">es. 1</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://pbcvalley.ru/novosti/podgotovitelnaya-stupen-uprazhneni-2">es. 2</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://pbcvalley.ru/obuchenie/podgotovitelnaya-stupen-uprazhneni-3">es. 3</a> del preparatorio</li>
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://bibliotekar.ru/bronnikov/">bibliotekar.ru: «Метод академика Бронникова»</a> (testo del libro)</li>
+                    <li>Studfile: <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://studfile.net/preview/5588608/page:10/">«Колокол» e «Дракон»</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://studfile.net/preview/5588608/page:15/">«Горизонтальная прокачка»</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://studfile.net/preview/2652582/page:6/">«Тяжесть-Лёгкость»</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://studfile.net/preview/5177980/page:25/">«Большой круг»</a></li>
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://www.galactic.org.ua/W-Bronnicov/index.htm">galactic.org.ua: materiali metodici del Club Bronnikov di Kiev</a></li>
+                    <li>neoludi.ru: <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://neoludi.ru/metod-bronnikova-stupen-1/">1ª</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://neoludi.ru/metod-bronnikova-stupen-2/">2ª</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://neoludi.ru/metod-bronnikova-stupen-3/">3ª</a> ступень</li>
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://sci-lib.biz/bioenergetika/suhoy-tibetskiy-massaj-82339.html">sci-lib.biz: «Сухой тибетский массаж»</a> · <a class="underline text-sage-700" target="_blank" rel="noopener" href="http://meditation.0pk.ru/viewtopic.php?id=260">meditation.0pk.ru: esercizi del corso 1</a> · <a class="underline text-sage-700" target="_blank" rel="noopener" href="http://www.modlife.ru/42-prakticheskie-navyki-skoroj-pomoshchi-metod-bronnikova-v-m">modlife.ru: pronto soccorso del metodo</a> · <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://samopoznanie.ru/articles/desyat_principov_metoda_bronnikova_tehnika_bezopasnosti/">samopoznanie.ru: dieci principi e sicurezza</a></li>
+                    <li>Video RUTUBE: <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/video/1166c2995e62b050e49b84f49b362a91/">Энергетический шар</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/video/b32aa8fbccabd7d2ea03eaf5d1663b48/">Перемещение шара</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/video/2a93968495d85290b4caca946a8f94ee/">Лучи из пальцев</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/video/265d4bebe611c58fa4c0e0480cf35f55/">Объёмное восприятие реальности</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/video/8f78007c6ffcb82063ed88766e81e227/">Колокол</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/video/fcde2d33d6d3eae0f57f7832c1299bd5/">Горизонтальная прокачка</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/video/a949f1a9bebfe36f09e1a6ec6eefc4d0/">Сухой тибетский массаж</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/video/e8fcff65cdc12cfab9de2faa1ed702dd/">Техника безопасности</a>, <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://rutube.ru/video/4a3dfc0e4c1a58caefe28bef818f47ec/">lezione sui 4 livelli</a></li>
+                </ul>
+                <p class="font-bold text-stone-900 pt-2">Verifiche e valutazioni</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://ru.wikipedia.org/wiki/%D0%9C%D0%B5%D1%82%D0%BE%D0%B4_%D0%91%D1%80%D0%BE%D0%BD%D0%BD%D0%B8%D0%BA%D0%BE%D0%B2%D0%B0">Wikipedia russa: «Метод Бронникова»</a></li>
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://link.springer.com/article/10.1023/A:1013948132328">«On the So-Called Alternative Vision or Direct Vision Phenomenon», <em>Human Physiology</em></a></li>
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://scorcher.ru/mist/bronnikov/medvedev.php">Intervista a S. V. Medvedev («Химия и жизнь», 2005)</a></li>
+                    <li><a class="underline text-sage-700" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/List_of_Derren_Brown_shows">Derren Brown Investigates (2010)</a> · <a class="underline text-sage-700" target="_blank" rel="noopener" href="https://www.martialdevelopment.com/derren-brown-investigates-bronnikov-method/">resoconto della puntata</a></li>
+                </ul>
+                <p class="text-[11px] text-stone-500 pt-1">Nota: i siti in russo sono stati letti tramite motore di ricerca, perché dall'ambiente di lavoro non erano raggiungibili direttamente. Dove una fonte non riportava tutti i passaggi, la scheda lo segnala come «descrizione parziale».</p>
             </div>
         </section>
 
@@ -2799,37 +2976,71 @@
             { id: 'xingqi', name: 'Xingqi Yupei Ming (circolazione guidata)', zh: '行氣銘', src: 'cl', goals: ['stress', 'focus'], eff: 2, effTxt: 'Bassa: è un respiro lento e profondo descritto in un testo antico, mai studiato come tale.', ease: 3, min: 5, order: 5,
               how: 'Inspirazione profonda che scende al Dantian e al perineo, poi risalita lungo la schiena con l\'espirazione.', go: "goalGo('corpus','Xingqi')" },
             { id: 'pesantezza', name: 'Pesantezza e leggerezza', zh: 'Тяжесть и Лёгкость', src: 'bron', goals: ['stress', 'sleep'], eff: 3, effTxt: 'Moderata per analogia: somiglia al training autogeno di Schultz (pesantezza e calore), che ha prove moderate su ansia e stress.', ease: 4, min: 5, order: 6,
-              how: 'In piedi o seduti, rilassati: senti il corpo diventare pesante dall\'alto verso il basso, poi leggero dal basso verso l\'alto.', go: "goalGo('corpus','Pesantezza')" },
+              how: 'In piedi o seduti, rilassati: senti il corpo diventare pesante dall\'alto verso il basso, poi leggero dal basso verso l\'alto.', go: "goalGo('bron','s1_heavy_st')" },
             { id: 'tibet', name: 'Massaggio secco tibetano', zh: 'Сухой тибетский массаж', src: 'bron', goals: ['energy', 'stress'], eff: 2, effTxt: 'Bassa: l\'automassaggio ha qualche prova sul rilassamento, nessuna su questa sequenza.', ease: 5, min: 3, order: 1,
-              how: 'Strofina i palmi finché sono caldi, poi massaggia occhi, viso, orecchie, collo e zona lombare.', go: "goalGo('corpus','Tibetano')" },
+              how: 'Strofina i palmi finché sono caldi, poi massaggia occhi, viso, orecchie, collo e zona lombare.', go: "goalGo('bron','s1_tibet')" },
             { id: 'palla', name: 'Palla energetica', zh: 'Энергетический Шар', src: 'bron', goals: ['focus'], eff: 1, effTxt: 'Nessuna prova controllata. Allena l\'attenzione alle sensazioni delle mani.', ease: 4, min: 3, order: 4,
-              how: 'Strofina i palmi, tienili a 15–20 cm e avvicinali e allontanali lentamente, come una fisarmonica.', go: "goalGo('pose','bronnikov_ball')" },
+              how: 'Strofina i palmi, tienili a 15–20 cm e avvicinali e allontanali lentamente, come una fisarmonica.', go: "goalGo('bron','s1_hands')" },
             { id: 'dragone', name: 'Esercizio del Dragone', zh: 'Дракон', src: 'bron', goals: ['energy'], eff: 1, effTxt: 'Nessuna prova controllata. Come mobilità dolce della colonna è utile.', ease: 3, min: 3, order: 2,
-              how: 'Gambe piegate: onda morbida di bacino e colonna che sale dal basso verso l\'alto.', go: "goalGo('corpus','Dragone')" },
+              how: 'Gambe piegate: onda morbida di bacino e colonna che sale dal basso verso l\'alto.', go: "goalGo('bron','s1_dragon')" },
             { id: 'splash', name: 'Splash (inserimento energetico)', zh: 'Всплеск', src: 'bron', goals: ['energy'], eff: 0, effTxt: 'Nessuna prova.', ease: 3, min: 2, order: 2,
-              how: 'Raccogli l\'attenzione al Dantian, poi falla salire di colpo lungo la colonna fino alla sommità della testa.', go: "goalGo('corpus','Splash')" },
+              how: 'Raccogli l\'attenzione al Dantian, poi falla salire di colpo lungo la colonna fino alla sommità della testa.', go: "goalGo('bron','s1_splash')" },
             { id: 'visione', name: 'Immaginazione visiva a occhi chiusi', zh: '', src: 'mod', goals: ['eyes', 'focus'], eff: 1, effTxt: 'La «visione senza occhi» è speculativa. L\'allenamento dell\'immaginazione visiva ha qualche prova su vividezza e memoria visiva.', ease: 4, min: 5, order: 6,
               how: 'Osserva un oggetto per 1 minuto, chiudi gli occhi e ricostruiscilo nei dettagli, poi riapri e confronta.', go: "goalGo('goal','eyes')" },
             { id: 'sensibilita', name: 'Sensibilità palmare', zh: '', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Nessuna prova controllata.', ease: 4, min: 5, order: 4, partner: true,
-              how: 'In coppia: palmi riscaldati, distanza crescente fino a 1 m, si descrivono le sensazioni.', go: "goalGo('corpus','Sensibilità')" },
+              how: 'In coppia: palmi riscaldati, distanza crescente fino a 1 m, si descrivono le sensazioni.', go: "goalGo('bron','s1_hands')" },
             { id: 'raggio', name: 'Raggio energetico', zh: 'Лучик', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Nessuna prova controllata.', ease: 3, min: 5, order: 4, partner: true,
-              how: 'In coppia: attenzione sui polpastrelli, «raggio» verso il palmo del partner, che dice «C\'è» quando sente qualcosa.', go: "goalGo('corpus','Raggio')" },
-            { id: 'campana', name: 'Campana energetica', zh: 'Колокол', src: 'bron', goals: ['bp', 'stress'], eff: 0, effTxt: 'Nessuna prova controllata per l\'effetto sulla pressione.', ease: 3, min: 5, order: 4, partner: true,
-              how: 'Con un operatore: si immagina un cono attorno al corpo con il vertice sulla testa.', go: "goalGo('pose','bronnikov_bell')" },
+              how: 'In coppia: attenzione sui polpastrelli, «raggio» verso il palmo del partner, che dice «C\'è» quando sente qualcosa.', go: "goalGo('bron','s1_ray_pair')" },
+            { id: 'campana', name: 'Campane inferiore e superiore', zh: 'Колокол', src: 'bron', goals: ['bp', 'stress'], eff: 0, effTxt: 'Nessuna prova controllata per l\'effetto sulla pressione.', ease: 3, min: 4, order: 4, caution: 'Con pressione alta: solo 1–2 minuti, come indica il metodo stesso.',
+              how: 'Campana inferiore: vertice al centro della testa, base alla punta delle dita, la si fa ruotare con le mani. Campana superiore: vertice al perineo, base verso l\'alto, si sposta il campo attorno alla testa.', go: "goalGo('bron','s1_bell_low')" },
             { id: 'sostanze', name: 'Sostanze primordiali', zh: '', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Nessuna prova controllata.', ease: 3, min: 10, order: 6, partner: true,
-              how: 'Si evocano le sensazioni di terra, acqua, fuoco e cielo: densità, fluidità, calore, leggerezza.', go: "goalGo('corpus','Sostanze')" },
-            { id: 'prochacka', name: 'Pompaggio (Prochacka)', zh: '', src: 'bron', goals: ['bp'], eff: 0, effTxt: 'Nessuna prova. Non sostituisce il soccorso medico.', ease: 2, min: 10, order: 5, partner: true,
-              how: 'Un operatore esegue passaggi lungo la colonna della persona distesa.', go: "goalGo('corpus','Pompaggio')" },
+              how: 'Si evocano le sensazioni di terra, acqua, fuoco e cielo: densità, fluidità, calore, leggerezza.', go: "goalGo('bron','s1_subst')" },
+            { id: 'prochacka', name: 'Pompaggio orizzontale (прокачка)', zh: '', src: 'bron', goals: ['bp'], eff: 0, effTxt: 'Nessuna prova. Non sostituisce il soccorso medico.', ease: 2, min: 10, order: 5, partner: true,
+              how: 'Un operatore esegue passaggi lungo la colonna della persona distesa.', go: "goalGo('bron','s1_hpump')" },
             { id: 'ekran', name: 'Schermo mentale (Ekran)', zh: '', src: 'bron', goals: ['eyes', 'focus'], eff: 0, effTxt: 'Speculativo.', ease: 1, min: 15, order: 6, adv: true,
-              how: 'Livello 2: con la benda si costruisce uno «schermo» interiore luminoso.', go: "goalGo('corpus','Schermo')" },
+              how: 'Livello 2: con la benda si costruisce uno «schermo» interiore luminoso.', go: "goalGo('bron','s2_screen')" },
             { id: 'cera', name: 'Corpo di cera', zh: '', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Speculativo.', ease: 1, min: 15, order: 6, adv: true,
-              how: 'Livello 2: percezione di un «doppio» interiore denso come la cera.', go: "goalGo('corpus','Cera')" },
+              how: 'Livello 2: percezione di un «doppio» interiore denso come la cera.', go: "goalGo('bron','s2_wax')" },
             { id: 'fantom', name: 'Fantom e proiezione', zh: '', src: 'bron', goals: ['eyes'], eff: 0, effTxt: 'Speculativo.', ease: 1, min: 15, order: 6, adv: true,
-              how: 'Livello 3: «proiezione» del corpo energetico per percepire oggetti a occhi bendati.', go: "goalGo('corpus','Fante')" },
+              how: 'Livello 3: «proiezione» del corpo energetico per percepire oggetti a occhi bendati.', go: "goalGo('bron','s2_fantom')" },
             { id: 'diretta', name: 'Visione diretta a occhi bendati', zh: '', src: 'bron', goals: ['eyes'], eff: 0, effTxt: 'Speculativo: nessuno studio controllato pubblicato.', ease: 1, min: 15, order: 6, adv: true,
-              how: 'Livello 3: lettura di testi e colori con la benda.', go: "goalGo('corpus','Visione Diretta')" },
+              how: 'Livello 3: lettura di testi e colori con la benda.', go: "goalGo('bron','s3_direct')" },
             { id: 'telepatia', name: 'Telepatia e sintonia remota', zh: '', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Speculativo: nessuna prova.', ease: 1, min: 15, order: 6, adv: true,
-              how: 'Livello 4: trasmissione di immagini tra operatori a distanza.', go: "goalGo('corpus','Telepatia')" },
+              how: 'Livello 4: trasmissione di immagini tra operatori a distanza.', go: "goalGo('bron','s4_world')" },
+            { id: 'b_palms', name: 'Respiro con i palmi e le dita', zh: 'Дыхание ладонями', src: 'bron', goals: ['stress', 'focus'], eff: 2, effTxt: 'Bassa: respiro lento con attenzione che si sposta; nessuno studio sull\'esercizio.', ease: 4, min: 5, order: 5,
+              how: 'Il palmo sinistro «inspira», il destro «espira»; poi si inverte; poi dito per dito.', go: "goalGo('bron','s1_palms')" },
+            { id: 'b_three', name: 'Tre centri della forza vitale', zh: 'Три центра', src: 'bron', goals: ['stress'], eff: 2, effTxt: 'Bassa: respiro diaframmatico con attenzione verso i piedi.', ease: 4, min: 3, order: 5,
+              how: 'Inspira da palmi e bocca fino al plesso solare, espira da perineo e piante dei piedi.', go: "goalGo('bron','s1_three')" },
+            { id: 'b_breath_thought', name: 'Respiro con il pensiero', zh: 'Дыхание мыслью', src: 'bron', goals: ['stress', 'sleep'], eff: 2, effTxt: 'Bassa: equivale a respiro lento con body scan.', ease: 4, min: 5, order: 5,
+              how: 'Inspira fino al plesso solare, espira lungo le gambe nella terra; poi inspira dalla terra ed espira dalle mani.', go: "goalGo('bron','p_breath')" },
+            { id: 'b_heavy_dyn', name: 'Pesantezza e leggerezza in movimento', zh: 'Тяжесть-лёгкость в динамике', src: 'bron', goals: ['energy'], eff: 2, effTxt: 'Bassa: attenzione al corpo durante il cammino; nessuno studio.', ease: 4, min: 5, order: 3,
+              how: 'Cammina evocando prima la pesantezza, poi la leggerezza («vento veloce»).', go: "goalGo('bron','s1_heavy_dyn')" },
+            { id: 'b_circle', name: 'Grande cerchio («città rumorosa»)', zh: 'Большой круг', src: 'bron', goals: ['organs'], eff: 1, effTxt: 'Nessuna prova per la sola attenzione; il massaggio addominale vero ha qualche prova contro la stitichezza.', ease: 4, min: 3, order: 6,
+              how: 'Fai girare la sensazione sull\'addome in senso orario partendo dalla zona iliaca destra; aggiungi un massaggio vero.', go: "goalGo('bron','s1_circle')" },
+            { id: 'b_rays', name: 'Raggi dalle dita', zh: 'Лучи из пальцев', src: 'bron', goals: ['focus'], eff: 1, effTxt: 'Nessuna prova; allena l\'attenzione tattile.', ease: 5, min: 3, order: 4,
+              how: 'Con l\'indice disegna sul palmo dell\'altra mano un quadrato, un triangolo, un cerchio.', go: "goalGo('bron','p_rays')" },
+            { id: 'b_move', name: 'Spostare la palla nel corpo', zh: 'Перемещение шара', src: 'bron', goals: ['focus', 'stress'], eff: 1, effTxt: 'Nessuna prova; è un body scan guidato.', ease: 4, min: 4, order: 4,
+              how: 'Crea la palla tra le mani e portala con l\'attenzione nel corpo, solo su tuo comando.', go: "goalGo('bron','p_move')" },
+            { id: 'b_field', name: 'Misura del biocampo', zh: 'Замер биополя', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Nessuno strumento misura un biocampo di metri.', ease: 3, min: 3, order: 4, partner: true,
+              how: 'L\'insegnante si avvicina all\'allievo con il palmo finché sente il «bordo denso» del campo.', go: "goalGo('bron','s1_field')" },
+            { id: 'b_vpump', name: 'Pompaggio verticale', zh: 'Вертикальная прокачка', src: 'bron', goals: ['energy'], eff: 0, effTxt: 'Nessuna prova di flussi energetici.', ease: 2, min: 5, order: 3, partner: true,
+              how: 'L\'insegnante, con le mani sulla testa dell\'allievo, accompagna un flusso dalla testa ai piedi e ritorno.', go: "goalGo('bron','s1_vpump')" },
+            { id: 'b_sky', name: 'Cielo e Terra', zh: 'Небо и Земля', src: 'bron', goals: ['stress'], eff: 0, effTxt: 'Esercizio di preghiera o intenzione: non verificabile.', ease: 4, min: 5, order: 6,
+              how: 'Palmi in su, ci si rivolge al Cielo e alla Terra con la formula del sistema «Начало-Начал».', go: "goalGo('bron','p_sky')" },
+            { id: 'b_eyes', name: 'Raggi dagli occhi', zh: 'Лучи из глаз', src: 'bron', goals: ['eyes'], eff: 0, effTxt: 'Nessuna base per un\'emissione dagli occhi.', ease: 3, min: 3, order: 6,
+              how: 'Tecnica nel video della playlist preparatoria.', go: "goalGo('bron','p_eyes')" },
+            { id: 'b_subtle', name: 'Corpo sottile', zh: 'Тонкоматериальное тело', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Nessuna prova di un corpo sottile.', ease: 3, min: 5, order: 6,
+              how: 'Percepire sé stessi dalla posizione delle «sensazioni fantasma».', go: "goalGo('bron','p_subtle')" },
+            { id: 'b_volume', name: 'Percezione volumetrica della realtà', zh: 'Объёмное восприятие', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Il «volume» dello spazio non è misurabile.', ease: 3, min: 5, order: 6,
+              how: 'Osservare come cambia lo spazio percepito pensando a sé, alla famiglia, al mondo.', go: "goalGo('bron','p_volume')" },
+            { id: 'b_ipump', name: 'Pompaggio interno (raffreddore)', zh: 'Внутренняя прокачка', src: 'bron', goals: ['energy'], eff: 0, effTxt: 'Nessuna prova; il raffreddore guarisce da sé in 7–10 giorni.', ease: 3, min: 5, order: 5,
+              how: 'Si «pompa» l\'energia dentro e fuori dalla zona dolente.', go: "goalGo('bron','s1_ipump')" },
+            { id: 'b_colors', name: 'Colori attraverso le sensazioni', zh: 'Цвет через ощущения', src: 'bron', goals: ['eyes'], eff: 0, effTxt: 'Senza buste opache sigillate il risultato non è affidabile.', ease: 2, min: 10, order: 6, adv: true,
+              how: 'Livello 2: riconoscere fogli colorati con le sensazioni.', go: "goalGo('bron','s2_colors')" },
+            { id: 'b_points', name: 'Punti di assemblaggio e doppio', zh: 'Точки сборки', src: 'bron', goals: ['focus'], eff: 0, effTxt: 'Speculativo.', ease: 1, min: 10, order: 6, adv: true,
+              how: 'Livello 2: visione volumetrica in sei direzioni.', go: "goalGo('bron','s2_points')" },
+            { id: 'b_scan', name: 'Scansione e correzione della salute', zh: 'Диагностика', src: 'bron', goals: ['organs'], eff: 0, effTxt: 'Nessuna prova; non sostituisce la diagnosi medica.', ease: 1, min: 20, order: 6, adv: true,
+              how: 'Livello 3: «osservare» gli organi con lo schermo interiore.', go: "goalGo('bron','s3_scan')" },
             { id: 'shou', name: 'Chiusura Shou Shi e automassaggio', zh: '收勢', src: 'trad', goals: ['all'], eff: 1, effTxt: 'Nessuna prova specifica: serve a chiudere la sessione con calma.', ease: 5, min: 2, order: 9, fixed: 'end',
               how: 'Mani sull\'ombelico, 6 cerchi in un senso e 6 nell\'altro. Strofina i palmi e massaggia viso, orecchie e reni.', go: "goalGo('lzj','shou')" }
         ];
@@ -2971,11 +3182,445 @@
                 document.getElementById('corpus-filter-eyes').value = 'all';
                 renderCorpus();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (kind === 'bron') {
+                switchTab('bronnikov');
+                setTimeout(() => bronOpen(a), 120);
             } else if (kind === 'goal') {
                 goalSel = a; renderGoals();
                 document.getElementById('goal-card').scrollIntoView({ block: 'start', behavior: 'smooth' });
             }
         }
+
+        // ==========================================
+        // METODO BRONNIKOV: catalogo completo degli esercizi, pratica guidata, fonti
+        // Livelli: prep = Подготовительная ступень (sistema «Начало-Начал», versione recente)
+        //          s1..s4 = ступени classiche del metodo (1ª-4ª)
+        // eff (0-5) come nel protocollo trasversale; mode: solo | coppia
+        // ==========================================
+        const BRON_LEVELS = {
+            prep: ['Preparatorio', 'Подготовительная ступень', 'Versione recente (sistema «Начало-Начал», Bronnikov-Feklerón): 10 esercizi di base per sentire e governare l\'energia. Contiene anche formule di tipo religioso.'],
+            s1: ['1ª Stupen', 'Гармонизация и развитие функций органов и систем организма', 'Armonizzazione delle funzioni dell\'organismo: 10 incontri di 2 ore, 2 a settimana, giorno di pratica alternato a giorno di riposo. Tutti gli esercizi a occhi aperti, movimenti in senso orario.'],
+            s2: ['2ª Stupen', 'Внутреннее видение · биокомпьютер', 'Visione interiore: si costruisce uno «schermo» mentale a occhi chiusi e lo si usa con l\'immaginazione (il «biocomputer» del metodo).'],
+            s3: ['3ª Stupen', 'Прямое (внешнее) видение', 'Visione diretta: il metodo dichiara di insegnare a percepire l\'ambiente e a leggere a occhi bendati.'],
+            s4: ['4ª Stupen', 'Мировое сознание', 'Coscienza universale: telepatia, «calcolatore» e «orologio» interiori, sintonia a distanza.']
+        };
+        const BS = { // fonti ricorrenti
+            stud: ['Studfile: Bronnikov V.M., «Метод Бронникова» (dispensa DOC)', 'https://studfile.net/preview/5109553/'],
+            studTB: ['Studfile: «Общая техника безопасности» (pag. 5 della dispensa)', 'https://studfile.net/preview/5109553/page:5/'],
+            studKD: ['Studfile: «2.7. Упражнения Колокол и Дракон»', 'https://studfile.net/preview/5588608/page:10/'],
+            studGP: ['Studfile: «3.5. Горизонтальная прокачка»', 'https://studfile.net/preview/5588608/page:15/'],
+            studTL: ['Studfile: «2.3. Упражнение Тяжесть-Лёгкость»', 'https://studfile.net/preview/2652582/page:6/'],
+            studBK: ['Studfile: «Большой круг (шумный город)»', 'https://studfile.net/preview/5177980/page:25/'],
+            ua1: ['bronnikov.com.ua: «Все упражнения по первой ступени»', 'https://www.bronnikov.com.ua/bronnikov-v-m-vse-uprazhneniya-po-pervoj-stupeni/'],
+            uaPdf: ['bronnikov.com.ua: PDF «Система Начало-Начал», preparatorio e 1ª ступень', 'https://www.bronnikov.com.ua/wp-content/uploads/2021/04/Podgotovitelnaya-1-stupen-sayt_compressed.pdf'],
+            biblio: ['bibliotekar.ru: «Метод академика Бронникова» (testo del libro)', 'https://bibliotekar.ru/bronnikov/'],
+            galactic: ['galactic.org.ua: materiali metodici del Club Bronnikov di Kiev', 'https://www.galactic.org.ua/W-Bronnicov/index.htm'],
+            neo1: ['neoludi.ru: «Метод Бронникова, Ступень 1»', 'https://neoludi.ru/metod-bronnikova-stupen-1/'],
+            neo2: ['neoludi.ru: «Метод Бронникова, Ступень 2»', 'https://neoludi.ru/metod-bronnikova-stupen-2/'],
+            neo3: ['neoludi.ru: «Метод Бронникова, Ступень 3»', 'https://neoludi.ru/metod-bronnikova-stupen-3/'],
+            forum: ['meditation.0pk.ru: «Бронников – курс 1 упражнения»', 'http://meditation.0pk.ru/viewtopic.php?id=260'],
+            sci: ['sci-lib.biz: «Сухой тибетский массаж»', 'https://sci-lib.biz/bioenergetika/suhoy-tibetskiy-massaj-82339.html'],
+            mod: ['modlife.ru: «Практические навыки скорой помощи. Метод Бронникова»', 'http://www.modlife.ru/42-prakticheskie-navyki-skoroj-pomoshchi-metod-bronnikova-v-m'],
+            pbc1: ['pbcvalley.ru (sito ufficiale): Esercizio 1, Энергетический шар', 'https://pbcvalley.ru/obuchenie/podgotovitelnaya-stupen-uprazhneni'],
+            pbc2: ['pbcvalley.ru: Esercizio 2, Перемещение шара', 'https://pbcvalley.ru/novosti/podgotovitelnaya-stupen-uprazhneni-2'],
+            pbc3: ['pbcvalley.ru: Esercizio 3, Лучи из пальцев', 'https://pbcvalley.ru/obuchenie/podgotovitelnaya-stupen-uprazhneni-3'],
+            rtPrep: ['RUTUBE: playlist «Метод Бронникова, Подготовительная ступень»', 'https://rutube.ru/plst/153059/'],
+            rtBase: ['RUTUBE: playlist «Метод Бронникова. Базовые практики»', 'https://rutube.ru/plst/283547/'],
+            rtS2: ['RUTUBE: corso d\'autore 2ª ступень (2005)', 'https://rutube.ru/plst/151780/'],
+            rtBall: ['RUTUBE: video «Энергетический шар»', 'https://rutube.ru/video/1166c2995e62b050e49b84f49b362a91/'],
+            rtMove: ['RUTUBE: video «Перемещение шара»', 'https://rutube.ru/video/b32aa8fbccabd7d2ea03eaf5d1663b48/'],
+            rtRays: ['RUTUBE: video «Лучи из пальцев»', 'https://rutube.ru/video/2a93968495d85290b4caca946a8f94ee/'],
+            rtVol: ['RUTUBE: video «Объёмное восприятие реальности»', 'https://rutube.ru/video/265d4bebe611c58fa4c0e0480cf35f55/'],
+            rtBell: ['RUTUBE: video «Упражнение Энергетический Колокол»', 'https://rutube.ru/video/8f78007c6ffcb82063ed88766e81e227/'],
+            rtGP: ['RUTUBE: video «Упражнение Горизонтальная Прокачка»', 'https://rutube.ru/video/fcde2d33d6d3eae0f57f7832c1299bd5/'],
+            rtTib: ['RUTUBE: N. Bakalin, «Сухой тибетский массаж – дополнение»', 'https://rutube.ru/video/a949f1a9bebfe36f09e1a6ec6eefc4d0/'],
+            rtSafe: ['RUTUBE: «Техника безопасности при работе с энергетикой»', 'https://rutube.ru/video/e8fcff65cdc12cfab9de2faa1ed702dd/'],
+            rtBak: ['RUTUBE: tutorial 1ª ступень, canale N. Bakalin', 'https://rutube.ru/video/30fde166acae2316f880476646a974e2/']
+        };
+        const BRON_EX = [
+            // ---------- PREPARATORIO ----------
+            { id: 'p_shar', lvl: 'prep', n: 1, it: 'Palla energetica', ru: 'Энергетический шар', mode: 'solo', eyes: 'aperti', min: 3, eff: 1, ease: 5,
+              pos: 'Seduti o in piedi, spalle rilassate, occhi aperti.',
+              steps: ['Strofina i palmi finché sono caldi.', 'Allontanali lentamente a 15–20 cm e immagina di tenere una palla tra le mani.', 'Avvicina e allontana i palmi molto lentamente; poi fai ruotare la palla cambiando la posizione delle mani.', 'Osserva cosa senti: formicolio alle dita, calore o fresco, densità, pressione tra i palmi.', 'Alla fine «spegni» la palla con un comando mentale e riposa le mani.'],
+              feel: 'Elasticità della «palla», pressione e calore tra le mani.',
+              purpose: 'Il metodo lo usa come test di attitudine creativa (immaginazione e memoria) e per togliere tensione e stanchezza.',
+              physio: 'L\'attenzione focalizzata sui palmi rende percepibili formicolii e variazioni di temperatura del microcircolo che di solito ignoriamo.',
+              src: ['pbc1', 'rtBall', 'uaPdf'] },
+            { id: 'p_move', lvl: 'prep', n: 2, it: 'Spostare la palla', ru: 'Перемещение шара', mode: 'solo', eyes: 'aperti', min: 4, eff: 1, ease: 4, partial: true,
+              pos: 'Seduti o in piedi, occhi aperti.',
+              steps: ['Crea la palla tra le mani (esercizio 1).', 'Con l\'attenzione portala dentro il corpo: dal palmo al braccio, alla spalla, al torace, poi dove decidi tu.', 'Regola chiave del metodo: «accendi la sensazione e spegnila». La palla si muove solo su tuo comando, mai da sola.', 'Riportala tra le mani e spegnila.'],
+              feel: 'Una sensazione localizzata (calore, densità) che si sposta dove va l\'attenzione.',
+              purpose: 'Sentire il proprio «corpo sottile» (тонкоматериальное тело); spostare l\'attenzione tra corpo denso e sottile toglie tensione e stanchezza.',
+              physio: 'È un body scan guidato: allena l\'interocezione e il controllo dell\'attenzione.',
+              src: ['pbc2', 'rtMove'] },
+            { id: 'p_rays', lvl: 'prep', n: 3, it: 'Raggi dalle dita', ru: 'Лучи из пальцев', mode: 'solo', eyes: 'aperti', min: 3, eff: 1, ease: 5,
+              pos: 'Seduti, una mano con il palmo rivolto verso l\'alto.',
+              steps: ['Punta l\'indice dell\'altra mano verso il palmo, a qualche centimetro.', 'Fai ruotare il dito come per inviare un «raggio» e senti la rotazione sul palmo.', 'Disegna con il «raggio» sul palmo un quadrato, un triangolo, un cerchio.', 'Ripeti a distanze diverse e confronta l\'intensità delle sensazioni.', 'Prova con le altre dita: per il metodo ogni dito emette una sua energia.'],
+              feel: 'Un punto di pressione, calore o solletico che segue il dito.',
+              purpose: 'Allenare focalizzazione e concentrazione; per il metodo, imparare a dirigere la propria energia su un oggetto.',
+              physio: 'Allenamento dell\'attenzione tattile; parte delle sensazioni dipende dall\'aspettativa (suggestione), come mostrano gli studi sulle sensazioni «indotte».',
+              src: ['pbc3', 'rtRays'] },
+            { id: 'p_breath', lvl: 'prep', n: 4, it: 'Respiro con il pensiero', ru: 'Дыхание мыслью (вдох и выдох полем)', mode: 'solo', eyes: 'aperti', min: 5, eff: 2, ease: 4,
+              pos: 'In piedi o seduti, respiro calmo.',
+              steps: ['Inspirando, con il pensiero fai entrare l\'energia fino al plesso solare.', 'Espirando, falla scendere lungo le gambe e uscire nella terra.', 'Inspira dal basso, dalla terra, fino al plesso solare.', 'Espira facendola uscire dalle mani.', 'Continua 5–10 minuti; il metodo consiglia più volte al giorno.'],
+              feel: 'Calore e correnti lungo gambe e braccia, rilassamento.',
+              purpose: 'Per il metodo attiva l\'energia a livello cellulare e rinforza respirazione, immunità e formazione del sangue.',
+              physio: 'Respiro lento con attenzione che percorre il corpo: effetti calmanti simili al respiro lento e al body scan. Gli effetti su immunità e sangue non sono dimostrati.',
+              src: ['uaPdf', 'rtPrep'] },
+            { id: 'p_splash', lvl: 'prep', n: 5, it: 'Splash', ru: 'Всплеск', mode: 'solo', eyes: 'chiusi → aperti', min: 2, eff: 0, ease: 3, ref: 's1_splash',
+              pos: 'Vedi la scheda della 1ª Stupen.', steps: ['Si esegue come lo «Splash» della 1ª Stupen.'], feel: '', purpose: 'Passare rapidamente da una modalità di percezione all\'altra.', physio: '', src: ['rtPrep'] },
+            { id: 'p_eyes', lvl: 'prep', n: 6, it: 'Raggi dagli occhi', ru: 'Лучи из глаз', mode: 'solo', eyes: 'aperti', min: 3, eff: 0, ease: 3, partial: true,
+              pos: '—', steps: ['Le fonti consultabili ne indicano solo lo scopo; la tecnica è spiegata nel video della playlist preparatoria.'],
+              feel: '', purpose: 'Per il metodo sviluppa le proprietà «radar» dell\'irradiazione; lo sguardo brillante è considerato segno di giovinezza e salute. È presentato come test.',
+              physio: 'Nessuna base fisiologica per un\'emissione dagli occhi.', src: ['uaPdf', 'rtPrep'] },
+            { id: 'p_subtle', lvl: 'prep', n: 7, it: 'Corpo sottile (attivazione e armonizzazione)', ru: 'Тонкоматериальное тело', mode: 'solo', eyes: 'aperti', min: 5, eff: 0, ease: 3, partial: true,
+              pos: 'In piedi, seduti o sdraiati.', steps: ['Le fonti consultabili ne indicano lo scopo: percepire se stessi e l\'ambiente «dalla posizione delle sensazioni fantasma», affiancando alla vita materiale una vita «sottile». La tecnica completa è nel video.'],
+              feel: '', purpose: 'Attivare e armonizzare il «corpo sottile».', physio: 'Paragonabile agli esercizi di immaginazione corporea; nessuna prova di un corpo sottile.', src: ['uaPdf', 'rtPrep'] },
+            { id: 'p_sky', lvl: 'prep', n: 8, it: 'Cielo e Terra', ru: 'Небо и Земля', mode: 'solo', eyes: 'aperti', min: 5, eff: 0, ease: 4, partial: true,
+              pos: 'In piedi, palmi rivolti verso l\'alto.',
+              steps: ['A bassa voce o ad alta voce ci si rivolge al Cielo con la formula del metodo: «Dio Padre, accendi il flusso della tua energia dall\'alto verso il basso e dirigilo…» (la formula prosegue nel materiale originale).', 'Si fa lo stesso con la Terra, secondo il principio Cielo (risveglio), Uomo (mediatore), Terra (nutrimento).'],
+              feel: '', purpose: 'Per il sistema «Начало-Начал», Cielo e Terra generano «tempo di vita» e longevità; scopo dichiarato: spiritualizzare la personalità.',
+              physio: 'Esercizio di preghiera o intenzione: valore personale e spirituale, non verificabile scientificamente.', src: ['uaPdf'] },
+            { id: 'p_heavy', lvl: 'prep', n: 9, it: 'Pesantezza e leggerezza', ru: 'Тяжесть-лёгкость', mode: 'solo', eyes: 'aperti', min: 4, eff: 3, ease: 4, ref: 's1_heavy_st',
+              pos: 'Vedi la scheda della 1ª Stupen.', steps: ['Si esegue come «Pesantezza e leggerezza in statica» della 1ª Stupen.'], feel: '', purpose: '', physio: '', src: ['rtPrep'] },
+            { id: 'p_volume', lvl: 'prep', n: 10, it: 'Percezione volumetrica della realtà', ru: 'Объёмное восприятие реальности', mode: 'solo', eyes: 'aperti', min: 5, eff: 0, ease: 3, partial: true,
+              pos: '—', steps: ['Si osserva come cambia il «volume» dello spazio percepito a seconda di dove va il pensiero.', 'Per il metodo, pensare solo a sé stringe lo spazio (posizione Yin); pensare al mondo, al cosmo, al proprio Paese lo allarga (Yang); pensare alla famiglia e agli altri crea un equilibrio Yin-Yang.'],
+              feel: '', purpose: 'Allargare la percezione di sé nello spazio.', physio: 'L\'idea che il focus sul sé restringa l\'esperienza ha paralleli nella psicologia della ruminazione; il «volume» dello spazio non è misurabile.', src: ['rtVol', 'uaPdf'] },
+            // ---------- 1ª STUPEN ----------
+            { id: 's1_field', lvl: 's1', it: 'Misura del biocampo', ru: 'Замер биополя', mode: 'coppia', eyes: 'aperti', min: 3, eff: 0, ease: 3,
+              pos: 'Insegnante e allievo uno di fronte all\'altro. L\'allievo non incrocia braccia né gambe.',
+              steps: ['L\'insegnante strofina le mani finché sono calde.', 'Solleva il braccio, gomito piegato, palmo verso l\'allievo.', 'Dondolando lentamente la mano avanti e indietro, si avvicina finché nel palmo compare una sensazione di fondo (ronzio, formicolio, pressione).', 'Prosegue fino al primo «bordo denso» del campo e lo annota.'],
+              feel: 'Per il metodo il campo normale è di 7 m o più, denso, attivo, uniforme; chi inizia ha di solito un campo 2–3 volte più piccolo, che cresce con la pratica.',
+              purpose: 'Si fa all\'inizio di ogni incontro per seguire i progressi.',
+              physio: 'Nessuno strumento misura un «biocampo» di metri; la percezione dell\'operatore dipende dall\'aspettativa. Va considerata un rituale di inizio, non una misura.',
+              src: ['biblio', 'ua1'] },
+            { id: 's1_hands', lvl: 's1', it: 'Sensazioni dell\'energia: palla, fisarmonica, raggio', ru: 'Развитие ощущений биоэнергии: мяч, гармошка, луч', mode: 'solo', eyes: 'aperti', min: 6, eff: 1, ease: 5,
+              pos: 'Seduti, in piedi o sdraiati; qualsiasi distanza tra i palmi.',
+              steps: ['Palla: strofina i palmi e allontanali lentamente; ascolta formicolio, calore o fresco, densità, pressione. Dai il comando mentale di sentire una palla e falla ruotare.', 'Fisarmonica: avvicina e allontana i palmi creando la sensazione di comprimere e tirare una fisarmonica, una molla, un elastico.', 'Raggio: palmi a 15–20 cm, comando mentale: un raggio va da un palmo all\'altro e torna. Poi con l\'indice di una mano fai ruotare il raggio sull\'altro palmo e disegna quadrato, triangolo, cerchio.'],
+              feel: 'Elasticità, pressione, punti di calore che si spostano.',
+              purpose: 'Per il metodo sviluppa la sensibilità delle mani, attiva l\'emisfero destro e riequilibra i due emisferi.',
+              physio: 'Allenamento dell\'attenzione tattile. L\'effetto sugli emisferi non è dimostrato.',
+              src: ['biblio', 'ua1', 'forum'] },
+            { id: 's1_tibet', lvl: 's1', it: 'Massaggio secco tibetano', ru: 'Сухой тибетский массаж', mode: 'solo', eyes: 'aperti', min: 7, eff: 2, ease: 5,
+              pos: 'In piedi, piedi alla larghezza delle spalle. In inspirazione la punta della lingua tocca il palato.',
+              steps: ['Strofina con energia un braccio con il palmo dell\'altra mano: lungo il lato esterno dalla spalla alla punta delle dita, poi lungo il lato interno dalle dita alla spalla, fino a sentire calore. Poi l\'altro braccio.', 'Prendi la sensazione nella zona della 7ª vertebra cervicale. Inspirando, «tira» l\'energia con una mano lungo il lato esterno del braccio fino alle dita; espirando, «spingila» dentro risalendo lungo il lato interno.', 'Massaggia con entrambe le mani la zona del coccige. Inspirando, raccogli la sensazione come in due coppe; con movimenti di spinta porta le mani fino ai reni, poi espira con decisione e dai una spinta.', 'Regola del metodo: la superficie esterna cede e quella interna riceve; la schiena è l\'uscita e l\'addome l\'entrata; la nuca è l\'uscita e la fronte l\'entrata.'],
+              feel: 'Calore diffuso, correnti lungo braccia e schiena.',
+              purpose: 'Attiva i «canali» di braccia e gambe e il movimento dell\'energia lungo l\'«anello dell\'immortalità», che il metodo identifica con la Piccola circolazione (Du Mai e Ren Mai).',
+              physio: 'Automassaggio vigoroso: aumenta il flusso sanguigno locale e il calore, rilassa. L\'automassaggio ha qualche prova sul rilassamento.',
+              caution: 'Durata 5–10 minuti, da aumentare gradualmente.',
+              src: ['sci', 'galactic', 'rtTib', 'ua1'] },
+            { id: 's1_heavy_st', lvl: 's1', it: 'Pesantezza e leggerezza in statica', ru: 'Тяжесть-лёгкость в статике', mode: 'solo', eyes: 'aperti', min: 4, eff: 3, ease: 4,
+              pos: 'Seduti, in piedi o sdraiati.',
+              steps: ['Comando: «Che il corpo diventi pesante». Lascia che la pesantezza arrivi, come se il corpo fosse premuto verso il pavimento.', 'Comando: «Che il corpo diventi leggero». Senti la leggerezza, come se stessi per sollevarti.', 'Varianti: parte superiore pesante e inferiore leggera; metà sinistra pesante e destra leggera; un braccio pesante e l\'altro leggero; una gamba pesante e l\'altra leggera.'],
+              feel: 'Pesantezza e calore, poi leggerezza; con la pratica le sensazioni si spostano a comando.',
+              purpose: 'Per il metodo la pesantezza attiva la grande circolazione e richiama «energia solare», la leggerezza la piccola circolazione e l\'«energia cosmica»; si sviluppano collegamenti diretti e inversi con il subconscio.',
+              physio: 'È molto vicino al training autogeno di Schultz, che usa proprio le formule di pesantezza e calore e ha prove moderate su ansia e stress. Le spiegazioni sulla circolazione del metodo non sono verificate.',
+              src: ['studTL', 'biblio', 'ua1', 'rtBak'] },
+            { id: 's1_heavy_dyn', lvl: 's1', it: 'Pesantezza e leggerezza in movimento', ru: 'Тяжесть-лёгкость в динамике', mode: 'solo', eyes: 'aperti', min: 5, eff: 2, ease: 4,
+              pos: 'Camminando.',
+              steps: ['Cammina evocando la pesantezza, come se il corpo fosse premuto a terra.', 'Poi cammina evocando la leggerezza (il metodo la chiama «vento veloce»), come se il corpo stesse per sollevarsi.', 'Il metodo consiglia di usare la leggerezza anche nelle salite e negli sforzi lunghi.'],
+              feel: 'Passo più pesante e stabile, poi più leggero e agile.',
+              purpose: 'Per il metodo aiuta a camminare e salire senza fatica il giorno dopo.',
+              physio: 'Attenzione al corpo durante il cammino; nessuno studio sull\'effetto anti-fatica.',
+              src: ['studTL', 'ua1'] },
+            { id: 's1_palms', lvl: 's1', it: 'Respiro con i palmi, i piedi e le dita', ru: 'Дыхание ладонями', mode: 'solo', eyes: 'aperti', min: 5, eff: 2, ease: 4,
+              pos: 'Seduti, palmi uno di fronte all\'altro o rivolti verso l\'alto.',
+              steps: ['Il palmo sinistro «inspira» e il destro «espira», 5–10 cicli; poi inverti.', 'Variante: inspira con i piedi ed espira con i palmi; poi metà del corpo inspira e l\'altra metà espira.', 'Dita: il pollice destro inspira e il pollice sinistro espira, poi l\'indice e così via; alla fine tutte le dita di una mano inspirano e quelle dell\'altra espirano.', 'Durata 5–10 minuti; senza fastidi si può aumentare.'],
+              feel: 'Correnti e formicolii che seguono il ritmo del respiro.',
+              purpose: 'Per il metodo migliora lo scambio energetico, la respirazione, la circolazione, il metabolismo e il tono dei vasi cerebrali.',
+              physio: 'Respiro lento e attenzione che si sposta: effetto calmante plausibile. Gli effetti su vasi e metabolismo non sono dimostrati.',
+              src: ['forum', 'ua1'] },
+            { id: 's1_three', lvl: 's1', it: 'Tre centri della forza vitale', ru: 'Три центра жизненной силы', mode: 'solo', eyes: 'aperti', min: 3, eff: 2, ease: 4,
+              pos: 'In piedi, braccia rilassate, palmi un po\' aperti.',
+              steps: ['Inspirando, «assorbi» energia dai tre centri superiori: i due palmi e la bocca.', 'Portala fino al plesso solare e trattieni il respiro per una frazione di secondo.', 'Espirando, falla scendere e uscire dai tre centri inferiori: il perineo e le piante dei due piedi.', 'Ripeti con calma, senza forzare l\'apnea.'],
+              feel: 'Flusso dall\'alto verso il basso, calore ai piedi.',
+              purpose: 'Rinforzare i «canali» e lo scambio tra campo esterno e interno; attivare le braccia, le gambe e l\'«anello dell\'immortalità».',
+              physio: 'Respiro diaframmatico con attenzione che scende verso i piedi: utile per calmarsi. Nessuna prova dei «canali».',
+              src: ['ua1', 'biblio'] },
+            { id: 's1_vpump', lvl: 's1', it: 'Pompaggio verticale', ru: 'Вертикальная прокачка', mode: 'coppia', eyes: 'aperti', min: 5, eff: 0, ease: 2,
+              pos: 'Insegnante e allievo uno di fronte all\'altro. L\'allievo sta fermo e calmo, attento alle sensazioni.',
+              steps: ['L\'insegnante appoggia i palmi paralleli sulla zona occipitale e parietale della testa dell\'allievo, poi il palmo destro sulla zona parietale.', 'Senza immagini mentali, solo con le sensazioni, dirige un flusso verticale dalla testa ai piedi e ritorno, accompagnandolo con le mani.', 'L\'allievo respira dalla bocca, lingua appoggiata al palato, labbra quasi chiuse.'],
+              feel: 'Correnti verticali, calore, oscillazione.',
+              purpose: 'Rinforzare i flussi verticali di energia «solare e cosmica». Dal secondo incontro, dopo la misura del campo, gli allievi lo fanno l\'uno per l\'altro.',
+              physio: 'Il contatto e la presenza dell\'altro rilassano; nessuna prova di flussi energetici.',
+              src: ['ua1', 'biblio', 'mod'] },
+            { id: 's1_hpump', lvl: 's1', it: 'Pompaggio orizzontale', ru: 'Горизонтальная прокачка', mode: 'coppia', eyes: 'aperti', min: 8, eff: 0, ease: 2,
+              pos: 'L\'allievo è sdraiato a pancia in giù, braccia lungo il corpo, rilassato.',
+              steps: ['L\'operatore «attiva» il centro appena sotto l\'ombelico con movimenti a lisciare di entrambe le mani.', 'Con brevi movimenti morbidi «a fontanella» solleva l\'energia fino all\'altezza delle braccia tese: prima dal fianco sinistro, poi dalla testa, poi dal fianco destro.', 'Stabilito il contatto con il centro, dirige il flusso lungo la colonna fino alla testa.', 'L\'allievo si gira sulla schiena e raccoglie il flusso dalla testa portandolo all\'ombelico.'],
+              feel: 'Calore, densità, rilassamento profondo.',
+              purpose: 'Per il metodo attiva le cellule e il metabolismo; viene proposto anche nelle riacutizzazioni di malattie croniche, ogni 3–4 ore.',
+              physio: 'Rilassamento indotto dalla posizione e dal contatto; nessuna prova sull\'infiammazione.',
+              caution: 'Non sostituisce le cure: nelle riacutizzazioni di una malattia cronica serve il medico.',
+              src: ['studGP', 'rtGP', 'ua1'] },
+            { id: 's1_ipump', lvl: 's1', it: 'Pompaggio interno (raffreddore)', ru: 'Внутренняя прокачка', mode: 'solo', eyes: 'aperti', min: 5, eff: 0, ease: 3, partial: true,
+              pos: 'Seduti o in piedi.',
+              steps: ['Si «pompa» l\'energia dentro il corpo e fuori, alternando, nella zona dolente.', 'Il metodo indica di continuare finché il dolore scompare.'],
+              feel: '', purpose: 'Rinforzare le difese nel raffreddore.', physio: 'Nessuna prova; il raffreddore guarisce da solo in 7–10 giorni.', src: ['galactic', 'ua1'] },
+            { id: 's1_bell_low', lvl: 's1', it: 'Campana inferiore', ru: 'Нижний колокол', mode: 'solo', eyes: 'aperti', min: 2, eff: 0, ease: 3,
+              pos: 'Piedi alla larghezza delle spalle, ginocchia leggermente piegate, palmi rivolti verso il corpo e un po\' aperti.',
+              steps: ['Immagina una campana rivolta verso il basso: il vertice al centro della testa, la base all\'altezza della punta delle dita.', 'Fissa il vertice al centro della testa, come se la campana vi fosse appesa.', 'Con le mani fai oscillare e ruotare lentamente il bordo della campana, prima in un senso e poi nell\'altro.'],
+              feel: 'Pressione sulla testa, densità attorno al corpo.',
+              purpose: 'Lavorare con le due «valvole», superiore e inferiore, da cui per il metodo l\'energia entra nel corpo; rinforzare i centri e i vasi del cervello.',
+              physio: 'Immagine guidata con movimento lento delle braccia; nessuna prova sui vasi cerebrali.',
+              caution: 'Il metodo stesso chiede prudenza (1–2 minuti) con pressione alta, problemi della testa o del bacino, ristagni e cisti.',
+              src: ['studKD', 'rtBell', 'ua1'] },
+            { id: 's1_bell_up', lvl: 's1', it: 'Campana superiore', ru: 'Верхний колокол', mode: 'solo', eyes: 'aperti', min: 2, eff: 0, ease: 3,
+              pos: 'Piedi alla larghezza delle spalle, ginocchia leggermente piegate, braccia sollevate e un po\' piegate.',
+              steps: ['Immagina la campana rivolta verso l\'alto: il vertice al centro del perineo, la base verso l\'alto.', 'Sentito il vertice, «afferra» la sensazione del campo attorno alla testa e spostala lentamente con le mani: avanti e indietro, a destra e a sinistra, a semicerchio.', 'Cerca la sensazione di un elastico teso tra il centro della testa e il centro del perineo.', 'Lascia che le «mani energetiche» continuino da sole e la campana le segua.'],
+              feel: 'Compressione e densità nella testa, espansione nel centro inferiore.',
+              purpose: 'Sviluppare i due centri energetici, quello al centro della testa e quello al centro del perineo.',
+              physio: 'Immagine guidata e movimento lento; nessuna prova dei centri.',
+              caution: 'Con pressione alta, problemi circolatori, del bacino o della testa: solo 1–2 minuti e con delicatezza, come indica il metodo.',
+              src: ['studKD', 'rtBell', 'ua1'] },
+            { id: 's1_dragon', lvl: 's1', it: 'Dragone', ru: 'Дракон', mode: 'solo', eyes: 'aperti', min: 3, eff: 1, ease: 3,
+              pos: 'Ideale la posizione del cavaliere («il drago seduto sulla coda»); si può fare anche seduti o sdraiati. Gomiti piegati, palmi all\'altezza delle spalle rivolti verso l\'alto.',
+              steps: ['Respira dalla bocca, lingua leggermente appoggiata al palato, labbra quasi chiuse.', 'Inspirando, l\'energia entra dai tre punti inferiori (le piante dei piedi e il perineo) e sale fino al diaframma.', 'Espirando, sale ancora ed esce dai tre punti superiori: i palmi e la bocca.', 'Tieni le mani come imbuti, così che il flusso scorra lungo l\'interno delle braccia; bacino e colonna seguono con un\'onda morbida.'],
+              feel: 'Corrente che sale dal basso, calore alle mani.',
+              purpose: 'Rinforzare da soli i flussi verticali «solare e cosmico». A differenza del pompaggio verticale non serve un partner.',
+              physio: 'La posizione del cavaliere è un lavoro isometrico delle gambe; respiro lento. Nessuna prova dei flussi.',
+              src: ['studKD', 'ua1', 'biblio'] },
+            { id: 's1_circle', lvl: 's1', it: 'Grande cerchio («città rumorosa»)', ru: 'Большой круг («шумный город»)', mode: 'solo', eyes: 'aperti', min: 3, eff: 1, ease: 4,
+              pos: 'Seduti o sdraiati.',
+              steps: ['Porta la sensazione nella zona iliaca destra, dove comincia il colon (oppure all\'ombelico se ti interessa l\'intestino tenue).', 'Falla girare sull\'addome in senso orario, a cerchio o a spirale.', 'Prova ad accelerarla, rallentarla, fermarla in un punto qualsiasi del cerchio.'],
+              feel: 'Calore e movimento nell\'addome.',
+              purpose: 'Per il metodo migliora il funzionamento dell\'intestino.',
+              physio: 'Aggiungere un vero massaggio addominale in senso orario lungo il colon rende la pratica più concreta: il massaggio addominale ha qualche prova contro la stitichezza.',
+              src: ['studBK', 'biblio'] },
+            { id: 's1_splash', lvl: 's1', it: 'Splash (scarica di energia)', ru: 'Всплеск', mode: 'solo', eyes: 'chiusi → aperti', min: 2, eff: 0, ease: 3,
+              pos: 'In piedi o seduti, occhi chiusi.',
+              steps: ['Raccogli la sensazione nel basso ventre, sotto l\'ombelico.', 'Falla risalire lungo la colonna e forma una «palla» all\'altezza del collo.', 'Quando la sensazione arriva alla testa (afflusso, senso di espansione), apri di colpo gli occhi e «versa fuori» l\'energia attraverso lo sguardo.', 'Guarda lontano per 30–60 secondi lasciando che l\'energia defluisca.'],
+              feel: 'Prima una sensazione di energia, poi dopo qualche secondo pressione e piccoli spasmi agli occhi.',
+              purpose: 'Per il metodo ricarica il cervello in pochi secondi; nella 2ª Stupen serve a «riempire» lo schermo interiore.',
+              physio: 'Nessuna prova. La pressione agli occhi è un segnale da non forzare.',
+              caution: 'Evitarlo con glaucoma, problemi di retina o pressione alta non controllata.',
+              src: ['ua1', 'biblio'] },
+            { id: 's1_ray_pair', lvl: 's1', it: 'Raggio in coppia', ru: 'Лучик (в паре)', mode: 'coppia', eyes: 'aperti', min: 5, eff: 0, ease: 3,
+              pos: 'In coppia, da 20 cm fino a 5–7 m.',
+              steps: ['Si concentra l\'attenzione sui polpastrelli e si «proietta» un raggio sottile verso il palmo o il corpo del partner.', 'Il partner dice «C\'è» quando avverte puntura o calore.', 'La distanza aumenta progressivamente.'],
+              feel: 'Il partner riferisce puntura o calore.', purpose: 'Sensibilità e controllo del raggio.',
+              physio: 'Senza un controllo in cieco le risposte del partner riflettono l\'aspettativa. Per verificarlo davvero, il partner deve tenere gli occhi chiusi e non sapere quando parte il raggio.',
+              src: ['ua1', 'biblio'] },
+            { id: 's1_subst', lvl: 's1', it: 'Sostanze primordiali (livello 1.2)', ru: 'Первоэлементы', mode: 'coppia', eyes: 'aperti', min: 10, eff: 0, ease: 3, partial: true,
+              pos: 'In piedi, con un partner.',
+              steps: ['Si evocano le proprietà fisiche e tattili delle sostanze primordiali: la densità solida della Terra, la fluidità dell\'Acqua, l\'espansione calda del Fuoco, la leggerezza del Cielo.', 'Il partner riferisce che cosa percepisce.'],
+              feel: 'Densità, fluidità, calore, leggerezza.', purpose: 'Distinguere qualità diverse dell\'energia (nel documento originale: «Stupen 1.2 · Sostanze»).',
+              physio: 'Esercizio di immaginazione sensoriale; nessuna prova di trasmissione al partner.', src: ['uaPdf', 'rtBase'] },
+            { id: 's1_aid', lvl: 's1', it: 'Pronto soccorso del metodo', ru: 'Скорая помощь', mode: 'coppia', eyes: 'aperti', min: 10, eff: 0, ease: 2,
+              pos: '—',
+              steps: ['Febbre improvvisa (40–41 °C): Campana inferiore e «pompaggio della testa», portando il flusso verso il basso e fuori dai piedi. Per il metodo l\'obiettivo è scendere verso 38 °C.', 'Pressione alta: si sposta l\'energia dalla testa lungo la colonna verso le gambe con passaggi delle mani dall\'alto in basso e la sensazione di pesantezza ai piedi.', 'Pressione bassa e svenimento: Splash concentrando la carica nell\'addome e portandola verso la testa, insieme al massaggio tibetano.'],
+              feel: '', purpose: 'Interventi immediati secondo il metodo.',
+              physio: 'Nessuna prova di efficacia. Sono situazioni mediche reali.',
+              caution: 'Prima di tutto il soccorso vero: febbre sopra 39,5 °C che non scende, rigidità del collo, confusione, svenimento con dolore al petto o difficoltà di respiro, pressione molto alta con mal di testa forte o sintomi neurologici → 112. Chi sviene va sdraiato a gambe sollevate. Le pratiche del metodo possono solo accompagnare, mai sostituire.',
+              src: ['mod', 'stud'] },
+            // ---------- 2ª STUPEN ----------
+            { id: 's2_screen', lvl: 's2', it: 'Schermo interiore', ru: 'Экран', mode: 'solo', eyes: 'chiusi', min: 8, eff: 1, ease: 3,
+              pos: 'Seduti comodi, occhi chiusi.',
+              steps: ['Immagina un punto bianco brillante.', 'Allungalo in una linea orizzontale bianca, poi aprila in uno schermo rettangolare bianco.', '«Riempi» lo schermo con lo Splash, dirigendo l\'energia sulla superficie luminosa.', 'Cambia il colore dello schermo: dal bianco al blu, dal blu al rosso, dal rosso al verde, dal verde di nuovo al bianco.', 'Su schermo bianco disegna una cornice quadrata a linee nere, scrivi al centro il numero 1 e fallo ruotare come la lancetta di un orologio fino alla posizione orizzontale.'],
+              feel: 'Immagini sempre più stabili e nitide.',
+              purpose: 'Costruire lo strumento principale della 2ª Stupen: lo schermo su cui il «biocomputer» mostra le risposte alle domande.',
+              physio: 'È un buon allenamento dell\'immaginazione visiva: con la pratica vividezza e stabilità delle immagini mentali migliorano. Che lo schermo dia informazioni nuove non è dimostrato.',
+              src: ['neo2', 'biblio', 'rtS2'] },
+            { id: 's2_dark', lvl: 's2', it: 'Spazio scuro', ru: 'Тёмное пространство', mode: 'coppia', eyes: 'chiusi', min: 5, eff: 0, ease: 3,
+              pos: 'Seduti, occhi chiusi, dopo il rilassamento.',
+              steps: ['L\'insegnante chiede di osservare con attenzione lo spazio scuro e confortevole davanti agli occhi chiusi.', 'L\'allievo descrive tutto quello che compare: luci, forme, colori.'],
+              feel: 'Fosfeni, macchie di luce, forme.', purpose: 'Avvicinarsi allo schermo interiore.',
+              physio: 'Le luci a occhi chiusi sono fosfeni, attività normale del sistema visivo.', src: ['neo2', 'biblio'] },
+            { id: 's2_colors', lvl: 's2', it: 'Colori attraverso le sensazioni', ru: 'Цвет через ощущения', mode: 'coppia', eyes: 'chiusi', min: 10, eff: 0, ease: 2,
+              pos: 'Occhi chiusi o maschera.',
+              steps: ['Si riconoscono fogli colorati con le sensazioni: toccandoli, tenendoli in mano o avvicinandoli alla testa.', 'Il metodo collega ogni colore a una sensazione (caldo, freddo, densità) da memorizzare.'],
+              feel: '', purpose: 'Preparare la percezione «senza occhi».',
+              physio: 'Con occhi solo chiusi o maschera non sigillata si può intravedere il colore. Un test valido richiede buste opache sigillate e un esaminatore che non conosce il colore.',
+              src: ['neo2'] },
+            { id: 's2_plot', lvl: 's2', it: 'Scena virtuale con memoria e immaginazione', ru: 'Виртуальный сюжет через память и воображение', mode: 'solo', eyes: 'chiusi', min: 8, eff: 1, ease: 3,
+              pos: 'Seduti, occhi chiusi.',
+              steps: ['Sullo schermo interiore si richiama una scena dalla memoria.', 'La si anima e la si modifica con l\'immaginazione.'],
+              feel: '', purpose: 'Controllare le immagini sullo schermo.',
+              physio: 'Allenamento dell\'immaginazione, simile alle tecniche di visualizzazione usate nello sport.', src: ['neo2'] },
+            { id: 's2_wax', lvl: 's2', it: 'Corpo di cera', ru: 'Восковое тело', mode: 'solo', eyes: 'benda', min: 10, eff: 0, ease: 1,
+              pos: 'Seduti o in piedi, benda opaca.',
+              steps: ['Si «condensa» il doppio energetico interiore fino a percepirlo al tatto come una struttura densa e malleabile, simile alla cera d\'api.', 'Il metodo lo collega allo spostamento nel «primo punto di assemblaggio».'],
+              feel: '', purpose: 'Base per il lavoro sui punti di assemblaggio.', physio: 'Nessuna base verificabile.', src: ['neo2', 'rtS2'] },
+            { id: 's2_points', lvl: 's2', it: 'Punti di assemblaggio e doppio', ru: 'Точки сборки · Двойник', mode: 'solo', eyes: 'chiusi', min: 10, eff: 0, ease: 1,
+              pos: '—',
+              steps: ['Lavoro sui «punti di assemblaggio» (esercizio n. 37 della 2ª Stupen).', 'Dalla posizione del primo punto si cerca una visione volumetrica in sei direzioni insieme; il «secondo punto» corrisponde al «Doppio».'],
+              feel: '', purpose: 'Visione volumetrica interiore.', physio: 'Nessuna base verificabile.', src: ['neo2'] },
+            { id: 's2_fantom', lvl: 's2', it: 'Fantom e proiezione', ru: 'Фантом', mode: 'solo', eyes: 'benda', min: 10, eff: 0, ease: 1,
+              pos: 'Seduti o in piedi, benda opaca.',
+              steps: ['Si «proietta» a distanza il braccio o l\'intero corpo energetico per toccare oggetti, pareti e persone, cercando di rilevarne forma e temperatura a occhi coperti.'],
+              feel: '', purpose: 'Percezione a distanza.', physio: 'Nessuna prova controllata.', src: ['biblio', 'rtS2'] },
+            // ---------- 3ª STUPEN ----------
+            { id: 's3_direct', lvl: 's3', it: 'Visione diretta in maschera', ru: 'Прямое видение', mode: 'coppia', eyes: 'benda', min: 20, eff: 0, ease: 1,
+              pos: 'Seduti al tavolo, maschera opaca.',
+              steps: ['Con lo schermo interiore attivo, si cerca di orientarsi nell\'ambiente, riconoscere colori e oggetti e leggere un testo a occhi bendati.', 'Il metodo sostiene che si possa arrivare a vedere anche senza occhi.'],
+              feel: '', purpose: 'Percepire il mondo senza gli organi di senso abituali.',
+              physio: 'Nelle verifiche controllate il fenomeno non ha retto: vedi «Verifiche indipendenti» più sotto.',
+              src: ['neo3', 'biblio'] },
+            { id: 's3_scan', lvl: 's3', it: 'Scansione e correzione della salute', ru: 'Диагностика и коррекция', mode: 'coppia', eyes: 'benda', min: 20, eff: 0, ease: 1,
+              pos: '—',
+              steps: ['Con lo schermo si «osservano» gli organi propri o di altri e si «corregge» lo stato di salute.'],
+              feel: '', purpose: 'Diagnosi e correzione secondo il metodo.', physio: 'Nessuna prova.',
+              caution: 'Non sostituisce mai una diagnosi medica.', src: ['neo3'] },
+            // ---------- 4ª STUPEN ----------
+            { id: 's4_world', lvl: 's4', it: 'Coscienza universale e telepatia', ru: 'Мировое сознание · телепатия', mode: 'coppia', eyes: 'aperti / chiusi', min: 20, eff: 0, ease: 1,
+              pos: '—',
+              steps: ['Sintonia di frequenza tra due o più operatori anche a grande distanza, per trasmettere e ricevere immagini e stati interiori.', 'Il metodo cita anche un «calcolatore mentale» per numeri enormi e un «orologio» interiore preciso.'],
+              feel: '', purpose: 'Configurazione di coscienza del livello più alto.', physio: 'Nessuna prova controllata di telepatia.', src: ['biblio'] }
+        ];
+        let bronFilter = 'all', bronSoloOnly = false;
+        const bronEvi = e => e >= 3 ? ['evi-sci', 'Prove indirette'] : e === 2 ? ['evi-trad', 'Prove scarse'] : e === 1 ? ['evi-trad', 'Nessuna prova (utile come cornice)'] : ['evi-spec', 'Nessuna prova'];
+        function bronCard(x) {
+            const lv = BRON_LEVELS[x.lvl], ev = bronEvi(x.eff);
+            const num = x.n ? `${lv[0]} · n. ${x.n}` : lv[0];
+            const src = (x.src || []).map(k => BS[k] ? `<a href="${BS[k][1]}" target="_blank" rel="noopener" class="underline text-sage-700">${BS[k][0]}</a>` : '').filter(Boolean).join(' · ');
+            return `<details id="bx-${x.id}" class="bron-card group bg-white rounded-xl border border-stone-200 shadow-sm open:shadow-md">
+                <summary class="cursor-pointer list-none p-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span class="text-[10px] uppercase tracking-wide font-bold text-terracotta-600">${num}</span>
+                    <span class="font-bold text-stone-900">${x.it}</span>
+                    <span class="text-xs text-stone-500">${x.ru}</span>
+                    <span class="ml-auto flex flex-wrap gap-1 text-[10px]">
+                        <span class="px-1.5 py-0.5 rounded bg-stone-100 text-stone-700">${x.mode === 'solo' ? 'da soli' : 'in coppia / con istruttore'}</span>
+                        <span class="px-1.5 py-0.5 rounded bg-stone-100 text-stone-700">occhi ${x.eyes}</span>
+                        <span class="px-1.5 py-0.5 rounded bg-stone-100 text-stone-700">${x.min} min</span>
+                        <span class="evi ${ev[0]}">${ev[1]}</span>
+                    </span>
+                </summary>
+                <div class="px-4 pb-4 space-y-2 text-sm text-stone-700">
+                    ${x.partial ? '<p class="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-1">Descrizione parziale: le fonti consultabili non riportano tutti i passaggi. La tecnica completa è nei video indicati.</p>' : ''}
+                    ${x.pos && x.pos !== '—' ? `<p><strong class="text-sage-800">Posizione:</strong> ${x.pos}</p>` : ''}
+                    <ol class="list-decimal pl-5 space-y-1">${x.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+                    ${x.feel ? `<p><strong class="text-sage-800">Cosa si dovrebbe sentire (secondo il metodo):</strong> ${x.feel}</p>` : ''}
+                    ${x.purpose ? `<p><strong class="text-sage-800">Scopo dichiarato:</strong> ${x.purpose}</p>` : ''}
+                    ${x.physio ? `<p><span class="evi ${ev[0]}">${ev[1]}</span> ${x.physio}</p>` : ''}
+                    ${x.caution ? `<p class="text-red-800 bg-red-50 border border-red-200 rounded px-2 py-1 text-xs"><strong>Attenzione:</strong> ${x.caution}</p>` : ''}
+                    ${x.ref ? `<p><button onclick="bronOpen('${x.ref}')" class="underline text-terracotta-700 text-xs font-bold">Vai alla scheda completa →</button></p>` : ''}
+                    ${src ? `<p class="text-[11px] text-stone-500"><strong>Fonti:</strong> ${src}</p>` : ''}
+                </div>
+            </details>`;
+        }
+        function renderBronnikov() {
+            const wrap = document.getElementById('bron-catalog');
+            if (!wrap) return;
+            const levels = ['prep', 's1', 's2', 's3', 's4'];
+            const btn = (v, l) => `<button onclick="bronFilter='${v}';renderBronnikov()" class="px-3 py-1.5 rounded-lg text-xs font-bold border ${bronFilter === v ? 'bg-sage-800 text-white border-sage-800' : 'bg-white text-stone-700 border-stone-300 hover:border-sage-600'}">${l}</button>`;
+            document.getElementById('bron-filters').innerHTML = btn('all', 'Tutti i livelli') + levels.map(k => btn(k, BRON_LEVELS[k][0])).join('') +
+                `<label class="flex items-center gap-1.5 text-xs text-stone-700 ml-2"><input id="bron-solo" type="checkbox" ${bronSoloOnly ? 'checked' : ''} onchange="bronSoloOnly=this.checked;renderBronnikov()" class="accent-amber-600"> solo esercizi da fare da soli</label>`;
+            wrap.innerHTML = levels.filter(k => bronFilter === 'all' || bronFilter === k).map(k => {
+                const list = BRON_EX.filter(x => x.lvl === k && (!bronSoloOnly || x.mode === 'solo'));
+                if (!list.length) return '';
+                const lv = BRON_LEVELS[k];
+                return `<div class="space-y-2">
+                    <div class="flex flex-wrap items-baseline gap-2 pt-2"><h4 class="text-lg font-bold text-sage-800">${lv[0]}</h4><span class="text-xs text-stone-500">${lv[1]}</span><span class="text-xs text-stone-400">· ${list.length} esercizi</span></div>
+                    <p class="text-xs text-stone-600">${lv[2]}</p>
+                    ${list.map(bronCard).join('')}
+                </div>`;
+            }).join('');
+        }
+        function bronOpen(id) {
+            if (bronFilter !== 'all') { bronFilter = 'all'; renderBronnikov(); }
+            if (bronSoloOnly && BRON_EX.find(x => x.id === id && x.mode !== 'solo')) { bronSoloOnly = false; renderBronnikov(); }
+            const el = document.getElementById('bx-' + id);
+            if (el) { el.open = true; el.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+        }
+
+        // ---------- Pratica guidata (1ª Stupen, da soli) ----------
+        const BRON_SESSIONS = {
+            breve: [
+                ['prep0', 'Posizione dell\'osservatore', 60, [[0, 'In piedi, occhi aperti, respiro naturale. Osserva le sensazioni senza giudicarle.'], [30, 'Regola del metodo: quando senti qualcosa, rispondi tra te «C\'è». Niente immagini forzate, solo sensazioni.']]],
+                ['s1_hands', 'Palla, fisarmonica, raggio', 180, [[0, 'Strofina i palmi finché sono caldi, poi allontanali piano: senti la palla.'], [60, 'Fisarmonica: avvicina e allontana i palmi, come a comprimere e tirare una molla.'], [120, 'Raggio: palmi a 15–20 cm, un raggio va da un palmo all\'altro. Disegna un cerchio sul palmo con l\'indice.']]],
+                ['s1_tibet', 'Massaggio secco tibetano', 240, [[0, 'Strofina il braccio destro: lato esterno dalla spalla alle dita, lato interno dalle dita alla spalla, fino al calore.'], [60, 'Ora il braccio sinistro, allo stesso modo.'], [120, 'Inspirando tira la sensazione dal collo lungo l\'esterno del braccio fino alle dita; espirando spingila dentro risalendo all\'interno.'], [180, 'Massaggia il coccige, raccogli la sensazione e spingila fino ai reni; espira con decisione.']]],
+                ['s1_heavy_st', 'Pesantezza e leggerezza', 180, [[0, '«Che il corpo diventi pesante.» Lascia che la pesantezza arrivi.'], [60, '«Che il corpo diventi leggero.» Senti la leggerezza.'], [120, 'Metà superiore pesante, metà inferiore leggera. Poi inverti.']]],
+                ['s1_bell_low', 'Campana inferiore', 120, [[0, 'Ginocchia morbide, palmi verso il corpo. Il vertice della campana è al centro della testa, la base alla punta delle dita.'], [60, 'Fai ruotare lentamente il bordo della campana con le mani, prima in un senso poi nell\'altro.']]],
+                ['s1_splash', 'Splash', 60, [[0, 'Occhi chiusi. Raccogli la sensazione sotto l\'ombelico e falla salire lungo la colonna fino al collo.'], [25, 'Quando arriva alla testa apri di colpo gli occhi e guarda lontano, senza sforzare.']]],
+                ['end', 'Chiusura', 60, [[0, 'Torna al respiro naturale. Nota come ti senti rispetto all\'inizio.'], [30, 'Scuoti mani e piedi. Se hai mal di testa o pressione agli occhi, la prossima volta accorcia gli esercizi.']]]
+            ],
+            completa: [
+                ['prep0', 'Posizione dell\'osservatore', 60, [[0, 'In piedi, occhi aperti, respiro naturale. Osserva le sensazioni senza giudicarle.'], [30, 'Quando senti qualcosa, rispondi tra te «C\'è». Niente immagini forzate, solo sensazioni.']]],
+                ['s1_hands', 'Palla, fisarmonica, raggio', 300, [[0, 'Strofina i palmi finché sono caldi, poi allontanali piano: senti la palla e falla ruotare.'], [100, 'Fisarmonica: avvicina e allontana i palmi, come a comprimere e tirare una molla.'], [200, 'Raggio: palmi a 15–20 cm, il raggio va e torna. Poi con l\'indice disegna sul palmo quadrato, triangolo, cerchio.']]],
+                ['s1_tibet', 'Massaggio secco tibetano', 300, [[0, 'Strofina il braccio destro: esterno dalla spalla alle dita, interno dalle dita alla spalla, fino al calore.'], [60, 'Ora il braccio sinistro.'], [120, 'Inspirando tira la sensazione dal collo lungo l\'esterno del braccio fino alle dita; espirando spingila dentro risalendo all\'interno. Un braccio, poi l\'altro.'], [210, 'Massaggia il coccige, raccogli la sensazione come in due coppe e spingila fino ai reni; espira con decisione.']]],
+                ['s1_heavy_st', 'Pesantezza e leggerezza', 240, [[0, '«Che il corpo diventi pesante.»'], [60, '«Che il corpo diventi leggero.»'], [120, 'Metà superiore pesante, inferiore leggera; poi inverti.'], [180, 'Metà sinistra pesante, destra leggera; poi inverti.']]],
+                ['s1_palms', 'Respiro con i palmi', 180, [[0, 'Palmi uno di fronte all\'altro: il sinistro inspira, il destro espira.'], [60, 'Inverti: il destro inspira, il sinistro espira.'], [120, 'Dita: pollice destro inspira, pollice sinistro espira; poi indice, medio, anulare, mignolo.']]],
+                ['s1_three', 'Tre centri', 120, [[0, 'Inspira dai palmi e dalla bocca fino al plesso solare; una frazione di secondo di pausa.'], [40, 'Espira facendo scendere e uscire dal perineo e dalle piante dei piedi. Continua con calma.']]],
+                ['s1_bell_low', 'Campana inferiore', 120, [[0, 'Ginocchia morbide, palmi verso il corpo. Vertice al centro della testa, base alla punta delle dita.'], [60, 'Fai ruotare lentamente il bordo della campana, prima in un senso poi nell\'altro.']]],
+                ['s1_bell_up', 'Campana superiore', 120, [[0, 'Braccia sollevate. Vertice al centro del perineo, base verso l\'alto.'], [40, 'Sposta con le mani il campo attorno alla testa: avanti, indietro, ai lati, a semicerchio. Con pressione alta fermati dopo un minuto.']]],
+                ['s1_dragon', 'Dragone', 180, [[0, 'Posizione del cavaliere, palmi in su all\'altezza delle spalle, lingua al palato, respiro dalla bocca.'], [40, 'Inspira dai piedi e dal perineo fino al diaframma.'], [90, 'Espira facendo salire e uscire dai palmi e dalla bocca; bacino e colonna seguono con un\'onda morbida.']]],
+                ['s1_circle', 'Grande cerchio', 120, [[0, 'Seduti. Porta la sensazione nella zona iliaca destra e falla girare in senso orario sull\'addome.'], [60, 'Accelera, rallenta, fermala in un punto. Puoi accompagnarla con un vero massaggio in senso orario.']]],
+                ['s1_splash', 'Splash', 60, [[0, 'Occhi chiusi. Raccogli sotto l\'ombelico e fai salire lungo la colonna fino al collo.'], [25, 'Quando arriva alla testa apri di colpo gli occhi e guarda lontano, senza sforzare.']]],
+                ['end', 'Chiusura', 60, [[0, 'Torna al respiro naturale. Nota le differenze rispetto all\'inizio.'], [30, 'Scuoti mani e piedi. Giorno di pratica, giorno di riposo: così indica il metodo.']]]
+            ]
+        };
+        let bs = { kind: 'breve', idx: 0, t: 0, running: false, last: 0, sub: -1, voice: false, ctx: null };
+        function bsTotal() { return BRON_SESSIONS[bs.kind].reduce((a, s) => a + s[2], 0); }
+        function bsChime(f) {
+            try {
+                bs.ctx = bs.ctx || new (window.AudioContext || window.webkitAudioContext)();
+                const o = bs.ctx.createOscillator(), g = bs.ctx.createGain();
+                o.frequency.value = f; g.gain.setValueAtTime(0.0001, bs.ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.1, bs.ctx.currentTime + 0.05);
+                g.gain.exponentialRampToValueAtTime(0.0001, bs.ctx.currentTime + 1.2);
+                o.connect(g); g.connect(bs.ctx.destination); o.start(); o.stop(bs.ctx.currentTime + 1.3);
+            } catch (e) {}
+        }
+        function bsSay(txt) {
+            if (!bs.voice || !('speechSynthesis' in window)) return;
+            try {
+                speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(txt.replace(/[«»]/g, ''));
+                u.lang = 'it-IT'; u.rate = 0.92;
+                const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.toLowerCase().startsWith('it'));
+                if (v) u.voice = v;
+                speechSynthesis.speak(u);
+            } catch (e) {}
+        }
+        function bsToggle() {
+            bs.running = !bs.running; bs.last = performance.now();
+            const b = document.getElementById('bs-play');
+            if (b) b.textContent = bs.running ? '❚❚ Pausa' : '▶ Avvia';
+            if (bs.running && bs.t === 0 && bs.idx === 0) { bs.sub = -1; bsChime(392); }
+            if (!bs.running && 'speechSynthesis' in window) try { speechSynthesis.cancel(); } catch (e) {}
+        }
+        function bsJump(d) {
+            const S = BRON_SESSIONS[bs.kind];
+            bs.idx = Math.max(0, Math.min(S.length - 1, bs.idx + d)); bs.t = 0; bs.sub = -1;
+            bsRender(true);
+        }
+        function bsSetKind(k) { bs.kind = k; bs.idx = 0; bs.t = 0; bs.sub = -1; bs.running = false; const b = document.getElementById('bs-play'); if (b) b.textContent = '▶ Avvia'; bsRender(true); }
+        function bsRender(force) {
+            const S = BRON_SESSIONS[bs.kind], st = S[bs.idx];
+            if (!document.getElementById('bs-title')) return;
+            let sub = 0;
+            for (let i = 0; i < st[3].length; i++) if (bs.t >= st[3][i][0]) sub = i;
+            if (sub !== bs.sub || force) {
+                bs.sub = sub;
+                document.getElementById('bs-title').textContent = `${bs.idx + 1}. ${st[1]}`;
+                document.getElementById('bs-text').textContent = st[3][sub][1];
+                const nx = S[bs.idx + 1];
+                document.getElementById('bs-next').textContent = nx ? `Dopo: ${nx[1]} (${Math.round(nx[2] / 60)} min)` : 'Ultimo esercizio';
+                const link = document.getElementById('bs-card');
+                if (link) link.style.display = BRON_EX.find(x => x.id === st[0]) ? '' : 'none';
+                if (bs.running) bsSay(sub === 0 ? `${st[1]}. ${st[3][sub][1]}` : st[3][sub][1]);
+                ['breve', 'completa'].forEach(k => { const b = document.getElementById('bs-k-' + k); if (b) b.className = 'px-3 py-1.5 rounded border font-bold ' + (k === bs.kind ? 'bg-amber-500 text-stone-900 border-amber-500' : 'bg-stone-800 border-stone-600 text-stone-200'); });
+                document.getElementById('bs-steps').innerHTML = S.map((s, i) => `<li class="${i === bs.idx ? 'font-bold text-amber-300' : i < bs.idx ? 'text-stone-500 line-through' : 'text-stone-300'}">${s[1]} <span class="font-mono text-stone-500">${Math.round(s[2] / 60)}′</span></li>`).join('');
+            }
+            const done = S.slice(0, bs.idx).reduce((a, s) => a + s[2], 0) + bs.t;
+            document.getElementById('bs-bar').style.width = (bs.t / st[2] * 100).toFixed(1) + '%';
+            document.getElementById('bs-clock').textContent = `${lzjFmt(st[2] - bs.t)} · totale ${lzjFmt(done)} / ${lzjFmt(bsTotal())}`;
+        }
+        function bsLoop() {
+            requestAnimationFrame(bsLoop);
+            if (!document.getElementById('bs-title')) return;
+            const now = performance.now();
+            if (bs.running) {
+                bs.t += (now - bs.last) / 1000;
+                const S = BRON_SESSIONS[bs.kind];
+                if (bs.t >= S[bs.idx][2]) {
+                    if (bs.idx + 1 < S.length) { bs.idx++; bs.t = 0; bs.sub = -1; bsChime(440); }
+                    else { bs.running = false; bs.t = S[bs.idx][2]; document.getElementById('bs-play').textContent = '▶ Ricomincia'; bsChime(330); bs.idx = 0; bs.t = 0; bs.sub = -1; }
+                }
+            }
+            bs.last = now;
+            bsRender(false);
+        }
+        function bsOpenCard() { const st = BRON_SESSIONS[bs.kind][bs.idx]; bronOpen(st[0]); }
 
         // ==========================================
         // WEB AUDIO API SOUND SYNTHESIZER ENGINE
@@ -3522,6 +4167,7 @@
 
             if (tabId === 'ontologia' && !radarChartInstance) renderRadarChart();
             if (tabId === 'model3d') setTimeout(init3DMannequin, 50);
+            if (tabId === 'bronnikov') { renderBronnikov(); bsRender(true); }
             if (tabId === 'audio') setTimeout(() => { loopAudioVisualizer(); }, 50);
             if (tabId === 'simulatore') setTimeout(initSimCanvas, 50);
             if (tabId === 'neuro') {
@@ -3727,6 +4373,8 @@
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             initLzjPlayer();
+            renderBronnikov();
+            bsLoop();
             renderFace();
             ztLoop();
             renderGoals();
