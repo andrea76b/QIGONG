@@ -1,0 +1,2707 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scienze Bioenergetiche: Corpus delle Pratiche, Ontologia, Acustica & Simulatore 3D</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Three.js for 3D Mannequin & Dynamic Postures -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stone: {
+                            50: '#FDFBF7',
+                            100: '#F5F2EB',
+                            200: '#E6E1D5',
+                            300: '#D5CEBE',
+                            800: '#2C3E35',
+                            900: '#1C2822',
+                        },
+                        sage: {
+                            500: '#4E7D63',
+                            600: '#3D6852',
+                            700: '#2E503F',
+                            800: '#213B2E',
+                            900: '#16281F',
+                        },
+                        terracotta: {
+                            500: '#D97706',
+                            600: '#C86D51',
+                            700: '#A85238',
+                            800: '#863C26',
+                        },
+                        gold: {
+                            400: '#E6C35C',
+                            500: '#D4AF37',
+                            600: '#B89223',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 680px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 330px;
+            max-height: 420px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 370px;
+            }
+        }
+        .tab-btn.active {
+            border-bottom: 3px solid #C86D51;
+            color: #ffffff;
+            font-weight: 700;
+            background-color: rgba(200, 109, 81, 0.15);
+        }
+        .fade-in {
+            animation: fadeIn 0.35s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        canvas.sim-canvas {
+            background: radial-gradient(circle at center, #16281F 0%, #0D1712 100%);
+            border-radius: 0.75rem;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+        .three-container {
+            position: relative;
+            width: 100%;
+            height: 420px;
+            background: #0d1712;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.85);
+        }
+        .acu-label {
+            position: absolute; transform: translate(8px, -50%); pointer-events: none; white-space: nowrap;
+            font-size: 9px; line-height: 1; padding: 1px 4px; border-radius: 4px;
+            background: rgba(12, 10, 9, .72); color: #fde68a; border: 1px solid rgba(212, 175, 55, .35);
+        }
+        .evi { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; vertical-align: middle; }
+        .evi-trad { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .evi-sci { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .evi-spec { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .evi-class { background: #e0e7ff; color: #3730a3; border: 1px solid #a5b4fc; }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans antialiased min-h-screen flex flex-col selection:bg-terracotta-600 selection:text-white">
+
+<!-- Chosen Palette: Warm Serene Earth (Cream #FDFBF7, Deep Sage Green #2E503F, Terracotta Accent #C86D51, Warm Gold #D4AF37) -->
+<!-- Application Structure Plan:
+     The SPA is structured into 8 main interactive hubs designed for exhaustive study, safety rules, emergency protocols, 3D body mannequin dynamic models, audio acoustic synthesis, and realistic simulation:
+     1. Paradigma & Ontologia: Theoretical foundation contrasting Neidan Daoist alchemy, Soviet psychotronics, and Bronnikov's 4-Stupen hierarchy.
+     2. Principi di Sicurezza & Pronto Soccorso: Safety rules (Observer, Signal "C'è", Open Eyes, Pairwork 1-7m) and bioenergetic emergency interventions (Fever, Hypertension, Syncope).
+     3. Corpus Integrale delle Pratiche & Finalità: Expanded directory of classical, Bronnikov basic (Palla, Raggio, Campana, Splash, Prochacka), and advanced techniques.
+     4. Modelli Dinamici 3D delle Posizioni e Respirazioni: Interactive 3D anatomical mannequin (Three.js) performing Qi Gong postures (Zhan Zhuang, Ma Bu) and Bronnikov postures (Ball, Bell, Jing Zuo, Supine Prochacka) with breathing expansion and bio-field particles.
+     5. Teoria Acustica, Suoni Curativi & Generatore Audio Sonoro: Web Audio API sound generator synthesizing Liu Zi Jue healing frequencies, Binaural brainwave entrainment (Delta/Theta/Alpha/Gamma), and singing bowl ambient drones with real-time visualizer canvas.
+     6. Simulatore Campo Bioenergetico: Particle canvas simulator for bioenergy flow, breath dynamics, and mental screen projection.
+     7. Testi Classici & Xingqi Explorer: Interactive step-by-step analyzer for the 12-sided Jade Inscription (Xingqi Yupei Ming), Tai Xi Jing, and Liu Zi Jue.
+     8. Neurofisiologia & Oscilloscopio EEG: Live simulated EEG wave generator with real-time spectrum analysis comparing awake, meditative, and Bronnikov super-conscious states.
+     9. Archivio Multimediale Open-Source: Filterable repository linking primary Russian and Chinese video/text archives.
+     WHY THIS STRUCTURE: Unifying safety rules, audio sound synthesis, 3D anatomical posture models, bio-protocols, 4-tier methodology, and classical sources provides an unmatched clinical and practical bioenergetic learning system. -->
+<!-- Visualization & Content Choices:
+     1. 3D Anatomical Mannequin (Three.js WebGL) -> Goal: Render dynamic 3D postures (Zhan Zhuang, Ma Bu, Ball, Bell, Jing Zuo, Supine) with chest expansion and energy vectors -> Interactive controls -> Justification: Replaces static diagrams with real 360-degree joint manipulation and breathing sync.
+     2. Web Audio Synthesizer (Vanilla JS Web Audio API) -> Goal: Synthesize real acoustic frequencies for Liu Zi Jue, Solfeggio, Binaural beats, and Singing bowls -> Interactive soundboard & visualizer.
+     3. Particle Physics Canvas (Vanilla JS HTML5 Canvas) -> Goal: Realistically render bio-energetic density, velocity, field charge, and circulation vectors -> Interactive controls -> Custom Canvas Engine.
+     4. EEG Oscilloscope Canvas -> Goal: Real-time dynamic multi-trace signal visualizer displaying brainwave interference and frequency synchronization -> Canvas HTML5.
+     5. Radar Chart (Chart.js Canvas) -> Goal: Compare energy sublimation priorities between systems -> Chart.js Canvas. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Header Navigation -->
+    <header class="bg-stone-900 text-stone-100 sticky top-0 z-50 shadow-lg border-b border-stone-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl text-terracotta-600">☯</span>
+                    <div>
+                        <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">Corpus delle Scienze Bioenergetiche</h1>
+                        <p class="text-xs text-stone-400 hidden sm:block">Dal Qi Gong Alchemico al Biocomputer Umano & Acustica Vibrazionale</p>
+                    </div>
+                </div>
+                <div class="hidden xl:flex space-x-1 text-xs font-semibold">
+                    <button onclick="switchTab('ontologia')" id="tab-ontologia" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition active">Ontologia</button>
+                    <button onclick="switchTab('sicurezza')" id="tab-sicurezza" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Sicurezza</button>
+                    <button onclick="switchTab('corpus')" id="tab-corpus" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Corpus Pratiche</button>
+                    <button onclick="switchTab('model3d')" id="tab-model3d" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Modello 3D Posizioni</button>
+                    <button onclick="switchTab('audio')" id="tab-audio" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Acustica & Audio Synth</button>
+                    <button onclick="switchTab('simulatore')" id="tab-simulatore" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Simulatore Campo</button>
+                    <button onclick="switchTab('classici')" id="tab-classici" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Testi Classici</button>
+                    <button onclick="switchTab('neuro')" id="tab-neuro" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">EEG Neuro</button>
+                    <button onclick="switchTab('archivio')" id="tab-archivio" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Archivio Fonti</button>
+                </div>
+                <!-- Mobile Select Nav -->
+                <div class="xl:hidden">
+                    <select onchange="switchTab(this.value)" class="bg-stone-800 text-stone-200 text-xs rounded-md px-3 py-1.5 border border-stone-700 focus:outline-none">
+                        <option value="ontologia">1. Ontologia & Livelli Stupen</option>
+                        <option value="sicurezza">2. Sicurezza & Pronto Soccorso</option>
+                        <option value="corpus">3. Corpus Pratiche e Finalità</option>
+                        <option value="model3d">4. Modelli 3D Posizioni e Respirazione</option>
+                        <option value="audio">5. Teoria Acustica & Generatore Audio Sonoro</option>
+                        <option value="simulatore">6. Simulatore Campo Energetico</option>
+                        <option value="classici">7. Testi Classici & Xingqi</option>
+                        <option value="neuro">8. Neurofisiologia & Oscilloscopio EEG</option>
+                        <option value="archivio">9. Archivio & Fonti Video</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- SECTION 1: ONTOLOGIA, PARADIGMA & I 4 LIVELLI STUPEN -->
+        <section id="sec-ontologia" class="tab-content fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800 mb-4">L'Ontologia del Respiro e la Sintesi Neuro-Cibernetica</h2>
+                <p class="text-stone-700 leading-relaxed text-base sm:text-lg">
+                    Questa piattaforma costituisce il corpus integrato di consultazione per lo studio comparato dell'alchimia interna daoista (<em>Neidan</em>) e della tecnologia psicotronica sovietica formulata dall'Accademico V.M. Bronnikov ("Sviluppo Informazionale dell'Uomo" / "Ecologia dello Spirito"). Entrambi i sistemi interpretano il corpo umano come un organismo elettrodinamico complesso capace di accumulare, trasformare e condurre carica informativa, acustica e bioenergetica.
+                </p>
+            </div>
+
+            <!-- Conceptual Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-stone-100 p-6 rounded-xl border border-stone-200 hover:border-terracotta-600 transition">
+                    <div class="text-terracotta-600 text-3xl mb-2">🏮</div>
+                    <h3 class="text-lg font-bold text-sage-800 mb-2">Tre Tesori (San Bao)</h3>
+                    <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                        Trasmutazione sequenziale: <strong>Jing</strong> (materia/secrezioni corporee) raffinato in <strong>Qi</strong> (energia di rete/potenziale di membrana), che sublima in <strong>Shen</strong> (matrice cognitiva e pura consapevolezza spirituale).
+                    </p>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-xl border border-stone-200 hover:border-terracotta-600 transition">
+                    <div class="text-terracotta-600 text-3xl mb-2">⚡</div>
+                    <h3 class="text-lg font-bold text-sage-800 mb-2">Attivazione a 220 Volt</h3>
+                    <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                        <span class="evi evi-spec">Modello di Bronnikov, non fisiologia</span> Secondo la cibernetica di Bronnikov, il cervello medio e la corteccia operano in modalità di risparmio energetico (50V). Le pratiche bioenergetiche aumentano la densità di carica per sbloccare l'85% di neuroni inattivi.
+                    </p>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-xl border border-stone-200 hover:border-terracotta-600 transition">
+                    <div class="text-terracotta-600 text-3xl mb-2">🖥️</div>
+                    <h3 class="text-lg font-bold text-sage-800 mb-2">Interfaccia Biocomputer</h3>
+                    <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                        Sviluppo della visione interiore e diretta (senza uso dei fotocettori retinici) tramite sincronizzazione delle frequenze corticali e generazione del "corpo fante" o schermata mentale.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bronnikov 4 Stupen System Hierarchy -->
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200 space-y-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-terracotta-600">Progressione Metodologica</span>
+                    <h3 class="text-xl font-bold text-sage-800 mt-1">I 4 Livelli di Apprendimento del Metodo Bronnikov (Stupen 1-4)</h3>
+                    <p class="text-xs sm:text-sm text-stone-600 mt-1">
+                        Ciascuna fase prevede un percorso strutturato di 10 sessioni da 2 ore con pratica guidata e rigorosa verifica sperimentale.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                    <div class="p-4 bg-stone-50 rounded-xl border-l-4 border-sage-700 border-stone-200">
+                        <span class="text-xs font-extrabold text-sage-800 block mb-1">1ª Stupen</span>
+                        <h4 class="text-sm font-bold text-stone-900 mb-1">Ecologia dello Spirito & Autoguarigione</h4>
+                        <p class="text-xs text-stone-600 leading-relaxed">
+                            Sviluppo del biocampo, sensibilità tattile-energetica primaria, regolazione della pressione e gestione delle energie sottili per la salute organica.
+                        </p>
+                    </div>
+                    <div class="p-4 bg-stone-50 rounded-xl border-l-4 border-amber-600 border-stone-200">
+                        <span class="text-xs font-extrabold text-amber-800 block mb-1">2ª Stupen</span>
+                        <h4 class="text-sm font-bold text-stone-900 mb-1">Sviluppo del Psicobiocomputer</h4>
+                        <p class="text-xs text-stone-600 leading-relaxed">
+                            Attivazione dello Schermo Mentale interiore (Ekran), visualizzazione stabile di forme, colori, grafici e dati normalmente preclusi al conscio.
+                        </p>
+                    </div>
+                    <div class="p-4 bg-stone-50 rounded-xl border-l-4 border-terracotta-600 border-stone-200">
+                        <span class="text-xs font-extrabold text-terracotta-700 block mb-1">3ª Stupen</span>
+                        <h4 class="text-sm font-bold text-stone-900 mb-1">Visione Diretta (Senza Occhi)</h4>
+                        <p class="text-xs text-stone-600 leading-relaxed">
+                            Orientamento e lettura di testi con benda opaca sigillata. Metodo utilizzato per la riabilitazione visiva e la percezione spaziale extracorporea.
+                        </p>
+                    </div>
+                    <div class="p-4 bg-stone-50 rounded-xl border-l-4 border-gold-600 border-stone-200">
+                        <span class="text-xs font-extrabold text-gold-600 block mb-1">4ª Stupen</span>
+                        <h4 class="text-sm font-bold text-stone-900 mb-1">Telepatia & Sintonia Informazionale</h4>
+                        <p class="text-xs text-stone-600 leading-relaxed">
+                            Trasmissione di pacchetti informativi a grande distanza, sincronizzazione di frequenza tra operatori e percezione dei campi sottili remoti.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Radar Chart Box -->
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <div class="mb-4">
+                    <h3 class="text-xl font-bold text-sage-800">Matrice Comparativa di Sublimazione Energetica</h3>
+                    <p class="text-xs sm:text-sm text-stone-600 mt-1">
+                        Confronto tra le priorità operative del Qi Gong tradizionale e le metriche di calibrazione cibernetica del Metodo Bronnikov.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button onclick="updateRadarChart('all')" class="px-3 py-1.5 text-xs font-semibold rounded-full bg-sage-700 text-white hover:bg-sage-800 transition">Entrambi i Sistemi</button>
+                    <button onclick="updateRadarChart('qigong')" class="px-3 py-1.5 text-xs font-semibold rounded-full bg-stone-200 text-stone-700 hover:bg-stone-300 transition">Solo Qi Gong</button>
+                    <button onclick="updateRadarChart('bronnikov')" class="px-3 py-1.5 text-xs font-semibold rounded-full bg-stone-200 text-stone-700 hover:bg-stone-300 transition">Solo Bronnikov</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: PRINCIPI DI SICUREZZA & PRONTO SOCCORSO BIOENERGETICO -->
+        <section id="sec-sicurezza" class="tab-content hidden fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800 mb-4">Regole di Sicurezza Operativa & Pronto Soccorso Bioenergetico</h2>
+                <p class="text-stone-700 leading-relaxed text-base sm:text-lg">
+                    L'addestramento bioenergetico richiede il rispetto rigoroso dei protocolli fisiologici per prevenire sovraccarichi vascolari o sbilanciamenti del sistema nervoso autonomo. Di seguito sono codificate le norme metodologiche base e gli interventi di pronto soccorso bioenergetico.
+                </p>
+            </div>
+
+            <!-- Safety Guidelines Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <div class="text-terracotta-600 text-2xl font-bold">👀 1. Occhi Aperti</div>
+                    <h3 class="text-sm font-bold text-sage-800">Integrazione di Realtà</h3>
+                    <p class="text-xs text-stone-600 leading-relaxed">
+                        Nelle pratiche di base della 1ª Stupen, tutti gli esercizi si eseguono a occhi aperti per evitare dissociazioni e radicare le percezioni bioenergetiche nella realtà fisica.
+                    </p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <div class="text-terracotta-600 text-2xl font-bold">🗣️ 2. Segnale "C'è" (Есть)</div>
+                    <h3 class="text-sm font-bold text-sage-800">Conferma di Contatto</h3>
+                    <p class="text-xs text-stone-600 leading-relaxed">
+                        Il praticante deve vocalizzare immediatamente "C'è!" non appena avverte la pressione, il calore o il raggio del partner, garantendo il feedback in tempo reale.
+                    </p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <div class="text-terracotta-600 text-2xl font-bold">🧘 3. Osservatore Attivo</div>
+                    <h3 class="text-sm font-bold text-sage-800">Posizione di Monitoraggio</h3>
+                    <p class="text-xs text-stone-600 leading-relaxed">
+                        Mantenere uno stato cinestetico neutro e vigile, senza formulare aspettative mentali, confrontando costantemente le variazioni fisiologiche.
+                    </p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <div class="text-terracotta-600 text-2xl font-bold">🔄 4. Vettori & Distanza</div>
+                    <h3 class="text-sm font-bold text-sage-800">Senso Orario & Proiezione</h3>
+                    <p class="text-xs text-stone-600 leading-relaxed">
+                        Circolazioni energetiche condotte prevalentemente in senso orario. Lavoro in coppia condotto progressivamente da 1 fino a 7 metri di distanza.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Emergency Protocols (Pronto Soccorso Bioenergetico) -->
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200 space-y-6">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-terracotta-600">Protocolli Clinici di Intervento Immediato</span>
+                    <h3 class="text-xl font-bold text-sage-800 mt-1">Pronto Soccorso Bioenergetico (Скорая Помощь)</h3>
+                    <p class="text-xs sm:text-sm text-stone-600 mt-1">
+                        Metodologie di sblocco rapido per la regolazione di sbalzi pressori, ipertermia e svenimenti tramite la ridistribuzione dei flussi energetici.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-red-50/60 p-5 rounded-xl border border-red-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-red-700 uppercase">Ipertermia Acuta</span>
+                            <span class="text-lg">🌡️</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-stone-900">Febbre Improvvisa (40-41°C)</h4>
+                        <p class="text-xs text-stone-700 leading-relaxed">
+                            Eseguire la <strong>Campana Inferiore</strong> in abbinamento al <strong>Pompaggio della Testa</strong>. Muovere il flusso termico verso il basso e dispersione attraverso le piante dei piedi verso la terra per scaricare il surplus calorico.
+                        </p>
+                    </div>
+
+                    <div class="bg-amber-50/60 p-5 rounded-xl border border-amber-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-800 uppercase">Ipertensione Arteriosa</span>
+                            <span class="text-lg">🩺</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-stone-900">Picco di Pressione Alta</h4>
+                        <p class="text-xs text-stone-700 leading-relaxed">
+                            Spostare l'energia dalla testa lungo la colonna vertebrale verso le gambe tramite passaggi manuali discendenti e visualizzazione della <strong>Pesantezza</strong> nei piedi. Allevia il sovraccarico vascolare cerebrale.
+                        </p>
+                    </div>
+
+                    <div class="bg-blue-50/60 p-5 rounded-xl border border-blue-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-blue-800 uppercase">Ipotensione & Sincope</span>
+                            <span class="text-lg">⚡</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-stone-900">Collasso / Pressione Bassa</h4>
+                        <p class="text-xs text-stone-700 leading-relaxed">
+                            Applicare l'<strong>Inserimento Energetico (Splash / Всплеск)</strong> concentrando la carica nell'addome e proiettandola rapidamente verso la testa, abbinato al Massaggio Tibetano per ripristinare il tono tonico-vascolare.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: CORPUS INTEGRALE DELLE PRATICHE E FINALITÀ -->
+        <section id="sec-corpus" class="tab-content hidden fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800 mb-4">Corpus Completo delle Pratiche & Finalità Specifiche</h2>
+                <p class="text-stone-700 leading-relaxed text-base sm:text-lg mb-4">
+                    In questa sezione è catalogato l'elenco sistematico di tutte le pratiche bioenergetiche codificate nei testi antichi e nei protocolli russi moderni (Stupen I-IV). Per ciascuna tecnica sono chiarite la <strong>meccanica esecutiva</strong>, la <strong>finalità fisiologico-neurobiologica</strong> e la <strong>finalità energetico-cognitiva</strong>.
+                </p>
+                <!-- Search and Filters -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-stone-100 p-4 rounded-xl border border-stone-200">
+                    <div class="md:col-span-1">
+                        <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Cerca Pratica o Finalità:</label>
+                        <input type="text" id="corpus-search" oninput="renderCorpus()" placeholder="es. Palla, Raggio, Campana, Vago, Splash..." class="w-full px-3 py-2 border border-stone-300 rounded-lg text-xs focus:ring-2 focus:ring-terracotta-600 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Categoria Tradizione:</label>
+                        <select id="corpus-filter-cat" onchange="renderCorpus()" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-xs bg-white focus:outline-none">
+                            <option value="all">Tutte le Categorie</option>
+                            <option value="tradizionale">Daoismo & Qi Gong Classico</option>
+                            <option value="fase1">Bronnikov Stupen 1 - Ecologia & Base</option>
+                            <option value="fase12">Bronnikov Stupen 1.2 - Sostanze</option>
+                            <option value="fase2">Bronnikov Stupen 2 - Biocomputer</option>
+                            <option value="fase3">Bronnikov Stupen 3 - Visione Diretta</option>
+                            <option value="fase4">Bronnikov Stupen 4 - Telepatia</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Stato Occhi / Postura:</label>
+                        <select id="corpus-filter-eyes" onchange="renderCorpus()" class="w-full px-3 py-2 border border-stone-300 rounded-lg text-xs bg-white focus:outline-none">
+                            <option value="all">Tutti gli Stati</option>
+                            <option value="aperti">Occhi Aperti</option>
+                            <option value="benda">Benda Opaca / Buio</option>
+                            <option value="chiusi">Occhi Chiusi / Socchiusi</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Directory Grid -->
+            <div id="corpus-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Dynamically rendered via JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 4: MODELLI DINAMICI 3D DELLE POSIZIONI E RESPIRAZIONI (NEW THREE.JS MANNEQUIN) -->
+        <section id="sec-model3d" class="tab-content hidden fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800 mb-4">Modelli Dinamici 3D delle Posizioni e Cicli Respiratori</h2>
+                <p class="text-stone-700 leading-relaxed text-base sm:text-lg">
+                    Esplora la biomeccanica posturale e la dinamica volumetrica del respiro attraverso un mannequin anatomico 3D interattivo in WebGL (Three.js). Seleziona le posizioni fondamentali del Qi Gong e del Metodo Bronnikov per osservare l'allineamento scheletrico, l'espansione della gabbia toracica e la circolazione delle particelle di carica.
+                </p>
+            </div>
+
+            <!-- LIU ZI JUE: PLAYER AUDIO SINCRONIZZATO CON IL MANICHINO -->
+            <div class="bg-stone-900 p-5 sm:p-6 rounded-2xl text-stone-100 shadow-xl border border-stone-800 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-700 pb-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-gold-400">Pratica guidata: Liu Zi Jue (六字訣) — sequenza Health Qigong</h3>
+                        <p class="text-[11px] text-stone-400">Musica ufficiale senza voce guida (15:02). Il manichino segue la fase in corso. <span class="evi evi-trad">Tradizione</span> per corrispondenze organo/suono, <span class="evi evi-sci">Evidenza</span> per i dati clinici.</p>
+                    </div>
+                    <label class="flex items-center gap-2 text-xs text-stone-300 cursor-pointer select-none">
+                        <input type="checkbox" id="lzj-sync" checked class="accent-amber-500"> Sincronizza manichino
+                    </label>
+                </div>
+
+                <audio id="lzj-audio" preload="metadata" src="audio/liu_zi_jue.mp3"></audio>
+
+                <div class="flex items-center gap-3">
+                    <button id="lzj-play" onclick="lzjToggle()" class="w-11 h-11 shrink-0 rounded-full bg-terracotta-600 hover:bg-terracotta-700 text-white text-lg font-bold shadow" aria-label="Play/Pausa">▶</button>
+                    <div class="flex-1 min-w-0">
+                        <div id="lzj-timeline" class="relative h-7 rounded-md overflow-hidden bg-stone-800 cursor-pointer border border-stone-700"></div>
+                        <div class="flex justify-between text-[10px] text-stone-400 font-mono mt-1">
+                            <span id="lzj-time">0:00</span><span id="lzj-dur">15:02</span>
+                        </div>
+                    </div>
+                    <input type="range" id="lzj-vol" min="0" max="1" step="0.05" value="0.8" class="w-20 accent-amber-500 hidden sm:block" aria-label="Volume">
+                </div>
+
+                <div id="lzj-chapters" class="flex flex-wrap gap-1.5"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                    <div class="md:col-span-7 bg-stone-800/80 rounded-xl p-4 border border-stone-700 space-y-2">
+                        <div class="flex items-baseline gap-3 flex-wrap">
+                            <span id="lzj-hanzi" class="text-4xl font-bold text-gold-400 leading-none">預</span>
+                            <div>
+                                <p id="lzj-name" class="font-bold text-white">Preparazione</p>
+                                <p id="lzj-meta" class="text-[11px] text-stone-400"></p>
+                            </div>
+                            <span id="lzj-rep" class="ml-auto text-xs font-mono px-2 py-1 rounded bg-stone-900 border border-stone-700 text-emerald-300"></span>
+                        </div>
+                        <p id="lzj-move" class="text-xs text-stone-200 leading-relaxed"></p>
+                        <p id="lzj-mouth" class="text-xs text-stone-300 leading-relaxed"></p>
+                        <p id="lzj-breath" class="text-xs text-stone-300 leading-relaxed"></p>
+                        <p id="lzj-tcm" class="text-[11px] text-stone-400 leading-relaxed"></p>
+                    </div>
+                    <div class="md:col-span-5 bg-stone-800/80 rounded-xl p-4 border border-stone-700 space-y-2 text-xs">
+                        <p class="font-bold text-gold-400">Fase respiratoria</p>
+                        <div class="h-3 rounded bg-stone-900 overflow-hidden border border-stone-700"><div id="lzj-breathbar" class="h-full bg-emerald-500 transition-[width] duration-200" style="width:0%"></div></div>
+                        <p id="lzj-breathlabel" class="text-stone-300">—</p>
+                        <p class="font-bold text-gold-400 pt-2">Calibrazione minutaggi</p>
+                        <p class="text-[11px] text-stone-400 leading-relaxed">I punti d'inizio sono stati stimati dall'analisi spettrale della musica (affidabili ±5 s per Xu, He, Hu; meno per Si, Chui, Xi). Se non coincidono con la tua pratica, mettiti sul punto giusto e premi:</p>
+                        <div class="flex flex-wrap gap-1.5">
+                            <select id="lzj-calib-seg" class="bg-stone-900 border border-stone-600 rounded p-1 text-[11px] flex-1 min-w-0"></select>
+                            <button onclick="lzjCalibrate()" class="px-2 py-1 bg-sage-700 hover:bg-sage-600 rounded text-[11px] font-bold">Imposta qui</button>
+                            <button onclick="lzjResetCalib()" class="px-2 py-1 bg-stone-700 hover:bg-stone-600 rounded text-[11px]">Ripristina</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-stone-900 p-6 rounded-2xl text-stone-100 shadow-xl border border-stone-800">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- 3D Viewport Container -->
+                    <div class="lg:col-span-8 flex flex-col items-center">
+                        <div id="three-canvas-container" class="three-container w-full">
+                            <!-- Three.js Canvas injected here -->
+                        </div>
+                        <div class="w-full flex justify-between items-center text-xs text-stone-400 mt-3 px-2">
+                            <span>Vista: <strong class="text-gold-400">trascina per ruotare, rotella per lo zoom</strong></span>
+                            <span>Allineamento Vertebrale: <strong id="3d-spine-status" class="text-emerald-400">Eretto (Du Mai)</strong></span>
+                            <span>Fase Respiratoria 3D: <strong id="3d-breath-status" class="text-terracotta-500">Inspirazione (Espansione Torace)</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Posture & Dynamics Controls -->
+                    <div class="lg:col-span-4 bg-stone-800/80 p-5 rounded-xl border border-stone-700 space-y-5">
+                        <h3 class="text-base font-bold text-gold-400 border-b border-stone-700 pb-2">Selezione Posizioni 3D</h3>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-2">Posizione Anatomica & Metodo:</label>
+                            <select id="select-3d-posture" onchange="change3DPosture(this.value)" class="w-full bg-stone-900 text-stone-100 border border-stone-600 rounded-lg p-2 text-xs focus:ring-1 focus:ring-gold-400">
+                                <option value="zhanzhuang">1. Zhan Zhuang (Postura del Palo / Albero - Qi Gong)</option>
+                                <option value="mabu">2. Ma Bu / Dragone (Posizione del Cavaliere - Qi Gong)</option>
+                                <option value="bronnikov_ball">3. Bronnikov Palla Energetica (Mani parallele Dantian)</option>
+                                <option value="bronnikov_bell">4. Bronnikov Campana (cono di braccia)</option>
+                                <option value="jingzuo">5. Tai Xi / Jing Zuo (Meditazione Seduta Loto)</option>
+                                <option value="supine">6. Posizione Supina</option>
+                                <optgroup label="Liu Zi Jue (anteprima in loop)">
+                                    <option value="qishi">起 Apertura (Qi Shi)</option>
+                                    <option value="xu">噓 Xu — Fegato</option>
+                                    <option value="he">呵 He — Cuore</option>
+                                    <option value="hu">呼 Hu — Milza</option>
+                                    <option value="si">呬 Si — Polmone</option>
+                                    <option value="chui">吹 Chui — Rene</option>
+                                    <option value="xi">嘻 Xi — Triplo Riscaldatore</option>
+                                    <option value="shou">收 Chiusura (Shou Shi)</option>
+                                </optgroup>
+                            </select>
+                            <p class="text-[10px] text-stone-400 mt-1">Se il player è in riproduzione con "Sincronizza" attivo, il manichino segue la musica. Per scegliere qui una posizione, disattiva la sincronizzazione.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-2">Ciclo Respiratorio Sincronizzato:</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="set3DBreath('inhale')" id="btn-3d-inhale" class="py-1.5 px-2 bg-sage-700 text-white rounded text-xs font-bold">Inspirazione</button>
+                                <button onclick="set3DBreath('hold')" id="btn-3d-hold" class="py-1.5 px-2 bg-stone-700 text-stone-300 rounded text-xs font-bold">Trattenimento</button>
+                                <button onclick="set3DBreath('exhale')" id="btn-3d-exhale" class="py-1.5 px-2 bg-stone-700 text-stone-300 rounded text-xs font-bold">Espirazione</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">Velocità di Animazione / Ciclo:</label>
+                            <input type="range" id="3d-speed-range" min="1" max="10" value="5" oninput="update3DSpeed()" class="w-full accent-terracotta-500">
+                        </div>
+
+                        <div class="space-y-1.5 text-xs text-stone-300">
+                            <p class="font-semibold">Livelli visibili:</p>
+                            <label class="flex items-center gap-2"><input type="checkbox" checked onchange="toggle3DLayer('points', this.checked)" class="accent-amber-500"> Punti di agopuntura (nomenclatura OMS)</label>
+                            <label class="flex items-center gap-2"><input type="checkbox" checked onchange="toggle3DLayer('meridians', this.checked)" class="accent-amber-500"> <span><span style="color:#ff9a5c">Ren Mai</span> / <span style="color:#6fd3ff">Du Mai</span></span></label>
+                            <label class="flex items-center gap-2"><input type="checkbox" onchange="toggle3DLayer('organs', this.checked)" class="accent-amber-500"> Corpo trasparente + organi Zang-Fu</label>
+                        </div>
+
+                        <div class="p-3 bg-stone-900/90 rounded-lg border border-stone-700 text-xs space-y-2">
+                            <p class="font-bold text-gold-400" id="3d-posture-title">Zhan Zhuang (Palo Eretto)</p>
+                            <p class="text-stone-300 leading-relaxed text-[11px]" id="3d-posture-desc">
+                                Gambe aperte larghezza spalle, ginocchia leggermente flesse, bacino retroverso, braccia arrotolate di fronte al petto come a sostenere un tronco. Rilassamento della gabbia toracica per la discesa del Qi al Dantian.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-3 text-sm text-stone-700">
+                <h3 class="text-lg font-bold text-sage-800">Liu Zi Jue: fonti e livello di evidenza</h3>
+                <p class="text-xs"><span class="evi evi-class">Fonte classica</span> <span class="evi evi-trad">Tradizione</span> <span class="evi evi-sci">Evidenza</span> <span class="evi evi-spec">Speculativo</span>: ogni affermazione della pagina è marcata con il proprio livello.</p>
+                <ul class="list-disc pl-5 space-y-1.5 text-xs leading-relaxed">
+                    <li><span class="evi evi-class">Classica</span> <strong>Tao Hongjing</strong>, <em>Yangxing Yanming Lu</em> 養性延命錄 (c. 500 d.C.): è la prima descrizione dei sei modi di espirare (chui, hu, xi, he, xu, si) con un'unica inspirazione nasale.</li>
+                    <li><span class="evi evi-class">Classica</span> <strong>Sun Simiao</strong>, <em>Beiji Qianjin Yaofang</em> 備急千金要方 (652): collega i suoni agli organi e alle stagioni.</li>
+                    <li><span class="evi evi-class">Classica</span> <strong>Hu Yin</strong>, <em>Huangting Neijing Wuzang Liufu Buxie Tu</em> 黃庭內景五臟六腑補瀉圖 (848): sistematizza le corrispondenze con i cinque elementi.</li>
+                    <li><span class="evi evi-class">Classica</span> In epoca Song e Ming (Zou Pu'an, Hu Wenhuan) ai suoni vengono affiancati movimenti degli arti.</li>
+                    <li><span class="evi evi-trad">Standard moderno</span> <strong>Chinese Health Qigong Association</strong>, <em>Liu Zi Jue</em> (2003; ed. inglese Foreign Languages Press, 2007). È la sequenza della traccia audio: ordine Xu → He → Hu → Si → Chui → Xi, che segue il ciclo di generazione Legno → Fuoco → Terra → Metallo → Acqua, con il San Jiao in chiusura. Ogni suono si ripete 6 volte.</li>
+                    <li><span class="evi evi-sci">Evidenza</span> Revisione sistematica e meta-analisi sulla BPCO stabile (<a class="underline text-sage-700" href="https://link.springer.com/article/10.1186/s12906-020-03104-1" target="_blank" rel="noopener">BMC Complement Med Ther, 2020</a>): miglioramenti di FEV1, FEV1%, FEV1/FVC, dispnea, tolleranza allo sforzo e qualità della vita.</li>
+                    <li><span class="evi evi-sci">Evidenza</span> Network meta-analysis su 57 studi e 4.294 pazienti BPCO (<a class="underline text-sage-700" href="https://link.springer.com/article/10.1186/s12906-024-04609-9" target="_blank" rel="noopener">BMC Complement Med Ther, 2024</a>): il Liu Zi Jue è risultato il più efficace su FEV1% nei casi moderati e gravi, con pratica di almeno 3 volte a settimana. Limite: studi prevalentemente cinesi, di qualità metodologica variabile.</li>
+                    <li><span class="evi evi-spec">Non verificato</span> Le corrispondenze suono → frequenza in Hz e gli effetti "vibrazionali" sui singoli organi non hanno riscontro né nei classici né nella letteratura sperimentale.</li>
+                </ul>
+                <p class="text-[11px] text-stone-500">Modello 3D: manichino procedurale. I punti seguono la nomenclatura standard OMS (DU20, RN17, RN8, RN4, RN1, DU4, DU14, PC8, KI1) e sono posizionati per proporzioni approssimative, non sono una mappa anatomica di precisione. Audio: traccia ufficiale HQA. Prima di pubblicare la pagina verificare i diritti d'uso.</p>
+            </div>
+</section>
+
+        <!-- SECTION 5: TEORIA ACUSTICA, SUONI CURATIVI & GENERATORE AUDIO SONORO (NEW AUDIO HUB) -->
+        <section id="sec-audio" class="tab-content hidden fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800 mb-4">Teoria Acustica, Suoni Curativi & Generatore Audio Sonoro</h2>
+                <p class="text-stone-700 leading-relaxed text-base sm:text-lg">
+                    La fisica acustica e le scienze bioenergetiche dimostrano come le onde sonore inducano la risonanza meccanica dei tessuti e il trascinamento delle frequenze cerebrali (<em>Brainwave Entrainment</em>). In questa sezione si approfondisce la teoria dei <strong>Sei Suoni Curativi (Liu Zi Jue)</strong> e la modulazione delle frequenze binaurali, con un generatore audio interattivo integrato (Web Audio API).
+                </p>
+            </div>
+
+            <!-- Theoretical Foundation Cards for Audio & Frequencies -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <div class="text-terracotta-600 text-2xl font-bold">🗣️ Liu Zi Jue (六字訣)</div>
+                    <h3 class="text-sm font-bold text-sage-800">Formanti Vocali & Organi</h3>
+                    <p class="text-xs text-stone-600 leading-relaxed">
+                        <span class="evi evi-class">Fonte classica</span> Sei espirazioni sussurrate, ognuna associata a un organo: <strong>Xu</strong> (Fegato), <strong>He</strong> (Cuore), <strong>Hu</strong> (Milza), <strong>Si</strong> (Polmone), <strong>Chui</strong> (Rene), <strong>Xi</strong> (Triplo Riscaldatore). Le prime attestazioni sono in Tao Hongjing (c. 500) e in Sun Simiao (652).<br><span class="evi evi-spec">Non tradizionale</span> Le frequenze in Hz usate dal sintetizzatore qui sotto sono convenzionali. Nessun testo classico le indica: i suoni si distinguono per la forma della bocca e il flusso d'aria, non per l'altezza.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <div class="text-terracotta-600 text-2xl font-bold">🎧 Toni Binaurali</div>
+                    <h3 class="text-sm font-bold text-sage-800">Sincronizzazione Emisferica</h3>
+                    <p class="text-xs text-stone-600 leading-relaxed">
+                        <span class="evi evi-sci">Evidenza debole/mista</span> Applicando due frequenze leggermente differenti alle orecchie (es. 432Hz e 438Hz), il tronco encefalico genera un battimento differenziale di 6Hz (Theta), inducendo lo stato di meditazione profonda Tai Xi e la massima ricettività neocorticale.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <div class="text-terracotta-600 text-2xl font-bold">🔔 Risonanza Acustica</div>
+                    <h3 class="text-sm font-bold text-sage-800">Campane Tibetane & 432 Hz</h3>
+                    <p class="text-xs text-stone-600 leading-relaxed">
+                        <span class="evi evi-spec">Speculativo</span> Si sostiene che le armoniche naturali e la frequenza di accordatura a 432 Hz si sincronizzino con la risonanza di Schumann (7.83Hz) e le oscillazioni cellulari del liquido cerebrospinale, riducendo la rigidità fasciale. Non esistono prove sperimentali di questo legame.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Web Audio Interactive Synthesizer Console -->
+            <div class="bg-stone-900 p-6 sm:p-8 rounded-2xl border border-stone-800 text-white space-y-6 shadow-xl">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-stone-800 pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-gold-400">Sintetizzatore Audio Acustico & Frequenze Bioenergetiche</h3>
+                        <p class="text-xs text-stone-400">Motore audio Web Audio API nativo senza campioni esterni</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="toggleMasterAudio()" id="btn-audio-toggle" class="px-4 py-2 bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-bold rounded-lg transition shadow">
+                            ▶️ Attiva Motore Audio
+                        </button>
+                        <span id="audio-status-badge" class="text-xs px-2.5 py-1 bg-red-900/60 text-red-200 rounded border border-red-800">Inattivo</span>
+                    </div>
+                </div>
+
+                <!-- Real-time Audio Spectrum Visualizer Canvas -->
+                <div class="relative w-full h-[140px] bg-stone-950 rounded-xl border border-stone-800 overflow-hidden">
+                    <canvas id="audioVisualizerCanvas" width="900" height="140" class="w-full h-full"></canvas>
+                    <span class="absolute top-2 left-3 text-[10px] text-stone-500 uppercase tracking-widest font-mono">Visualizzatore Spettro Acustico in Tempo Reale</span>
+                </div>
+
+                <!-- Interactive Modules Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <!-- Module 1: Liu Zi Jue Sounds Synth -->
+                    <div class="bg-stone-800/90 p-5 rounded-xl border border-stone-700 space-y-3">
+                        <h4 class="text-sm font-bold text-gold-400 border-b border-stone-700 pb-2">1. Suoni Curativi (Liu Zi Jue)</h4>
+                        <p class="text-xs text-stone-300">Toni sintetici di riferimento (convenzionali, non tradizionali). Per la pratica reale usa il player nella sezione Modello 3D.</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="playHealingSound('xu')" class="p-2 bg-stone-700 hover:bg-sage-700 text-white text-xs font-bold rounded text-left transition">
+                                🟢 嘘 XŪ (Fegato) · tono 480Hz
+                            </button>
+                            <button onclick="playHealingSound('he')" class="p-2 bg-stone-700 hover:bg-red-700 text-white text-xs font-bold rounded text-left transition">
+                                🔴 呵 HĒ (Cuore) · tono 540Hz
+                            </button>
+                            <button onclick="playHealingSound('hu')" class="p-2 bg-stone-700 hover:bg-amber-700 text-white text-xs font-bold rounded text-left transition">
+                                🟡 呼 HŪ (Milza) · tono 380Hz
+                            </button>
+                            <button onclick="playHealingSound('si')" class="p-2 bg-stone-700 hover:bg-stone-500 text-white text-xs font-bold rounded text-left transition">
+                                ⚪ 呬 SĪ (Polmone) · tono 720Hz
+                            </button>
+                            <button onclick="playHealingSound('chui')" class="p-2 bg-stone-700 hover:bg-blue-700 text-white text-xs font-bold rounded text-left transition">
+                                🔵 吹 CHUĪ (Rene) · tono 280Hz
+                            </button>
+                            <button onclick="playHealingSound('xi')" class="p-2 bg-stone-700 hover:bg-purple-700 text-white text-xs font-bold rounded text-left transition">
+                                🟣 嘻 XĪ (San Jiao) · tono 600Hz
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Module 2: Binaural Beats Generator -->
+                    <div class="bg-stone-800/90 p-5 rounded-xl border border-stone-700 space-y-3">
+                        <h4 class="text-sm font-bold text-gold-400 border-b border-stone-700 pb-2">2. Generatore Toni Binaurali</h4>
+                        <div>
+                            <label class="block text-xs text-stone-300 mb-1">Preset Frequenza Cerebrale:</label>
+                            <select id="select-binaural-preset" onchange="setBinauralPreset(this.value)" class="w-full bg-stone-900 text-stone-200 border border-stone-600 rounded p-1.5 text-xs">
+                                <option value="theta">Theta (6 Hz - Meditazione Tai Xi)</option>
+                                <option value="alpha">Alpha (10 Hz - Veglia Rilassata)</option>
+                                <option value="delta">Delta (2 Hz - Rigenerazione Profonda)</option>
+                                <option value="gamma">Gamma (40 Hz - Schermo Bronnikov)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-stone-300 mb-1">Frequenza Portante (Carrier): <span id="val-carrier-disp" class="text-gold-400">216 Hz</span></label>
+                            <input type="range" id="slider-carrier" min="100" max="500" value="216" oninput="updateBinauralParams()" class="w-full accent-gold-400">
+                        </div>
+                        <button onclick="toggleBinauralBeat()" id="btn-binaural-toggle" class="w-full py-2 bg-stone-700 hover:bg-sage-700 text-white text-xs font-bold rounded transition">
+                            ▶ Avvia Toni Binaurali
+                        </button>
+                    </div>
+
+                    <!-- Module 3: Ambient Meditation Drone / Bowls -->
+                    <div class="bg-stone-800/90 p-5 rounded-xl border border-stone-700 space-y-3">
+                        <h4 class="text-sm font-bold text-gold-400 border-b border-stone-700 pb-2">3. Drone & Campana di Risonanza</h4>
+                        <p class="text-xs text-stone-300">Simulatore di sottofondo acustico armonico a 432 Hz e rintocco di campana tibetana:</p>
+                        <div class="space-y-2">
+                            <button onclick="toggleAmbientDrone()" id="btn-ambient-toggle" class="w-full py-2 bg-stone-700 hover:bg-sage-700 text-white text-xs font-bold rounded transition">
+                                🧘 Attiva Drone Armonico 432 Hz
+                            </button>
+                            <button onclick="strikeSingingBowl()" class="w-full py-2 bg-stone-700 hover:bg-terracotta-600 text-white text-xs font-bold rounded transition">
+                                🔔 Rintocco Campana Tibetana
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: SIMULATORE BIOENERGETICO & ANIMAZIONI REALISTICHE -->
+        <section id="sec-simulatore" class="tab-content hidden fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800 mb-4">Simulatore del Campo Bioenergetico & Dinamica delle Particelle</h2>
+                <p class="text-stone-700 leading-relaxed text-base sm:text-lg">
+                    Questo simulatore interattivo utilizza un motore fisico di particelle su HTML5 Canvas per riprodurre in modo fluido la densità energetica, la temperatura apparente, i vettori di rotazione e i flussi di carica elettrodinamica durante la respirazione, la formazione della Campana o lo Splash.
+                </p>
+            </div>
+
+            <!-- Canvas Physics Engine Card -->
+            <div class="bg-stone-900 p-6 rounded-2xl text-stone-100 shadow-xl border border-stone-800">
+                <div class="flex flex-col lg:flex-row gap-6 items-start">
+                    <!-- Canvas Container -->
+                    <div class="w-full lg:w-2/3 flex flex-col items-center">
+                        <div class="relative w-full aspect-square max-w-[540px]">
+                            <canvas id="fieldSimCanvas" width="540" height="540" class="sim-canvas w-full h-full"></canvas>
+                        </div>
+                        <div class="w-full flex justify-between items-center text-xs text-stone-400 mt-3 px-2">
+                            <span>Velocità Vettoriale: <strong id="val-speed-disp" class="text-gold-400">Normale</strong></span>
+                            <span>Densità Carica: <strong id="val-count-disp" class="text-terracotta-500">400 Particelle</strong></span>
+                            <span>Fase Attiva: <strong id="val-phase-disp" class="text-emerald-400">Inspirazione</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Control Panel -->
+                    <div class="w-full lg:w-1/3 bg-stone-800/80 p-5 rounded-xl border border-stone-700 space-y-5">
+                        <h3 class="text-base font-bold text-gold-400 border-b border-stone-700 pb-2">Controlli del Campo Fisiologico</h3>
+                        
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-2">Modalità della Dinamica Energetica:</label>
+                            <select id="sim-mode" onchange="changeSimMode(this.value)" class="w-full bg-stone-900 text-stone-100 border border-stone-600 rounded-lg p-2 text-xs focus:ring-1 focus:ring-gold-400">
+                                <option value="microcosmic">1. Orbita Microcosmica (Ren/Du Mai)</option>
+                                <option value="spherical">2. Espansione Aurica Sferica (Campo 3D)</option>
+                                <option value="dantian">3. Condensazione Dantian / Palla Energetica</option>
+                                <option value="bell">4. Campana Energetica (Inferiore/Superiore)</option>
+                                <option value="splash">5. Inserimento Energetico / Splash (Всплеск)</option>
+                                <option value="phantom">6. Proiezione Fante Virtuale / Benda</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-2">Fase del Ciclo Respiratorio:</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="setBreathPhase('inhale')" id="btn-phase-inhale" class="py-1.5 px-2 bg-sage-700 text-white rounded text-xs font-bold transition">Inspirazione</button>
+                                <button onclick="setBreathPhase('hold')" id="btn-phase-hold" class="py-1.5 px-2 bg-stone-700 text-stone-300 rounded text-xs font-bold transition">Trattenimento</button>
+                                <button onclick="setBreathPhase('exhale')" id="btn-phase-exhale" class="py-1.5 px-2 bg-stone-700 text-stone-300 rounded text-xs font-bold transition">Espirazione</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">Intensità della Carica (Densità Particelle):</label>
+                            <input type="range" id="sim-density" min="150" max="800" step="50" value="400" oninput="updateSimParams()" class="w-full accent-terracotta-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">Coerenza Neocorticale (Turbolenza vs. Armonia):</label>
+                            <input type="range" id="sim-coherence" min="1" max="10" step="1" value="7" oninput="updateSimParams()" class="w-full accent-gold-400">
+                        </div>
+
+                        <div class="p-3 bg-stone-900/90 rounded-lg border border-stone-700/80 text-xs text-stone-300 space-y-1">
+                            <p class="font-bold text-terracotta-600">Indicatori della Simulazione:</p>
+                            <p id="sim-explanation-text">L'energia risale lungo la colonna vertebrale (Du Mai) durante l'inspirazione e ridiscende lungo la linea mediana anteriore (Ren Mai) nell'espirazione.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: TESTI CLASSICI & XINGQI EXPLORER -->
+        <section id="sec-classici" class="tab-content hidden fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800 mb-4">I Testi Classici Cinesi sulla Circolazione del Qi</h2>
+                <p class="text-stone-700 leading-relaxed text-base sm:text-lg">
+                    Un'analisi filologica dettagliata dei reperti scritti antichi. L'Iscrizione sulla Giada (<em>Xingqi Yupei Ming</em>) rappresenta la più antica testimonianza codificata sulla respirazione ritmica alchemica.
+                </p>
+            </div>
+
+            <!-- Xingqi Yupei Ming Stepper -->
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <div class="border-b border-stone-200 pb-4 mb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-terracotta-600">Reperto Archeologico (VI - III sec. a.C.)</span>
+                    <h3 class="text-2xl font-bold text-sage-800 mt-1">Xingqi Yupei Ming (行氣銘) — L'Iscrizione della Giada</h3>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-5 bg-stone-100 p-6 rounded-xl border border-stone-300 text-center flex flex-col justify-between min-h-[320px]">
+                        <div>
+                            <span id="xingqi-step-num" class="inline-block px-3 py-1 bg-terracotta-600 text-white text-xs font-bold rounded-full mb-3">Fase 1 / 10</span>
+                            <div id="xingqi-char" class="text-5xl font-serif font-bold text-sage-800 mb-2">行氣</div>
+                            <div id="xingqi-pinyin" class="text-lg italic text-terracotta-700 font-medium mb-3">Xíngqì</div>
+                            <div id="xingqi-trans" class="text-base font-bold text-stone-800 mb-4">"Per circolare il Respiro Vitale..."</div>
+                        </div>
+                        <div id="xingqi-desc" class="text-xs sm:text-sm text-stone-600 bg-white p-4 rounded-lg border border-stone-200 text-left">
+                            Attivazione dell'intenzione (Yi) per guidare e mobilitare l'energia attraverso i canali.
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 space-y-3">
+                        <label class="block text-xs font-bold text-stone-500 uppercase">Seleziona una fase del ciclo alchemico:</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="xingqi-buttons-grid">
+                            <!-- Populated via JS -->
+                        </div>
+                        <div class="flex justify-between items-center pt-4">
+                            <button onclick="prevXingqiStep()" class="px-4 py-2 bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-bold rounded-lg transition">← Precedente</button>
+                            <button onclick="nextXingqiStep()" class="px-4 py-2 bg-sage-700 hover:bg-sage-800 text-white text-xs font-bold rounded-lg transition">Successivo →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classical Texts Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm space-y-3">
+                    <h3 class="text-lg font-bold text-sage-800">Tai Xi Jing (胎息經) — Canone della Respirazione Embrionale</h3>
+                    <p class="text-xs text-stone-600 leading-relaxed">
+                        Insegna il riassorbimento del respiro polmonare grezzo nel "respiro dell'embrione". Quando il respiro esterno tace, il centro del Dantian inferiore comincia a contrarsi ed espandersi autonomamente, attivando lo scambio bioenergetico cellulare diretto.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm space-y-3">
+                    <h3 class="text-lg font-bold text-sage-800">Liu Zi Jue (六字訣) & Quegu Shiqi (卻穀食氣)</h3>
+                    <p class="text-xs text-stone-600 leading-relaxed">
+                        I Sei Suoni Curativi associano sei espirazioni sonore, ognuna con una diversa forma della bocca, agli organi interni (Fegato, Cuore, Milza, Polmoni, Reni, Triplo Riscaldatore), mentre il Quegu Shiqi insegna l'alimentazione diretta di Qi durante periodi di digiuno alchemico.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: NEUROFISIOLOGIA & OSCILLOSCOPIO EEG -->
+        <section id="sec-neuro" class="tab-content hidden fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800 mb-4">Neurofisiologia, Telemetria EEG & Onde Cerebrali</h2>
+                <p class="text-stone-700 leading-relaxed text-base sm:text-lg">
+                    Rilievi sperimentali condotti dall'Istituto del Cervello Umano dell'Accademia Russa delle Scienze (Natalia Bekhtereva). Durante lo stato di "Visione Diretta" e la meditazione profonda Tai Xi, il cervello evidenzia una sincronizzazione ad alta frequenza senza precedenti.
+                </p>
+            </div>
+
+            <!-- Live Oscilloscope Dynamic Canvas -->
+            <div class="bg-stone-900 p-6 rounded-2xl border border-stone-800 text-white space-y-4 shadow-xl">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-stone-800 pb-3">
+                    <div>
+                        <h3 class="text-base font-bold text-gold-400">Oscilloscopio EEG Multicanale in Tempo Reale</h3>
+                        <p class="text-xs text-stone-400">Tracciato fisiologico simulato basato sui dati Bekhtereva (2002)</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="setEEGState('awake')" id="eeg-btn-awake" class="px-3 py-1 bg-stone-700 text-stone-200 rounded text-xs font-bold">1. Veglia Ordinaria</button>
+                        <button onclick="setEEGState('meditation')" id="eeg-btn-meditation" class="px-3 py-1 bg-sage-700 text-white rounded text-xs font-bold">2. Tai Xi Meditazione</button>
+                        <button onclick="setEEGState('direct')" id="eeg-btn-direct" class="px-3 py-1 bg-terracotta-600 text-white rounded text-xs font-bold">3. Bronnikov Visione Diretta</button>
+                    </div>
+                </div>
+
+                <!-- Canvas Stream -->
+                <div class="relative w-full h-[220px]">
+                    <canvas id="eegTraceCanvas" width="900" height="220" class="w-full h-full bg-stone-950 rounded-lg border border-stone-800"></canvas>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-stone-300 pt-2">
+                    <div class="bg-stone-800/80 p-2.5 rounded border border-stone-700">
+                        <span class="text-stone-400 block">Delta (0.5 - 4 Hz):</span>
+                        <span id="eeg-val-delta" class="font-bold text-gold-400">15%</span>
+                    </div>
+                    <div class="bg-stone-800/80 p-2.5 rounded border border-stone-700">
+                        <span class="text-stone-400 block">Theta (4 - 8 Hz):</span>
+                        <span id="eeg-val-theta" class="font-bold text-emerald-400">20%</span>
+                    </div>
+                    <div class="bg-stone-800/80 p-2.5 rounded border border-stone-700">
+                        <span class="text-stone-400 block">Alfa (8 - 12 Hz):</span>
+                        <span id="eeg-val-alpha" class="font-bold text-sky-400">50%</span>
+                    </div>
+                    <div class="bg-stone-800/80 p-2.5 rounded border border-stone-700">
+                        <span class="text-stone-400 block">Gamma (30 - 80 Hz):</span>
+                        <span id="eeg-val-gamma" class="font-bold text-terracotta-500">10%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart.js Spectrum Bar Box -->
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <h3 class="text-xl font-bold text-sage-800 mb-2">Spettro delle Onde Cerebrali nei Tre Stati di Coscienza</h3>
+                <div class="chart-container">
+                    <canvas id="eegChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: ARCHIVIO & FONTI OPEN-SOURCE -->
+        <section id="sec-archivio" class="tab-content hidden fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800 mb-4">Archivio Multimediale & Fonti Open-Source</h2>
+                <p class="text-stone-700 leading-relaxed text-base sm:text-lg">
+                    Riconnessione diretta alle fonti primarie storiche: playlist ufficiali RUTUBE, seminari storici di V.M. Bronnikov del 2005 e manuali bilingui conservati su Archive.org e Studfile.
+                </p>
+            </div>
+
+            <!-- Search and Category Filter -->
+            <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm space-y-4">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="w-full md:w-1/2">
+                        <input type="text" id="resource-search" oninput="filterResources()" placeholder="Cerca risorse (es. RUTUBE, Bakalin, Studfile, Tai Xi, 2005)..." class="w-full px-4 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-terracotta-600">
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                        <button onclick="setResourceCategory('all')" class="res-cat-btn px-3 py-1.5 rounded-full text-xs font-bold bg-sage-700 text-white">Tutti</button>
+                        <button onclick="setResourceCategory('rutube')" class="res-cat-btn px-3 py-1.5 rounded-full text-xs font-bold bg-stone-200 text-stone-700 hover:bg-stone-300">RUTUBE / Video</button>
+                        <button onclick="setResourceCategory('classici')" class="res-cat-btn px-3 py-1.5 rounded-full text-xs font-bold bg-stone-200 text-stone-700 hover:bg-stone-300">Testi Classici & PDF</button>
+                        <button onclick="setResourceCategory('2005')" class="res-cat-btn px-3 py-1.5 rounded-full text-xs font-bold bg-stone-200 text-stone-700 hover:bg-stone-300">Corso 2005 / Studfile</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resources Grid Container -->
+            <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Populated via JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-stone-400 py-8 border-t border-stone-800 text-center text-xs">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="text-stone-300 font-semibold mb-1">Corpus Integrale sulle Scienze Bioenergetiche, Tai Xi & Metodo Bronnikov</p>
+            <p>Piattaforma interattiva di consultazione scientifica, filologica, acustica e biomeccanica 3D.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Engine -->
+    <script>
+        // ==========================================
+        // DATA STORE: COMPLETE CORPUS OF PRACTICES & PURPOSES
+        // ==========================================
+        const practicesCorpus = [
+            {
+                id: "p1",
+                cat: "tradizionale",
+                catLabel: "Daoismo Classico",
+                title: "Xingqi Yupei Ming (行氣銘) — Circolazione Guidata",
+                eyes: "chiusi",
+                eyesLabel: "Socchiusi / Interni",
+                postura: "Eretta o Seduta (Jing Zuo)",
+                breath: "Addominale Inversa Ritmo 10 Fasi",
+                mechanics: "Inspirazione diaframmatica profonda che spinge il Qi al Dantian inferiore, accumulo, discesa al perineo (Huiyin), risalita lungo Du Mai ed espirazione di ritorno.",
+                physioPurpose: "Regolazione del sistema nervoso autonomo, riduzione del tono simpatico, ottimizzazione della variabilità della frequenza cardiaca (HRV) e stimolazione del nervo vago.",
+                energeticPurpose: "Condensazione del Qi fluido in Jing concentrato; apertura e pervietà dell'Orbita Microcosmica (Ren Mai e Du Mai) per la longevità biologica."
+            },
+            {
+                id: "p2",
+                cat: "tradizionale",
+                catLabel: "Daoismo Classico",
+                title: "Tai Xi Jing (胎息經) — Respirazione Embrionale",
+                eyes: "chiusi",
+                eyesLabel: "Chiusi",
+                postura: "Seduta o Loto / Supina",
+                breath: "Impercettibile / Frequenza < 3 cicli/min",
+                mechanics: "Annullamento della respirazione polmonare grossolana; focalizzazione fissa sulla pulsazione autonoma del Dantian e contrazione sottile della cavità pelvica.",
+                physioPurpose: "Abbattimento del consumo metabolico di ossigeno (ipometabolismo controllato), sincronizzazione delle frequenze alfa/theta cerebrali e rigenerazione vascolare organica.",
+                energeticPurpose: "Formazione del 'Feto di Giada' (Yuying); risveglio della respirazione primaria pre-natale (Xiantian Qi) affrancata dallo scambio gassoso esterno."
+            },
+            {
+                id: "p3",
+                cat: "tradizionale",
+                catLabel: "Daoismo Classico",
+                title: "Liu Zi Jue (六字訣) — I Sei Suoni Curativi",
+                eyes: "chiusi",
+                eyesLabel: "Aperti / Chiusi",
+                postura: "Eretta ampiezza spalle",
+                breath: "Espirazione fonetica continua",
+                mechanics: "Emissione di 6 suoni sub-vocali (Xu, He, Hu, Si, Chui, Xi) abbinati a movimenti specifici delle braccia per stimolare i 5 Organi (Zang) e il Triplo Riscaldatore.",
+                physioPurpose: "Mantenimento della micro-vibrazione biomeccanica e pulizia del ristagno mucoso viscerale; rilascio del calore in eccesso dal pericardio e dai parenchimi.",
+                energeticPurpose: "Riequilibratura termica e vibrazionale dei 5 elementi alchemici (Legno, Fuoco, Terra, Metallo, Acqua) e purificazione dei meridiani latenti."
+            },
+            {
+                id: "p_ball",
+                cat: "fase1",
+                catLabel: "Bronnikov Stupen 1",
+                title: "Palla Energetica («Энергетический Шар»)",
+                eyes: "aperti",
+                eyesLabel: "Rigorosamente Aperti",
+                postura: "Eretta o Seduta confortevole",
+                breath: "Naturale ritmato",
+                mechanics: "1. Strofinare le palme. 2. Porle a 15-20 cm. 3. Movimenti a fisarmonica percependo resistenza magnetica. 4. Modellare una sfera di energia condensata ruotando delicatamente le mani.",
+                physioPurpose: "Attivazione delle connessioni neurali tra corteccia somatosensoriale e terminazioni nervose manuali; sensibilizzazione tattile-bioenergetica primaria.",
+                energeticPurpose: "Creazione della matrice sferica condensata usata come costrutto base per l'autoguarigione, la concentrazione e l'accumulo di carica informazionale."
+            },
+            {
+                id: "p_ray",
+                cat: "fase1",
+                catLabel: "Bronnikov Stupen 1",
+                title: "Raggio Energetico («Лучик»)",
+                eyes: "aperti",
+                eyesLabel: "Rigorosamente Aperti",
+                postura: "In coppia (da 20 cm a 5-7 metri)",
+                breath: "Coordinato / Intenzione focalizzata",
+                mechanics: "Focalizzare l'attenzione sui polpastrelli delle dita e proiettare un raggio sottile verso la palma o il corpo del partner. Il partner confermando dice 'C'è' quando percepisce la puntura/calore.",
+                physioPurpose: "Aumento della precisione della concentrazione mentale e stimolazione della percezione a distanza tramite i meccanocettori cutanei.",
+                energeticPurpose: "Addestramento all'emissione vettoriale direzionata e al controllo dell'ampiezza dell'impulso energetico nello spazio extracorporeo."
+            },
+            {
+                id: "p4",
+                cat: "fase1",
+                catLabel: "Bronnikov Stupen 1",
+                title: "Sensibilità Palmare & Raggio Bioenergetico",
+                eyes: "aperti",
+                eyesLabel: "Rigorosamente Aperti",
+                postura: "In piedi di fronte al partner",
+                breath: "Naso / Bocca coordinato",
+                mechanics: "Strofinamento dinamico dei palmi, allontanamento fino a 1 metro. Proiezione manuale di un raggio o sfera energetica percependo resistenza, densità e punture tattili.",
+                physioPurpose: "Ipersensibilizzazione dei meccanocettori cutanei (corpuscoli di Meissner e Pacini) e riorganizzazione della rappresentazione somatosensoriale nella corteccia parietale.",
+                energeticPurpose: "Attivazione del generatore elettrico periferico corporeo e sviluppo del primo livello di trasmissione bio-informazionale a occhi aperti."
+            },
+            {
+                id: "p5",
+                cat: "fase1",
+                catLabel: "Bronnikov Stupen 1",
+                title: "Massaggio Secco Tibetano («Сухой Тибетский Массаж»)",
+                eyes: "aperti",
+                eyesLabel: "Aperti",
+                postura: "In piedi / Dinamica in coppia o individuale",
+                breath: "Ritmato con sforzo attivo",
+                mechanics: "Passaggi energetici a sfioramento o a pochi cm dal corpo lungo gli arti, il busto e la colonna (Piccola Orbita). Sfregamenti e spazzolature per armonizzare la superficie del campo.",
+                physioPurpose: "Stimolazione della circolazione linfatica periferica, incremento dell'irrorazione capillare, rimozione di blocchi neuromuscolari e rafforzamento biologico.",
+                energeticPurpose: "Pulizia e sigillatura della membrana del campo aurico; prevenzione delle dispersioni di carica bioelettrica e potenziamento delle difese immunitarie."
+            },
+            {
+                id: "p_bell",
+                cat: "fase1",
+                catLabel: "Bronnikov Stupen 1",
+                title: "Campana Energetica Inferiore e Superiore («Энергетический Колокол»)",
+                eyes: "aperti",
+                eyesLabel: "Aperti",
+                postura: "Eretta con partner operatore",
+                breath: "Calmo e profondo",
+                mechanics: "Inferiore: vertice del cono fissato alla testa, base espansa a mani e piedi; l'operatore muove i bordi della campana. Superiore: vertice in testa e cono verso l'alto nello spazio.",
+                physioPurpose: "Bilanciamento della differenza di potenziale tra centri superiori ed inferiori, stabilizzazione della pressione arteriosa e rinforzo dei vasi cerebrali.",
+                energeticPurpose: "Armonizzazione del campo verticale, protezione del canale centrale e prevenzione delle congestioni di carica nella cavità encefalica."
+            },
+            {
+                id: "p6",
+                cat: "fase1",
+                catLabel: "Bronnikov Stupen 1",
+                title: "Pesantezza & Leggerezza («Тяжесть и Лёгкость»)",
+                eyes: "aperti",
+                eyesLabel: "Aperti",
+                postura: "Eretta e rilassata",
+                breath: "Profondo sincronizzato",
+                mechanics: "Comando mentale direzionale: attrazione di flusso energetico dall'alto per saturare il corpo (pesantezza) seguita da spinta ascendente dal basso (leggerezza).",
+                physioPurpose: "Ricalibrazione dei canali semicircolari vestibolari, della propriocezione profonda e della regolazione del tono posturale involontario.",
+                energeticPurpose: "Padronanza dei vettori energetici Yin/Yang e modulazione volontaria della densità del duplicato energetico."
+            },
+            {
+                id: "p7",
+                cat: "fase1",
+                catLabel: "Bronnikov Stupen 1",
+                title: "Esercizio del Dragone («Дракон»)",
+                eyes: "aperti",
+                eyesLabel: "Aperti",
+                postura: "Gambe piegate (Ma Bu / Posizione del Cavaliere)",
+                breath: "Bocca / Perineo esplosivo",
+                mechanics: "Aggancio con i flussi cosmico (descendente) e tellurico (ascendente). Movimento fluido del bacino e della colonna facendo scorrere un'onda energetica continua dal Dantian lungo la spina.",
+                physioPurpose: "Sblocco delle contrazioni diaframmatiche croniche, aumento della pressione intra-addominale, potenziamento dei muscoli anti-gravitazionali della colonna.",
+                energeticPurpose: "Aumento esponenziale della capacità e del volume del biocampo, pulizia profonda del canale centrale di scorrimento (Chong Mai)."
+            },
+            {
+                id: "p_splash",
+                cat: "fase1",
+                catLabel: "Bronnikov Stupen 1",
+                title: "Inserimento Energetico / Splash («Энергетический Всплеск»)",
+                eyes: "aperti",
+                eyesLabel: "Aperti",
+                postura: "Eretta o Seduta",
+                breath: "Contrazione ritmica ed espulsione",
+                mechanics: "1. Concentrare la carica nel Dantian/ombelico. 2. Far risalire una spinta energetica lungo la spina dorsale. 3. Proiettare lo 'splash' verso l'alto attraverso la sommità della testa, occhi o mani.",
+                physioPurpose: "Ricarica istantanea delle forze vitali, stimolazione del sistema immunitario, pulizia e tonificazione immediata dei micro-vasi cerebrali.",
+                energeticPurpose: "Attivazione del generatore energetico profondo; esercizio propedeutico fondamentale per la generazione dello Schermo Mentale (Stupen 2)."
+            },
+            {
+                id: "p_prochacka",
+                cat: "fase1",
+                catLabel: "Bronnikov Stupen 1",
+                title: "Pompaggio Energetico (Prochacka) & Pronto Soccorso",
+                eyes: "aperti",
+                eyesLabel: "Aperti",
+                postura: "Supina / In piedi in coppia",
+                breath: "Sincronizzato a grandi volumi",
+                mechanics: "Pompaggio verticale ed orizzontale condotto dall'operatore lungo la colonna e gli occhi per far circolare grandi volumi di carica. Usato nei protocolli di emergenza per febbri e svenimenti.",
+                physioPurpose: "Normalizzazione immediata dei picchi pressori, abbattimento rapido dell'ipertermia (40°C) e riduzione dell'affaticamento visivo e cefalico.",
+                energeticPurpose: "Rimozione dei blocchi massivi nel circuito energetico e ripristino dell'omeostasi bio-informazionale dell'organismo."
+            },
+            {
+                id: "p8",
+                cat: "fase12",
+                catLabel: "Bronnikov Stupen 1.2",
+                title: "Sostanze Primordiali (Terra, Cielo, Fuoco)",
+                eyes: "aperti",
+                eyesLabel: "Aperti",
+                postura: "Eretta con partner",
+                breath: "Variabile in base alla sostanza",
+                mechanics: "Evocazione delle proprietà fisiche e tattili delle sostanze primordiali: densità solida (Terra), fluido liquido (Acqua), espansione termica (Fuoco), leggerezza (Cielo).",
+                physioPurpose: "Sviluppo della neuroplasticità sensoriale e creazione di sinestesie controllate all'interno della corteccia cerebrale.",
+                energeticPurpose: "Calibrazione fine del gradiente di trasmissione bio-informazionale e saturazione degli organi con frequenze elementi primordiali."
+            },
+            {
+                id: "p9",
+                cat: "fase2",
+                catLabel: "Bronnikov Stupen 2",
+                title: "Il Corpo di Cera (Voskvoe Telo)",
+                eyes: "benda",
+                eyesLabel: "Benda Opaca",
+                postura: "Seduta / Eretta",
+                breath: "Lento e profondo",
+                mechanics: "Condensazione del doppio energetico interiore fino a raggiungere la percezione tattile di una struttura densa, plasmabile e solida come la cera d'api.",
+                physioPurpose: "Iper-attivazione della mappa somatoparietale e disconnessione dei filtri inibitori retinici a favore dei segnali interni.",
+                energeticPurpose: "Creazione della matrice strutturale portante per l'attivazione del Biocomputer interiore e stabilizzazione dello schermo interiore."
+            },
+            {
+                id: "p10",
+                cat: "fase2",
+                catLabel: "Bronnikov Stupen 2",
+                title: "Lo Schermo Mentale Interiore (Ekran - psicobiocomputer)",
+                eyes: "benda",
+                eyesLabel: "Benda Opaca",
+                postura: "Seduta confortevole",
+                breath: "Sincronizzato e quieto",
+                mechanics: "Generazione intenzionale nello spazio buio interiore di un punto luminoso centrale, espanso in una linea e poi in una superficie rettangolare 'Schermo Bianco' stabile per proiettare dati.",
+                physioPurpose: "Sincronizzazione ad alta frequenza (onde Gamma a 40-80 Hz) tra i lobi occipitali e i lobi frontali in assenza di input fotici retinici.",
+                energeticPurpose: "Costruzione dell'interfaccia grafica del Biocomputer per la proiezione di simboli, matrici numeriche e dati diagnostici organici."
+            },
+            {
+                id: "p11",
+                cat: "fase2",
+                catLabel: "Bronnikov Stupen 2",
+                title: "Fante Percettivo (Fantom) & Proiezione",
+                eyes: "benda",
+                eyesLabel: "Benda Opaca",
+                postura: "Seduta / In piedi",
+                breath: "Spontaneo",
+                mechanics: "Proiezione a distanza del braccio o dell'intero corpo energetico 'fante' per toccare oggetti, pareti e persone rilevandone forma e temperatura a occhi coperti.",
+                physioPurpose: "Sviluppo della propriocezione extrapersonale e ri-mappatura dei campi recettivi dei neuroni specchio e della corteccia somatosensoriale.",
+                energeticPurpose: "Affrancamento della percezione sensoriale dal corpo fisico denso e coordinamento del corpo sottile nello spazio tridimensionale."
+            },
+            {
+                id: "p12",
+                cat: "fase3",
+                catLabel: "Bronnikov Stupen 3",
+                title: "Visione Diretta & Lettura a Benda Coperta",
+                eyes: "benda",
+                eyesLabel: "Benda Opaca sigillata",
+                postura: "Seduta al tavolo",
+                breath: "Naturale spontaneo",
+                mechanics: "Attivazione dello Schermo Mentale per la decodifica dei fotoni o del campo informativo emanato da testi scritti, carte colorate e oggetti nascosti senza l'uso degli occhi.",
+                physioPurpose: "Integrazione diretta delle informazioni percettive via talamo e struttura reticolare verso la corteccia visiva (verificato via EEG da Bekhtereva).",
+                energeticPurpose: "Conseguimento della percezione superconscia diretta; superamento del limite sensoriale degli organi retinici e padronanza del Biocomputer."
+            },
+            {
+                id: "p13",
+                cat: "fase4",
+                catLabel: "Bronnikov Stupen 4",
+                title: "Telepatia & Sintonia Informazionale Remota",
+                eyes: "aperti",
+                eyesLabel: "Aperti / Chiusi",
+                postura: "Meditativa / In coppia remota",
+                breath: "Ode profonda sincronizzata",
+                mechanics: "Aggancio di frequenza tra due o più operatori a grande distanza per il trasferimento e la ricezione immediata di pacchetti di dati, immagini e stati interni.",
+                physioPurpose: "Sincronizzazione inter-emisferica e inter-cerebrale provata da risonanze di coerenza elettrica negli elettroencefalogrammi.",
+                energeticPurpose: "Superamento del vincolo spazio-temporale corporeo e padronanza dell'interazione diretta nel campo noosferico informazionale."
+            }
+        ];
+
+        // ==========================================
+        // RENDER CORPUS FUNCTION
+        // ==========================================
+        function renderCorpus() {
+            const query = document.getElementById('corpus-search').value.toLowerCase();
+            const cat = document.getElementById('corpus-filter-cat').value;
+            const eyes = document.getElementById('corpus-filter-eyes').value;
+            const grid = document.getElementById('corpus-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const filtered = practicesCorpus.filter(item => {
+                const matchQuery = item.title.toLowerCase().includes(query) || 
+                                   item.physioPurpose.toLowerCase().includes(query) || 
+                                   item.energeticPurpose.toLowerCase().includes(query) ||
+                                   item.mechanics.toLowerCase().includes(query);
+                const matchCat = (cat === 'all' || item.cat === cat);
+                const matchEyes = (eyes === 'all' || item.eyes === eyes);
+                return matchQuery && matchCat && matchEyes;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-2 p-8 text-center bg-stone-100 rounded-xl border border-stone-200 text-stone-500 text-sm">Nessuna pratica trovata con i filtri selezionati.</div>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 rounded-2xl border border-stone-200 shadow-sm hover:border-terracotta-600 transition flex flex-col justify-between space-y-4";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                            <span class="text-xs font-bold px-3 py-1 bg-sage-700 text-white rounded-full">${item.catLabel}</span>
+                            <span class="text-xs font-semibold px-2.5 py-1 bg-amber-100 text-amber-900 rounded-md">👁️ ${item.eyesLabel}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-sage-800 mb-2">${item.title}</h3>
+                        <div class="text-xs text-stone-500 mb-3 space-y-1">
+                            <p><strong>Postura:</strong> ${item.postura}</p>
+                            <p><strong>Respirazione:</strong> ${item.breath}</p>
+                        </div>
+                        <div class="space-y-3 border-t border-stone-100 pt-3">
+                            <div>
+                                <h4 class="text-xs font-bold text-stone-700 uppercase tracking-wide">Meccanica & Protocollo:</h4>
+                                <p class="text-xs text-stone-600 leading-relaxed mt-0.5">${item.mechanics}</p>
+                            </div>
+                            <div class="bg-emerald-50/60 p-3 rounded-lg border border-emerald-100">
+                                <h4 class="text-xs font-bold text-sage-800 uppercase tracking-wide flex items-center gap-1">
+                                    <span>🧠</span> Finalità Fisiologica e Neurobiologica:
+                                </h4>
+                                <p class="text-xs text-stone-700 leading-relaxed mt-1">${item.physioPurpose}</p>
+                            </div>
+                            <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-100">
+                                <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wide flex items-center gap-1">
+                                    <span>⚡</span> Finalità Energetica e Cognitiva:
+                                </h4>
+                                <p class="text-xs text-stone-700 leading-relaxed mt-1">${item.energeticPurpose}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // THREE.JS 3D — MANICHINO ARTICOLATO (scheletro gerarchico, cinematica con piedi a terra)
+        // Convenzioni: la figura guarda verso +Z; la sua sinistra è +X.
+        // ==========================================
+        let threeScene, threeCamera, threeRenderer, threeContainer;
+        let mannequinRoot, chestMesh, dantianMesh, particlesGroup;
+        let leftArmGroup, rightArmGroup, leftThighGroup, rightThighGroup, spineGroup;
+        let current3DPosture = 'zhanzhuang';
+        let breath3DPhase = 'inhale'; // inhale, hold, exhale
+        let breath3DTime = 0;
+        let threeSpeed = 5;
+        let is3DInitialized = false;
+
+        const BODY = { hipY: 0.08, hipX: 0.095, L1: 0.44, L2: 0.43, sole: 0.07 };
+        const J = {};             // giunti (Object3D) per nome
+        const ANCH = {};          // ancore per punti e meridiani
+        const ORGANS = {};        // mesh degli organi
+        let bodyMats = [];
+        let acuLabels = [];
+        let renMaiLine, duMaiLine;
+        let curPose = null;
+        let lzjDrive = null;      // { pose, breath, organ } quando la musica guida il manichino
+        let camOrbit = { theta: 0.35, phi: 1.25, r: 3.6, target: new THREE.Vector3(0, 0.95, 0) };
+        let show3D = { points: true, meridians: true, organs: false };
+
+        // ---------- Pose ----------
+        // a*: [spallaX(-=avanti), spallaY(rot. interna), spallaZ(abduzione), gomitoX(-=flessione), polsoX, polsoY(supinazione)]
+        // l*: [ancaX(-=flessione), ancaZ(abduzione), ginocchioX(+=flessione), ancaY(rot. esterna)]
+        function P(o) {
+            const p = Object.assign({
+                rootRy: 0, rootRx: 0, rootY: null,
+                spX: 0, spY: 0, spZ: 0, chX: 0, nkX: 0, nkY: 0,
+                aL: [0, 0, 0.08, -0.12, 0, 0], aR: null,
+                lL: [-0.04, 0.05, 0.08, 0], lR: null
+            }, o || {});
+            if (!p.aR) p.aR = p.aL.slice();
+            if (!p.lR) p.lR = p.lL.slice();
+            return p;
+        }
+        function mirrorPose(p) {
+            const q = Object.assign({}, p);
+            q.aL = p.aR.slice(); q.aR = p.aL.slice();
+            q.lL = p.lR.slice(); q.lR = p.lL.slice();
+            q.spY = -p.spY; q.spZ = -p.spZ; q.nkY = -p.nkY;
+            return q;
+        }
+        function lerpPose(a, b, t) {
+            const r = {};
+            for (const k in a) {
+                if (Array.isArray(a[k])) r[k] = a[k].map((v, i) => v + (b[k][i] - v) * t);
+                else if (a[k] === null || b[k] === null) r[k] = t < 0.5 ? a[k] : b[k];
+                else r[k] = a[k] + (b[k] - a[k]) * t;
+            }
+            return r;
+        }
+        const smooth = t => t * t * (3 - 2 * t);
+        // keys: [[t, pose], ...] con t crescente in [0,1); ciclico
+        function seqPose(t, keys) {
+            for (let i = 0; i < keys.length; i++) {
+                const k0 = keys[i], k1 = keys[(i + 1) % keys.length];
+                const t0 = k0[0], t1 = i + 1 < keys.length ? k1[0] : 1 + keys[0][0];
+                const tt = t < keys[0][0] ? t + 1 : t;
+                if (tt >= t0 && tt < t1) return lerpPose(k0[1], k1[1], smooth((tt - t0) / (t1 - t0)));
+            }
+            return keys[0][1];
+        }
+
+        const LEG_SOFT = [-0.12, 0.07, 0.24, 0];
+        const LEG_SINK = [-0.38, 0.07, 0.76, 0];
+        const POSTURES = {
+            zhanzhuang: P({ aL: [-1.05, -0.55, 0.42, -1.1, 0, 0.4], lL: [-0.28, 0.07, 0.56, 0] }),
+            mabu: P({ aL: [-1.0, -0.35, 0.3, -0.7, 0.3, -0.3], lL: [-0.95, 0.42, 1.55, 0.35], spX: 0.05 }),
+            bronnikov_ball: P({ aL: [-0.55, -0.55, 0.12, -1.35, 0, 0.6], lL: [-0.1, 0.06, 0.2, 0] }),
+            bronnikov_bell: P({ aL: [-0.05, 0, 0.62, -0.1, 0, 0], lL: [-0.06, 0.05, 0.12, 0] }),
+            jingzuo: P({ rootY: 0.27, aL: [-0.55, -0.45, 0.2, -1.25, 0, 0.9], lL: [-1.35, 0.35, 2.6, -1.25] }),
+            supine: P({ rootRx: -Math.PI / 2, rootY: 0.12, aL: [0, 0, 0.18, -0.05, 0, 0], lL: [0, 0.06, 0, 0] })
+        };
+
+        // ---------- Liu Zi Jue: movimenti (dalla sequenza Health Qigong) ----------
+        const WAIST = [0.38, 0, 0.14, -1.65, 0.1, 1.3];      // mani ai fianchi, palmi in su
+        const NAVEL = [-0.45, -0.45, 0.12, -1.55, 0, 0.3];   // mani davanti all'ombelico
+        const HANG = [0, 0, 0.08, -0.12, 0, 0];
+        const LZJ_MOVES = {
+            prep: { period: 8, keys: [[0, P({ lL: LEG_SOFT })]], breath: [[0, 'in'], [0.45, 'out']] },
+            qishi: { period: 18, keys: [
+                [0.0, P({ aL: HANG, lL: LEG_SOFT })],
+                [0.3, P({ aL: [-0.55, 0, 0.16, -1.35, 0, 1.4], lL: [-0.06, 0.07, 0.12, 0] })],
+                [0.55, P({ aL: [-0.5, -0.2, 0.16, -1.45, 0, -0.2], lL: LEG_SINK })],
+                [0.75, P({ aL: [-1.2, -0.2, 0.18, -0.45, -0.5, -0.2], lL: LEG_SINK })],
+                [0.9, P({ aL: NAVEL, lL: LEG_SOFT })]
+            ], breath: [[0, 'in'], [0.3, 'out'], [0.75, 'in']] },
+            xu: { alternate: true, keys: [
+                [0.0, P({ aL: WAIST, lL: LEG_SOFT })],
+                [0.42, P({ spY: 0.85, nkY: 0.25, aL: WAIST, aR: [-1.5, 0, -0.25, -0.12, 0, -0.3], lL: LEG_SOFT })],
+                [0.55, P({ spY: 0.85, nkY: 0.25, aL: WAIST, aR: [-1.45, 0, -0.2, -0.2, 0, -0.3], lL: LEG_SOFT })],
+                [0.9, P({ aL: WAIST, lL: LEG_SOFT })]
+            ], breath: [[0, 'out'], [0.45, 'in'], [0.9, 'pause']] },
+            he: { keys: [
+                [0.0, P({ aL: WAIST, lL: LEG_SOFT })],
+                [0.2, P({ aL: [-0.75, 0, 0.12, -0.25, 0, 1.4], lL: LEG_SINK, spX: 0.08 })],
+                [0.42, P({ aL: [-0.45, -0.2, 0.5, -1.95, 0, 1.4], lL: LEG_SOFT })],
+                [0.55, P({ aL: [-0.45, -0.3, 0.5, -1.85, 0.3, -0.6], lL: LEG_SOFT })],
+                [0.82, P({ aL: [-0.6, -0.3, 0.25, -1.25, 0.3, -0.6], lL: LEG_SINK })]
+            ], breath: [[0, 'in'], [0.55, 'out']] },
+            hu: { keys: [
+                [0.0, P({ aL: NAVEL, lL: LEG_SOFT })],
+                [0.45, P({ aL: [-0.75, -0.35, 0.5, -1.1, 0, 0.3], lL: LEG_SINK })],
+                [0.55, P({ aL: [-0.75, -0.35, 0.5, -1.1, 0, 0.3], lL: LEG_SINK })]
+            ], breath: [[0, 'out'], [0.5, 'in']] },
+            si: { keys: [
+                [0.0, P({ aL: HANG, lL: LEG_SOFT })],
+                [0.25, P({ aL: [-0.35, 0, 0.25, -2.25, 0, 1.3], lL: LEG_SOFT })],
+                [0.42, P({ aL: [0.35, 0, 0.32, -2.35, 0.2, 0.2], chX: -0.12, nkX: -0.3, lL: LEG_SOFT })],
+                [0.75, P({ aL: [-1.45, 0, 0.18, -0.15, -0.8, -0.2], lL: LEG_SINK })],
+                [0.88, P({ aL: [-0.9, 0, 0.18, -0.8, 0, -0.2], lL: LEG_SOFT })]
+            ], breath: [[0, 'in'], [0.42, 'pause'], [0.48, 'out'], [0.88, 'in']] },
+            chui: { keys: [
+                [0.0, P({ aL: [0.65, 0, 0.25, -1.45, 0, 0.6], lL: LEG_SOFT })],
+                [0.45, P({ spX: 0.45, aL: [0.35, 0, 0.12, -0.1, 0, 0], lL: [-1.05, 0.08, 1.75, 0] })],
+                [0.6, P({ spX: 0.3, aL: [-0.55, 0, 0.18, -0.3, 0, 0], lL: [-0.8, 0.08, 1.4, 0] })],
+                [0.8, P({ aL: [-0.95, -0.2, 0.3, -1.4, 0, 0.6], lL: LEG_SOFT })]
+            ], breath: [[0, 'out'], [0.5, 'in']] },
+            xi: { keys: [
+                [0.0, P({ aL: [0, 0, 0.12, -0.15, 0, -1.2], lL: LEG_SOFT })],
+                [0.25, P({ aL: [-1.65, 0, 0.08, -1.3, 0, -1.2], lL: [-0.06, 0.07, 0.12, 0] })],
+                [0.42, P({ aL: [-2.75, 0, -0.55, -0.2, 0, 0], lL: [-0.06, 0.07, 0.12, 0] })],
+                [0.58, P({ aL: [-1.1, -0.2, 0.35, -1.95, 0, -0.6], lL: LEG_SOFT })],
+                [0.85, P({ aL: [-0.15, 0, 0.5, -0.2, 0, -0.6], lL: LEG_SINK })]
+            ], breath: [[0, 'in'], [0.58, 'out']] },
+            shou: { period: 10, keys: [
+                [0.0, P({ aL: [-0.4, -0.45, 0.12, -1.6, 0, 0.3], lL: LEG_SOFT })],
+                [0.5, P({ aL: [-0.45, -0.5, 0.1, -1.55, 0, 0.3], spZ: 0.04, lL: LEG_SOFT })]
+            ], breath: [[0, 'in'], [0.45, 'out']] }
+        };
+        function lzjBreathAt(move, t) {
+            let cur = move.breath[0];
+            for (const b of move.breath) if (t >= b[0]) cur = b;
+            const idx = move.breath.indexOf(cur);
+            const next = move.breath[idx + 1] ? move.breath[idx + 1][0] : 1;
+            return { phase: cur[1], frac: (t - cur[0]) / (next - cur[0]) };
+        }
+        // t: progresso nella ripetizione [0,1); rep: indice ripetizione
+        function lzjPoseAt(id, t, rep) {
+            const m = LZJ_MOVES[id];
+            let pose = m.keys.length === 1 ? m.keys[0][1] : seqPose(t, m.keys);
+            if (m.alternate && rep % 2 === 1) pose = mirrorPose(pose);
+            const b = lzjBreathAt(m, t);
+            let lung = b.phase === 'in' ? smooth(b.frac) : b.phase === 'out' ? 1 - smooth(b.frac) : 1;
+            return { pose, breath: b.phase, lung };
+        }
+
+        // ---------- Costruzione geometria ----------
+        function limb(r1, r2, len, mat) {
+            const g = new THREE.Group();
+            const cyl = new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, len, 20, 1, true), mat);
+            cyl.position.y = -len / 2;
+            g.add(cyl);
+            const c1 = new THREE.Mesh(new THREE.SphereGeometry(r1, 20, 14), mat);
+            g.add(c1);
+            const c2 = new THREE.Mesh(new THREE.SphereGeometry(r2, 20, 14), mat);
+            c2.position.y = -len;
+            g.add(c2);
+            return g;
+        }
+        function blob(rx, ry, rz, mat) {
+            const m = new THREE.Mesh(new THREE.SphereGeometry(1, 28, 20), mat);
+            m.scale.set(rx, ry, rz);
+            return m;
+        }
+        function anchor(parent, name, x, y, z) {
+            const o = new THREE.Object3D();
+            o.position.set(x, y, z);
+            parent.add(o);
+            ANCH[name] = o;
+            return o;
+        }
+
+        function buildArm(side, matBody, matJoint) {
+            const s = side === 'L' ? 1 : -1;
+            const shoulder = new THREE.Group();
+            shoulder.rotation.order = 'YZX';
+            shoulder.add(new THREE.Mesh(new THREE.SphereGeometry(0.058, 18, 14), matJoint));
+            shoulder.add(limb(0.052, 0.042, 0.29, matBody));
+            const elbow = new THREE.Group();
+            elbow.position.y = -0.29;
+            shoulder.add(elbow);
+            elbow.add(limb(0.04, 0.032, 0.25, matBody));
+            const wrist = new THREE.Group();
+            wrist.rotation.order = 'YXZ';
+            wrist.position.y = -0.255;
+            elbow.add(wrist);
+            const palm = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.1, 0.028), matBody);
+            palm.position.y = -0.055;
+            const fingers = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.085, 0.018), matBody);
+            fingers.position.y = -0.145;
+            const thumb = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.06, 0.02), matBody);
+            thumb.position.set(-0.045 * s, -0.06, 0.012);
+            thumb.rotation.z = 0.5 * s;
+            const hand = new THREE.Group();
+            hand.rotation.y = -Math.PI / 2 * s; // palmo (locale +Z) rivolto verso la coscia
+            hand.add(palm, fingers, thumb);
+            wrist.add(hand);
+            anchor(hand, 'Laogong' + side, 0, -0.07, 0.02);
+            J['sh' + side] = shoulder; J['el' + side] = elbow; J['wr' + side] = wrist;
+            return shoulder;
+        }
+        function buildLeg(side, matBody, matJoint) {
+            const s = side === 'L' ? 1 : -1;
+            const hip = new THREE.Group();
+            hip.rotation.order = 'YZX';
+            hip.add(limb(0.078, 0.055, BODY.L1, matBody));
+            const knee = new THREE.Group();
+            knee.position.y = -BODY.L1;
+            hip.add(knee);
+            knee.add(new THREE.Mesh(new THREE.SphereGeometry(0.058, 18, 14), matJoint));
+            knee.add(limb(0.055, 0.038, BODY.L2, matBody));
+            const ankle = new THREE.Group();
+            ankle.position.y = -BODY.L2;
+            knee.add(ankle);
+            const foot = new THREE.Mesh(new THREE.BoxGeometry(0.085, 0.05, 0.24), matBody);
+            foot.position.set(0.005 * s, -BODY.sole + 0.025, 0.06);
+            ankle.add(foot);
+            anchor(ankle, 'Yongquan' + side, 0, -BODY.sole - 0.002, 0.07);
+            J['hip' + side] = hip; J['kn' + side] = knee; J['an' + side] = ankle;
+            return hip;
+        }
+
+        function init3DMannequin() {
+            const container = document.getElementById('three-canvas-container');
+            if (!container || is3DInitialized) return;
+            threeContainer = container;
+            const w = container.clientWidth, h = container.clientHeight;
+
+            threeScene = new THREE.Scene();
+            threeScene.fog = new THREE.FogExp2(0x0d1712, 0.06);
+            threeCamera = new THREE.PerspectiveCamera(40, w / h, 0.05, 100);
+            threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            threeRenderer.setSize(w, h);
+            threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(threeRenderer.domElement);
+
+            threeScene.add(new THREE.HemisphereLight(0xfff3dd, 0x1d3027, 0.75));
+            const key = new THREE.DirectionalLight(0xffe2b0, 0.9);
+            key.position.set(2, 4, 3);
+            threeScene.add(key);
+            const rim = new THREE.DirectionalLight(0x7fc8a9, 0.55);
+            rim.position.set(-3, 2, -3);
+            threeScene.add(rim);
+
+            // Pavimento
+            const floor = new THREE.Mesh(new THREE.CircleGeometry(1.4, 64), new THREE.MeshStandardMaterial({ color: 0x1b2b22, roughness: 0.95 }));
+            floor.rotation.x = -Math.PI / 2;
+            threeScene.add(floor);
+            const ring = new THREE.Mesh(new THREE.RingGeometry(1.36, 1.4, 64), new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0.35 }));
+            ring.rotation.x = -Math.PI / 2; ring.position.y = 0.002;
+            threeScene.add(ring);
+
+            const matBody = new THREE.MeshStandardMaterial({ color: 0x5f8f74, roughness: 0.55, metalness: 0.05, transparent: true, opacity: 1 });
+            const matJoint = new THREE.MeshStandardMaterial({ color: 0xc9a54a, roughness: 0.4, metalness: 0.3, transparent: true, opacity: 1 });
+            bodyMats = [matBody, matJoint];
+
+            // Gerarchia: radice (bacino) → lombare → torace → collo → testa
+            mannequinRoot = new THREE.Group();
+            threeScene.add(mannequinRoot);
+            const pelvis = blob(0.15, 0.11, 0.1, matBody);
+            mannequinRoot.add(pelvis);
+            anchor(mannequinRoot, 'Huiyin', 0, -0.1, 0);
+            anchor(mannequinRoot, 'Guanyuan', 0, 0.02, 0.1);
+
+            spineGroup = new THREE.Group();
+            spineGroup.position.y = 0.06;
+            spineGroup.rotation.order = 'YZX';
+            mannequinRoot.add(spineGroup);
+            const abdomen = blob(0.13, 0.13, 0.095, matBody);
+            abdomen.position.y = 0.1;
+            spineGroup.add(abdomen);
+            anchor(spineGroup, 'Shenque', 0, 0.06, 0.095);
+            anchor(spineGroup, 'Mingmen', 0, 0.06, -0.09);
+            anchor(spineGroup, 'Ren_abd', 0, 0.16, 0.09);
+            anchor(spineGroup, 'Du_lumb', 0, 0.16, -0.085);
+
+            const chest = new THREE.Group();
+            chest.position.y = 0.2;
+            chest.rotation.order = 'YZX';
+            spineGroup.add(chest);
+            J.chest = chest;
+            chestMesh = blob(0.165, 0.2, 0.115, matBody);
+            chestMesh.position.y = 0.13;
+            chest.add(chestMesh);
+            anchor(chest, 'Shanzhong', 0, 0.13, 0.118);
+            anchor(chest, 'Ren_neck', 0, 0.3, 0.06);
+            anchor(chest, 'Du_thor', 0, 0.15, -0.115);
+            anchor(chest, 'Dazhui', 0, 0.31, -0.06);
+
+            const neck = new THREE.Group();
+            neck.position.y = 0.31;
+            neck.rotation.order = 'YXZ';
+            chest.add(neck);
+            J.neck = neck;
+            neck.add(limb(0.045, 0.05, 0.08, matJoint)).rotation.x = Math.PI;
+            const head = blob(0.095, 0.118, 0.108, matBody);
+            head.position.y = 0.17;
+            neck.add(head);
+            const nose = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.04, 10), matBody);
+            nose.rotation.x = Math.PI / 2; nose.position.set(0, 0.16, 0.115);
+            neck.add(nose);
+            anchor(neck, 'Baihui', 0, 0.29, 0);
+            anchor(neck, 'Yintang', 0, 0.2, 0.105);
+            anchor(neck, 'Chengjiang', 0, 0.1, 0.095);
+            anchor(neck, 'Renzhong', 0, 0.135, 0.11);
+            anchor(neck, 'Fengfu', 0, 0.13, -0.1);
+
+            // Arti
+            const shL = buildArm('L', matBody, matJoint); shL.position.set(0.2, 0.25, 0); chest.add(shL);
+            const shR = buildArm('R', matBody, matJoint); shR.position.set(-0.2, 0.25, 0); chest.add(shR);
+            const hipL = buildLeg('L', matBody, matJoint); hipL.position.set(BODY.hipX, -BODY.hipY, 0); mannequinRoot.add(hipL);
+            const hipR = buildLeg('R', matBody, matJoint); hipR.position.set(-BODY.hipX, -BODY.hipY, 0); mannequinRoot.add(hipR);
+            leftArmGroup = shL; rightArmGroup = shR; leftThighGroup = hipL; rightThighGroup = hipR;
+
+            // Dantian inferiore (Xia Dantian): sfera luminosa interna
+            dantianMesh = new THREE.Mesh(new THREE.SphereGeometry(0.045, 20, 16), new THREE.MeshBasicMaterial({ color: 0xffd36b, transparent: true, opacity: 0.9 }));
+            dantianMesh.position.set(0, 0.0, 0.02);
+            mannequinRoot.add(dantianMesh);
+
+            // Organi (visibili in modalità trasparenza; si accendono durante il suono corrispondente)
+            const om = c => new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.0, depthWrite: false });
+            ORGANS.liver = blob(0.085, 0.045, 0.06, om(0x3fbf6a)); ORGANS.liver.position.set(-0.06, 0.17, 0.02); spineGroup.add(ORGANS.liver);
+            ORGANS.heart = blob(0.042, 0.05, 0.04, om(0xe0453a)); ORGANS.heart.position.set(0.025, 0.1, 0.03); chest.add(ORGANS.heart);
+            ORGANS.spleen = blob(0.04, 0.05, 0.035, om(0xe8b93a)); ORGANS.spleen.position.set(0.085, 0.18, -0.02); spineGroup.add(ORGANS.spleen);
+            const lungL = blob(0.065, 0.12, 0.07, om(0xf2f2f2)); lungL.position.set(0.075, 0.14, 0);
+            const lungR = blob(0.07, 0.12, 0.07, om(0xf2f2f2)); lungR.position.set(-0.075, 0.14, 0);
+            ORGANS.lung = new THREE.Group(); ORGANS.lung.add(lungL, lungR); chest.add(ORGANS.lung);
+            const kL = blob(0.028, 0.045, 0.022, om(0x3a7bd5)); kL.position.set(0.055, 0.1, -0.055);
+            const kR = blob(0.028, 0.045, 0.022, om(0x3a7bd5)); kR.position.set(-0.055, 0.08, -0.055);
+            ORGANS.kidney = new THREE.Group(); ORGANS.kidney.add(kL, kR); spineGroup.add(ORGANS.kidney);
+            ORGANS.sanjiao = new THREE.Group();
+            [[chest, 0.14, 0.16], [spineGroup, 0.17, 0.13], [spineGroup, 0.0, 0.13]].forEach(([par, y, r], i) => {
+                const t = new THREE.Mesh(new THREE.TorusGeometry(r, 0.008, 8, 40), om(0xb07be0));
+                t.rotation.x = Math.PI / 2; t.position.y = y;
+                par.add(t); ORGANS.sanjiao.add(new THREE.Object3D()); ORGANS['sj' + i] = t;
+            });
+
+            // Meridiani Ren Mai (anteriore) e Du Mai (posteriore): linee aggiornate ogni frame sulle ancore
+            const mkLine = (c) => {
+                const g = new THREE.BufferGeometry();
+                g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(40 * 3), 3));
+                const l = new THREE.Line(g, new THREE.LineBasicMaterial({ color: c, transparent: true, opacity: 0.9, depthTest: false }));
+                l.renderOrder = 10; l.frustumCulled = false;
+                threeScene.add(l);
+                return l;
+            };
+            renMaiLine = mkLine(0xff9a5c);
+            duMaiLine = mkLine(0x6fd3ff);
+
+            // Punti di agopuntura con etichette
+            const ACU = [
+                ['Baihui', 'DU20 Baihui'], ['Yintang', 'Yintang'], ['Shanzhong', 'RN17 Shanzhong'],
+                ['Shenque', 'RN8 Shenque'], ['Guanyuan', 'RN4 Guanyuan · Dantian'], ['Huiyin', 'RN1 Huiyin'],
+                ['Mingmen', 'DU4 Mingmen'], ['Dazhui', 'DU14 Dazhui'],
+                ['LaogongL', 'PC8 Laogong'], ['LaogongR', 'Laogong 勞宮 (PC8)'],
+                ['YongquanL', 'KI1 Yongquan'], ['YongquanR', 'Yongquan 湧泉 (KI1)']
+            ];
+            const dotGeo = new THREE.SphereGeometry(0.012, 10, 8);
+            const dotMat = new THREE.MeshBasicMaterial({ color: 0xffe08a, depthTest: false });
+            ACU.forEach(([k, label]) => {
+                const d = new THREE.Mesh(dotGeo, dotMat); d.renderOrder = 11;
+                ANCH[k].add(d);
+                if (k.endsWith('R')) { acuLabels.push({ anchor: ANCH[k], el: null, dot: d }); return; }
+                const el = document.createElement('div');
+                el.className = 'acu-label';
+                el.textContent = label;
+                container.appendChild(el);
+                acuLabels.push({ anchor: ANCH[k], el, dot: d });
+            });
+
+            // Particelle del campo
+            particlesGroup = new THREE.Group();
+            const pCount = 260, pPos = new Float32Array(pCount * 3);
+            for (let i = 0; i < pCount; i++) {
+                const a = Math.random() * Math.PI * 2, r = 0.45 + Math.random() * 0.6;
+                pPos[i * 3] = Math.cos(a) * r; pPos[i * 3 + 1] = Math.random() * 2.0; pPos[i * 3 + 2] = Math.sin(a) * r;
+            }
+            const pg = new THREE.BufferGeometry();
+            pg.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+            particlesGroup.add(new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xc86d51, size: 0.018, transparent: true, opacity: 0.55 })));
+            threeScene.add(particlesGroup);
+
+            // Orbita camera: mouse, touch, rotella
+            let drag = null;
+            const down = (x, y) => { drag = { x, y }; };
+            const move = (x, y) => {
+                if (!drag) return;
+                camOrbit.theta -= (x - drag.x) * 0.008;
+                camOrbit.phi = Math.min(2.6, Math.max(0.35, camOrbit.phi - (y - drag.y) * 0.006));
+                drag = { x, y };
+            };
+            container.addEventListener('mousedown', e => down(e.clientX, e.clientY));
+            window.addEventListener('mouseup', () => { drag = null; });
+            window.addEventListener('mousemove', e => move(e.clientX, e.clientY));
+            container.addEventListener('touchstart', e => { const t = e.touches[0]; down(t.clientX, t.clientY); }, { passive: true });
+            container.addEventListener('touchmove', e => { const t = e.touches[0]; move(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
+            container.addEventListener('touchend', () => { drag = null; });
+            container.addEventListener('wheel', e => { e.preventDefault(); camOrbit.r = Math.min(7, Math.max(1.4, camOrbit.r * (1 + e.deltaY * 0.001))); }, { passive: false });
+            window.addEventListener('resize', () => {
+                const w2 = container.clientWidth, h2 = container.clientHeight;
+                if (!w2) return;
+                threeCamera.aspect = w2 / h2; threeCamera.updateProjectionMatrix(); threeRenderer.setSize(w2, h2);
+            });
+
+            curPose = POSTURES.zhanzhuang;
+            is3DInitialized = true;
+            apply3DPosture(current3DPosture);
+            animate3D();
+        }
+
+        // Applica una posa allo scheletro, con radice calcolata perché i piedi restino a terra
+        function setSkeleton(p) {
+            const sideArm = (s, a) => {
+                const m = s === 'L' ? 1 : -1;
+                J['sh' + s].rotation.set(a[0], a[1] * m, a[2] * m);
+                J['el' + s].rotation.set(a[3], 0, 0);
+                J['wr' + s].rotation.set(a[4], a[5] * m, 0);
+            };
+            const sideLeg = (s, l) => {
+                const m = s === 'L' ? 1 : -1;
+                J['hip' + s].rotation.set(l[0], l[3] * m, l[1] * m);
+                J['kn' + s].rotation.set(l[2], 0, 0);
+                J['an' + s].rotation.set(p.rootRx ? 0 : -(l[0] + l[2]), 0, -l[1] * m * 0.8);
+            };
+            sideArm('L', p.aL); sideArm('R', p.aR);
+            sideLeg('L', p.lL); sideLeg('R', p.lR);
+            spineGroup.rotation.set(p.spX, p.spY * 0.6, p.spZ);
+            J.chest.rotation.set(p.chX + p.spX * 0.3, p.spY * 0.4, 0);
+            J.neck.rotation.set(p.nkX - p.spX * 0.6, p.nkY, 0);
+
+            // cinematica diretta della gamba sinistra per altezza e arretramento del bacino
+            const legH = l => (BODY.L1 * Math.cos(l[0]) + BODY.L2 * Math.cos(l[0] + l[2])) * Math.cos(l[1]);
+            const legZ = l => -(BODY.L1 * Math.sin(l[0]) + BODY.L2 * Math.sin(l[0] + l[2]));
+            if (p.rootY !== null && p.rootY !== undefined) {
+                mannequinRoot.position.set(0, p.rootY, 0);
+            } else {
+                const h = (legH(p.lL) + legH(p.lR)) / 2;
+                const z = (legZ(p.lL) + legZ(p.lR)) / 2;
+                mannequinRoot.position.set(0, BODY.hipY + h + BODY.sole, -z * 0.8);
+            }
+            mannequinRoot.rotation.set(p.rootRx, p.rootRy, 0);
+        }
+
+        function change3DPosture(posture) {
+            current3DPosture = posture;
+            apply3DPosture(posture);
+            const titleEl = document.getElementById('3d-posture-title');
+            const descEl = document.getElementById('3d-posture-desc');
+            const D = {
+                zhanzhuang: ["Zhan Zhuang (Postura del Palo / Abbracciare l'albero)", "Piedi alla larghezza delle spalle e paralleli, ginocchia morbide che non superano le punte, coccige rilasciato verso il basso, braccia arrotondate davanti al petto come ad abbracciare un tronco, palmi verso il torace. Spalle e gomiti abbassati."],
+                mabu: ["Ma Bu (Posizione del Cavaliere)", "Piedi a circa due larghezze di spalle, ginocchia flesse in linea con le punte dei piedi, busto verticale, peso centrato tra i piedi. Nella pratica di salute si scende solo quanto si riesce a mantenere senza tensione alle ginocchia."],
+                bronnikov_ball: ["Bronnikov — Palla", "Postura eretta, gomiti piegati, palmi affacciati davanti all'ombelico a circa 20 cm, come a contenere una palla. (Metodo Bronnikov: esercizio della 1ª Stupen.)"],
+                bronnikov_bell: ["Bronnikov — Campana", "Corpo eretto, braccia aperte verso il basso a formare un cono attorno al corpo. (Metodo Bronnikov.)"],
+                jingzuo: ["Jing Zuo (Meditazione seduta)", "Gambe incrociate su un cuscino, ginocchia più basse delle anche, colonna verticale, mani sovrapposte sul grembo davanti al Dantian. Postura usata per la respirazione embrionale (Tai Xi)."],
+                supine: ["Posizione supina", "Disteso, braccia lungo i fianchi, gambe leggermente divaricate. Posizione di rilassamento e di lavoro in coppia."]
+            };
+            const L = LZJ_INFO[posture];
+            if (D[posture]) { titleEl.innerText = D[posture][0]; descEl.innerText = D[posture][1]; }
+            else if (L) { titleEl.innerText = L.name; descEl.innerText = L.move; }
+        }
+
+        function apply3DPosture(posture) {
+            current3DPosture = posture;
+            if (!mannequinRoot) return;
+            Object.values(ORGANS).forEach(o => o.traverse && o.traverse(c => { if (c.material) c.material.opacity = 0; }));
+        }
+
+        function set3DBreath(phase) {
+            breath3DPhase = phase;
+            document.getElementById('3d-breath-status').innerText = phase === 'inhale' ? 'Inspirazione (Espansione Torace)' : phase === 'exhale' ? 'Espirazione (Rilascio)' : 'Trattenimento (Apnea Dantian)';
+            ['inhale', 'hold', 'exhale'].forEach(p => {
+                const btn = document.getElementById(`btn-3d-${p}`);
+                if (btn) btn.className = (p === phase) ? "py-1.5 px-2 bg-sage-700 text-white rounded text-xs font-bold" : "py-1.5 px-2 bg-stone-700 text-stone-300 rounded text-xs font-bold";
+            });
+        }
+
+        function update3DSpeed() {
+            threeSpeed = parseInt(document.getElementById('3d-speed-range').value);
+        }
+
+        function toggle3DLayer(k, v) {
+            show3D[k] = v;
+            if (bodyMats.length) bodyMats.forEach(m => { m.opacity = show3D.organs ? 0.28 : 1; m.depthWrite = !show3D.organs; });
+        }
+
+        const ORGAN_OF = { xu: ['liver'], he: ['heart'], hu: ['spleen'], si: ['lung'], chui: ['kidney'], xi: ['sj0', 'sj1', 'sj2'] };
+        let preview = { t: 0 };
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            const dt = 0.016 * (threeSpeed / 5);
+            breath3DTime += dt;
+
+            // Posa obiettivo: guidata dalla musica, anteprima di un movimento Liu Zi Jue, oppure postura statica
+            let target, lung, organKey = null;
+            if (lzjDrive) {
+                target = lzjDrive.pose; lung = lzjDrive.lung; organKey = lzjDrive.id;
+            } else if (LZJ_MOVES[current3DPosture]) {
+                const m = LZJ_MOVES[current3DPosture];
+                const period = m.period || 12;
+                preview.t += dt / period;
+                const rep = Math.floor(preview.t), t = preview.t - rep;
+                const r = lzjPoseAt(current3DPosture, t, rep);
+                target = r.pose; lung = r.lung; organKey = current3DPosture;
+                setBreathLabel3D(r.breath);
+            } else {
+                target = POSTURES[current3DPosture] || POSTURES.zhanzhuang;
+                const s = Math.sin(breath3DTime * 0.9) * 0.5 + 0.5;
+                lung = breath3DPhase === 'inhale' ? s : breath3DPhase === 'exhale' ? 1 - s : 1;
+            }
+            curPose = lerpPose(curPose, target, 0.12);
+            setSkeleton(curPose);
+
+            const bs = 1 + lung * 0.07;
+            chestMesh.scale.set(0.165 * bs, 0.2 * (1 + lung * 0.02), 0.115 * bs);
+            const ds = 0.85 + (1 - lung) * 0.35;
+            dantianMesh.scale.set(ds, ds, ds);
+            dantianMesh.material.opacity = 0.55 + 0.4 * (1 - lung);
+
+            // Organi
+            const active = organKey && ORGAN_OF[organKey] ? ORGAN_OF[organKey] : [];
+            ['liver', 'heart', 'spleen', 'lung', 'kidney', 'sj0', 'sj1', 'sj2'].forEach(k => {
+                const on = active.includes(k);
+                const base = show3D.organs ? 0.35 : 0;
+                const op = on ? 0.55 + 0.4 * (1 - lung) : base;
+                ORGANS[k].traverse(c => { if (c.material) c.material.opacity += (op - c.material.opacity) * 0.1; });
+            });
+
+            // Meridiani
+            const v = new THREE.Vector3();
+            const fill = (line, names) => {
+                line.visible = show3D.meridians;
+                if (!show3D.meridians) return;
+                const pts = names.map(n => ANCH[n].getWorldPosition(new THREE.Vector3()));
+                const arr = line.geometry.attributes.position.array;
+                const N = 40;
+                const curve = new THREE.CatmullRomCurve3(pts);
+                for (let i = 0; i < N; i++) { curve.getPoint(i / (N - 1), v); arr[i * 3] = v.x; arr[i * 3 + 1] = v.y; arr[i * 3 + 2] = v.z; }
+                line.geometry.attributes.position.needsUpdate = true;
+            };
+            fill(renMaiLine, ['Huiyin', 'Guanyuan', 'Shenque', 'Ren_abd', 'Shanzhong', 'Ren_neck', 'Chengjiang']);
+            fill(duMaiLine, ['Huiyin', 'Mingmen', 'Du_lumb', 'Du_thor', 'Dazhui', 'Fengfu', 'Baihui', 'Yintang', 'Renzhong']);
+
+            // Camera
+            const c = camOrbit;
+            threeCamera.position.set(
+                c.target.x + c.r * Math.sin(c.phi) * Math.sin(c.theta),
+                c.target.y + c.r * Math.cos(c.phi),
+                c.target.z + c.r * Math.sin(c.phi) * Math.cos(c.theta));
+            threeCamera.lookAt(c.target);
+
+            if (particlesGroup) particlesGroup.rotation.y += 0.003 + (1 - lung) * 0.004;
+
+            threeRenderer.render(threeScene, threeCamera);
+
+            // Etichette dei punti
+            const W = threeContainer.clientWidth, H = threeContainer.clientHeight;
+            acuLabels.forEach(a => {
+                a.dot.visible = show3D.points;
+                if (!a.el) return;
+                if (!show3D.points) { a.el.style.display = 'none'; return; }
+                a.anchor.getWorldPosition(v);
+                const camSide = v.clone().sub(threeCamera.position).length();
+                v.project(threeCamera);
+                if (v.z > 1) { a.el.style.display = 'none'; return; }
+                a.el.style.display = 'block';
+                a.el.style.left = ((v.x + 1) / 2 * W) + 'px';
+                a.el.style.top = ((1 - v.y) / 2 * H) + 'px';
+                a.el.style.display = camSide > c.r + 0.02 ? 'none' : 'block'; // nascosta se sul lato non visibile
+            });
+        }
+        function setBreathLabel3D(b) {
+            const el = document.getElementById('3d-breath-status');
+            if (el) el.innerText = b === 'in' ? 'Inspirazione (naso)' : b === 'out' ? 'Espirazione con suono (bocca)' : 'Pausa naturale';
+        }
+
+        // ==========================================
+        // LIU ZI JUE — PLAYER AUDIO SINCRONIZZATO
+        // ==========================================
+        const LZJ_INFO = {
+            prep: { hanzi: '預', name: 'Preparazione (Yubei Shi 預備勢)', reps: 0,
+                meta: 'Postura di partenza',
+                move: "In piedi, piedi paralleli alla larghezza delle spalle, ginocchia morbide, braccia rilassate lungo i fianchi. Mento leggermente rientrato, punta della lingua al palato, sguardo all'orizzonte.",
+                mouth: '', breath: 'Respiro naturale dal naso. Si lascia calmare la mente prima di iniziare.', tcm: '' },
+            qishi: { hanzi: '起', name: 'Apertura (Qi Shi 起勢)', reps: 0,
+                meta: 'Raccogliere il Qi al Dantian',
+                move: "Palmi in su, le mani salgono davanti al corpo fino al petto. I palmi ruotano verso il basso e scendono fino all'ombelico piegando leggermente le ginocchia. Le mani spingono in avanti, poi tornano a raccogliersi davanti all'ombelico.",
+                mouth: '', breath: 'Inspirare mentre le mani salgono, espirare mentre scendono e spingono. Senza suono.', tcm: '' },
+            xu: { hanzi: '噓', name: 'Xū 噓 — Fegato', reps: 6, organ: 'Fegato · Legno · primavera · verde',
+                meta: 'Fegato (Gan) · Legno · Primavera',
+                move: "Mani ai fianchi, palmi in su. Espirando con 'xu' il busto ruota di 90° verso sinistra e la mano destra scorre in avanti verso sinistra all'altezza delle spalle, occhi spalancati. Inspirando la mano rientra e il busto torna di fronte. Poi dall'altro lato. 3 volte per lato.",
+                mouth: "Bocca: labbra socchiuse con gli angoli tirati leggermente indietro, denti quasi a contatto con una piccola fessura, lingua distesa in avanti. L'aria passa tra lingua e denti.",
+                breath: "Inspirare dal naso, espirare dalla bocca con il suono. Gli occhi si spalancano durante l'espirazione: nella teoria classica il Fegato «si apre negli occhi».",
+                tcm: "Teoria tradizionale: drena il calore e la stagnazione del Fegato. È il primo suono perché il Legno apre il ciclo di generazione dei cinque elementi." },
+            he: { hanzi: '呵', name: 'Hē 呵 — Cuore', reps: 6,
+                meta: 'Cuore (Xin) · Fuoco · Estate',
+                move: "Ginocchia leggermente piegate, le mani scendono in avanti, palmi in su, e risalgono come a raccogliere acqua fino al petto, gomiti alti. I palmi ruotano verso il basso e, espirando con 'he', scendono fino all'ombelico piegando le ginocchia.",
+                mouth: "Bocca: semiaperta, punta della lingua appoggiata dietro gli incisivi inferiori, dorso della lingua sollevato. L'aria esce tra il dorso della lingua e il palato.",
+                breath: 'Inspirare mentre le mani salgono al petto, espirare con il suono mentre spingono verso il basso.',
+                tcm: "Teoria tradizionale: rinfresca il «fuoco» del Cuore, per agitazione e insonnia." },
+            hu: { hanzi: '呼', name: 'Hū 呼 — Milza', reps: 6,
+                meta: 'Milza-Stomaco (Pi) · Terra · Tarda estate',
+                move: "Mani davanti all'ombelico, palmi rivolti all'addome a circa 10 cm. Espirando con 'hu' le mani si allontanano in avanti e le braccia si arrotondano come ad abbracciare una palla, con le ginocchia piegate. Inspirando le mani tornano verso l'ombelico e le gambe si distendono.",
+                mouth: "Bocca: labbra protese e arrotondate a cerchio, lingua distesa con i bordi leggermente sollevati. L'aria esce al centro, da una cavità rotonda.",
+                breath: "Espirazione con 'hu' mentre le mani si aprono, inspirazione mentre si richiudono.",
+                tcm: 'Teoria tradizionale: rafforza la funzione digestiva di trasformazione e trasporto della Milza.' },
+            si: { hanzi: '呬', name: 'Sī 呬 — Polmone', reps: 6,
+                meta: 'Polmone (Fei) · Metallo · Autunno',
+                move: "Palmi in su, le mani salgono fino al petto. I gomiti vanno indietro, le scapole si avvicinano, il petto si apre e la testa si inclina leggermente indietro. Espirando con 'si' i palmi ruotano in avanti e spingono a braccia tese, mentre il collo torna dritto.",
+                mouth: "Bocca: denti superiori e inferiori a contatto con una sottile fessura, punta della lingua leggermente dietro i denti. L'aria sibila tra i denti. (Il carattere esatto è 呬, non 咝.)",
+                breath: "Inspirare mentre si apre il petto, una breve sospensione, poi espirare con 'si' spingendo in avanti.",
+                tcm: 'Teoria tradizionale: purifica il Polmone. È il suono più studiato in clinica, in particolare per la broncopneumopatia cronica ostruttiva (BPCO).' },
+            chui: { hanzi: '吹', name: 'Chuī 吹 — Rene', reps: 6,
+                meta: 'Rene (Shen) · Acqua · Inverno',
+                move: "Le mani scivolano sui fianchi fino alla zona lombare. Espirando con 'chui' si scende piegando le ginocchia e le mani scorrono lungo glutei e cosce verso il basso. Risalendo, le braccia girano in avanti e le mani tornano davanti all'addome, poi alla zona lombare.",
+                mouth: "Bocca: labbra tirate indietro e verso i lati, lingua e denti arretrati. L'aria esce dai lati della lingua e passa tra le labbra.",
+                breath: "Espirare con 'chui' scendendo, inspirare risalendo.",
+                tcm: "Teoria tradizionale: nutre il Rene e la zona lombare, sede di Mingmen. Il lavoro sulle gambe rinforza gli arti inferiori." },
+            xi: { hanzi: '嘻', name: 'Xī 嘻 — Triplo Riscaldatore', reps: 6,
+                meta: 'San Jiao · Fuoco ministeriale',
+                move: "Dorsi delle mani affiancati, le mani salgono davanti al corpo fino al viso e poi si aprono in alto e ai lati. Scendono fino al petto e, espirando con 'xi', premono verso il basso aprendosi ai lati delle anche mentre le ginocchia si piegano.",
+                mouth: "Bocca: leggero sorriso, denti quasi a contatto, punta della lingua che sfiora gli incisivi inferiori. L'aria esce tra i molari.",
+                breath: "Inspirare mentre le mani salgono e si aprono, espirare con 'xi' mentre scendono.",
+                tcm: 'Teoria tradizionale: regola il Qi dei tre livelli del tronco (torace, addome superiore, addome inferiore).' },
+            shou: { hanzi: '收', name: 'Chiusura (Shou Shi 收勢)', reps: 0,
+                meta: 'Riportare il Qi al Dantian',
+                move: "Mani sovrapposte sull'ombelico. Nella tradizione HQA gli uomini mettono la sinistra a contatto con l'addome e le donne la destra. Si massaggia l'addome con piccoli cerchi, 6 in un senso e 6 nell'altro, poi si torna con le braccia lungo i fianchi.",
+                mouth: '', breath: 'Respiro naturale, attenzione al basso ventre.', tcm: '' }
+        };
+        // Inizio di ogni fase (secondi). Stimato da analisi spettrale (novelty) della traccia.
+        const LZJ_DEFAULT_START = { prep: 0, qishi: 47, xu: 86, he: 221, hu: 349, si: 466, chui: 586, xi: 732, shou: 866 };
+        const LZJ_ORDER = ['prep', 'qishi', 'xu', 'he', 'hu', 'si', 'chui', 'xi', 'shou'];
+        const LZJ_COLORS = { prep: '#57534e', qishi: '#78716c', xu: '#2f9e5a', he: '#c2412d', hu: '#c9962a', si: '#a8a29e', chui: '#2c5fa8', xi: '#8b5cc6', shou: '#78716c' };
+        let lzjStart = Object.assign({}, LZJ_DEFAULT_START);
+        try { Object.assign(lzjStart, JSON.parse(localStorage.getItem('lzjStart') || '{}')); } catch (e) {}
+        let lzjAudio = null, lzjCurSeg = null;
+
+        function lzjFmt(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+        function lzjSegAt(t, dur) {
+            let id = 'prep';
+            for (const k of LZJ_ORDER) if (t >= lzjStart[k]) id = k;
+            const i = LZJ_ORDER.indexOf(id);
+            const end = i + 1 < LZJ_ORDER.length ? lzjStart[LZJ_ORDER[i + 1]] : dur;
+            return { id, start: lzjStart[id], end };
+        }
+
+        function initLzjPlayer() {
+            lzjAudio = document.getElementById('lzj-audio');
+            if (!lzjAudio) return;
+            const dur = () => (isFinite(lzjAudio.duration) && lzjAudio.duration) || 902.7;
+            const tl = document.getElementById('lzj-timeline');
+            const chap = document.getElementById('lzj-chapters');
+            const sel = document.getElementById('lzj-calib-seg');
+            sel.innerHTML = LZJ_ORDER.slice(1).map(k => `<option value="${k}">${LZJ_INFO[k].name}</option>`).join('');
+
+            const render = () => {
+                const D = dur();
+                tl.innerHTML = LZJ_ORDER.map((k, i) => {
+                    const s = lzjStart[k], e = i + 1 < LZJ_ORDER.length ? lzjStart[LZJ_ORDER[i + 1]] : D;
+                    return `<div title="${LZJ_INFO[k].name}" style="position:absolute;top:0;bottom:0;left:${s / D * 100}%;width:${(e - s) / D * 100}%;background:${LZJ_COLORS[k]};opacity:.55;border-right:1px solid #0c0a09;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;overflow:hidden">${LZJ_INFO[k].hanzi}</div>`;
+                }).join('') + '<div id="lzj-head" style="position:absolute;top:0;bottom:0;width:2px;background:#fde68a;box-shadow:0 0 6px #fde68a;left:0"></div>';
+                chap.innerHTML = LZJ_ORDER.map(k => `<button data-k="${k}" onclick="lzjSeek(${lzjStart[k]})" class="lzj-chip px-2 py-1 rounded text-[11px] font-semibold border border-stone-700 bg-stone-800 hover:bg-stone-700" style="border-left:3px solid ${LZJ_COLORS[k]}">${LZJ_INFO[k].hanzi} ${LZJ_INFO[k].name.split(' — ')[0].split(' (')[0]} <span class="text-stone-500 font-mono">${lzjFmt(lzjStart[k])}</span></button>`).join('');
+            };
+            render();
+            lzjAudio.addEventListener('loadedmetadata', () => { document.getElementById('lzj-dur').innerText = lzjFmt(dur()); render(); });
+            tl.addEventListener('click', e => { const r = tl.getBoundingClientRect(); lzjSeek((e.clientX - r.left) / r.width * dur()); });
+            document.getElementById('lzj-vol').addEventListener('input', e => { lzjAudio.volume = +e.target.value; });
+            lzjAudio.volume = 0.8;
+            lzjAudio.addEventListener('play', () => { document.getElementById('lzj-play').innerText = '❚❚'; });
+            lzjAudio.addEventListener('pause', () => { document.getElementById('lzj-play').innerText = '▶'; });
+            document.getElementById('lzj-sync').addEventListener('change', e => { if (!e.target.checked) lzjDrive = null; });
+            window._lzjRender = render;
+            lzjShowSeg('prep');
+
+            const tick = () => {
+                requestAnimationFrame(tick);
+                const t = lzjAudio.currentTime, D = dur();
+                const head = document.getElementById('lzj-head');
+                if (head) head.style.left = (t / D * 100) + '%';
+                document.getElementById('lzj-time').innerText = lzjFmt(t);
+                const seg = lzjSegAt(t, D);
+                if (seg.id !== lzjCurSeg) lzjShowSeg(seg.id);
+                const info = LZJ_INFO[seg.id], m = LZJ_MOVES[seg.id];
+                let rep, frac;
+                if (info.reps) {
+                    const per = (seg.end - seg.start) / info.reps;
+                    const x = (t - seg.start) / per;
+                    rep = Math.min(info.reps - 1, Math.floor(x)); frac = Math.min(0.999, x - rep);
+                    document.getElementById('lzj-rep').innerText = `Ripetizione ${rep + 1}/${info.reps}`;
+                } else {
+                    const per = m.period || 12;
+                    const x = (t - seg.start) / per; rep = Math.floor(x); frac = x - rep;
+                    document.getElementById('lzj-rep').innerText = `${lzjFmt(t - seg.start)} / ${lzjFmt(seg.end - seg.start)}`;
+                }
+                const r = lzjPoseAt(seg.id, frac, rep);
+                const bl = document.getElementById('lzj-breathlabel'), bb = document.getElementById('lzj-breathbar');
+                bb.style.width = (r.lung * 100) + '%';
+                bb.style.background = r.breath === 'out' ? '#e07a5f' : r.breath === 'in' ? '#34d399' : '#a8a29e';
+                bl.innerText = r.breath === 'in' ? '↑ Inspira dal naso' : r.breath === 'out' ? (info.reps ? `↓ Espira dalla bocca: «${info.name.split(' ')[0]}»` : '↓ Espira') : '· Pausa';
+                const syncOn = document.getElementById('lzj-sync').checked;
+                if (syncOn && (!lzjAudio.paused || lzjAudio.currentTime > 0)) {
+                    lzjDrive = { pose: r.pose, lung: r.lung, id: seg.id };
+                    setBreathLabel3D(r.breath);
+                }
+            };
+            tick();
+        }
+        function lzjShowSeg(id) {
+            lzjCurSeg = id;
+            const i = LZJ_INFO[id];
+            document.getElementById('lzj-hanzi').innerText = i.hanzi;
+            document.getElementById('lzj-hanzi').style.color = LZJ_COLORS[id] === '#78716c' || LZJ_COLORS[id] === '#57534e' ? '#d4af37' : LZJ_COLORS[id];
+            document.getElementById('lzj-name').innerText = i.name;
+            document.getElementById('lzj-meta').innerText = i.meta + (i.reps ? ` · ${i.reps} ripetizioni` : '');
+            document.getElementById('lzj-move').innerHTML = '<strong class="text-gold-400">Movimento:</strong> ' + i.move;
+            document.getElementById('lzj-mouth').innerHTML = i.mouth ? '<strong class="text-gold-400">Forma della bocca:</strong> ' + i.mouth.replace(/^Bocca: /, '') : '';
+            document.getElementById('lzj-breath').innerHTML = '<strong class="text-gold-400">Respiro:</strong> ' + i.breath;
+            document.getElementById('lzj-tcm').innerHTML = i.tcm ? '<span class="evi evi-trad">Tradizione</span> ' + i.tcm.replace(/^Teoria tradizionale: /, '') : '';
+            document.querySelectorAll('.lzj-chip').forEach(b => b.classList.toggle('ring-1', b.dataset.k === id));
+            document.querySelectorAll('.lzj-chip').forEach(b => b.classList.toggle('ring-amber-400', b.dataset.k === id));
+            const t = document.getElementById('3d-posture-title'), d = document.getElementById('3d-posture-desc');
+            if (lzjAudio && !lzjAudio.paused && t) { t.innerText = i.name; d.innerText = i.move; }
+        }
+        function lzjToggle() {
+            if (!lzjAudio) return;
+            if (lzjAudio.paused) { lzjAudio.play(); if (!is3DInitialized) init3DMannequin(); } else lzjAudio.pause();
+        }
+        function lzjSeek(s) { if (lzjAudio) lzjAudio.currentTime = Math.max(0, s); }
+        function lzjCalibrate() {
+            const k = document.getElementById('lzj-calib-seg').value;
+            lzjStart[k] = Math.round(lzjAudio.currentTime * 10) / 10;
+            // mantiene l'ordine: le fasi successive non possono iniziare prima
+            const i = LZJ_ORDER.indexOf(k);
+            for (let j = i + 1; j < LZJ_ORDER.length; j++) if (lzjStart[LZJ_ORDER[j]] <= lzjStart[k]) lzjStart[LZJ_ORDER[j]] = lzjStart[k] + 5;
+            for (let j = i - 1; j > 0; j--) if (lzjStart[LZJ_ORDER[j]] >= lzjStart[k]) lzjStart[LZJ_ORDER[j]] = Math.max(0, lzjStart[k] - 5);
+            try { localStorage.setItem('lzjStart', JSON.stringify(lzjStart)); } catch (e) {}
+            window._lzjRender(); lzjCurSeg = null;
+        }
+        function lzjResetCalib() {
+            lzjStart = Object.assign({}, LZJ_DEFAULT_START);
+            try { localStorage.removeItem('lzjStart'); } catch (e) {}
+            window._lzjRender(); lzjCurSeg = null;
+        }
+
+        // ==========================================
+        // WEB AUDIO API SOUND SYNTHESIZER ENGINE
+        // ==========================================
+        let audioCtx = null;
+        let isAudioActive = false;
+        let binauralOscL = null, binauralOscR = null;
+        let binauralGain = null;
+        let isBinauralActive = false;
+        let ambientDroneOsc = null, ambientDroneGain = null;
+        let isAmbientActive = false;
+        let audioAnalyser = null;
+        let audioVisualizerFrame = null;
+
+        function initAudioEngine() {
+            if (audioCtx) return;
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+
+            audioAnalyser = audioCtx.createAnalyser();
+            audioAnalyser.fftSize = 128;
+            audioAnalyser.connect(audioCtx.destination);
+
+            isAudioActive = true;
+            document.getElementById('audio-status-badge').className = "text-xs px-2.5 py-1 bg-emerald-900/60 text-emerald-200 rounded border border-emerald-800";
+            document.getElementById('audio-status-badge').innerText = "Attivo";
+            document.getElementById('btn-audio-toggle').innerText = "⏸️ Disattiva Motore Audio";
+
+            loopAudioVisualizer();
+        }
+
+        function toggleMasterAudio() {
+            if (!audioCtx) {
+                initAudioEngine();
+            } else {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                    document.getElementById('audio-status-badge').innerText = "Attivo";
+                } else if (audioCtx.state === 'running') {
+                    audioCtx.suspend();
+                    document.getElementById('audio-status-badge').innerText = "Sospeso";
+                }
+            }
+        }
+
+        // 1. Liu Zi Jue Healing Sound Synthesizer
+        function playHealingSound(sound) {
+            initAudioEngine();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            osc.type = 'sine';
+            let freq = 480;
+
+            if (sound === 'xu') freq = 480;      // Fegato / Wood
+            else if (sound === 'he') freq = 540; // Cuore / Fire
+            else if (sound === 'hu') freq = 380; // Milza / Earth
+            else if (sound === 'si') freq = 720; // Polmoni / Metal
+            else if (sound === 'chui') freq = 280;// Reni / Water
+            else if (sound === 'xi') freq = 600; // San Jiao
+
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            // Envelope ADSR
+            gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.4, audioCtx.currentTime + 0.3);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.5);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(freq * 1.5, audioCtx.currentTime);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioAnalyser);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 2.6);
+        }
+
+        // 2. Binaural Beats Generator
+        function toggleBinauralBeat() {
+            initAudioEngine();
+            if (!audioCtx) return;
+
+            if (isBinauralActive) {
+                if (binauralGain) binauralGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+                setTimeout(() => {
+                    if (binauralOscL) binauralOscL.stop();
+                    if (binauralOscR) binauralOscR.stop();
+                }, 500);
+                isBinauralActive = false;
+                document.getElementById('btn-binaural-toggle').innerText = "▶ Avvia Toni Binaurali";
+            } else {
+                const carrier = parseFloat(document.getElementById('slider-carrier').value);
+                const preset = document.getElementById('select-binaural-preset').value;
+                let beat = 6;
+                if (preset === 'delta') beat = 2;
+                else if (preset === 'theta') beat = 6;
+                else if (preset === 'alpha') beat = 10;
+                else if (preset === 'gamma') beat = 40;
+
+                const merger = audioCtx.createChannelMerger(2);
+                binauralGain = audioCtx.createGain();
+                binauralGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+
+                binauralOscL = audioCtx.createOscillator();
+                binauralOscR = audioCtx.createOscillator();
+
+                binauralOscL.frequency.setValueAtTime(carrier, audioCtx.currentTime);
+                binauralOscR.frequency.setValueAtTime(carrier + beat, audioCtx.currentTime);
+
+                binauralOscL.connect(merger, 0, 0); // Left ear
+                binauralOscR.connect(merger, 0, 1); // Right ear
+
+                merger.connect(binauralGain);
+                binauralGain.connect(audioAnalyser);
+
+                binauralOscL.start();
+                binauralOscR.start();
+                isBinauralActive = true;
+                document.getElementById('btn-binaural-toggle').innerText = "⏹️ Ferma Toni Binaurali";
+            }
+        }
+
+        function setBinauralPreset(preset) {
+            if (isBinauralActive) {
+                toggleBinauralBeat();
+                toggleBinauralBeat();
+            }
+        }
+
+        function updateBinauralParams() {
+            const carrier = document.getElementById('slider-carrier').value;
+            document.getElementById('val-carrier-disp').innerText = `${carrier} Hz`;
+            if (isBinauralActive && binauralOscL && binauralOscR) {
+                binauralOscL.frequency.setValueAtTime(parseFloat(carrier), audioCtx.currentTime);
+            }
+        }
+
+        // 3. Ambient Meditation Drone & Singing Bowls
+        function toggleAmbientDrone() {
+            initAudioEngine();
+            if (!audioCtx) return;
+
+            if (isAmbientActive) {
+                if (ambientDroneGain) ambientDroneGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
+                setTimeout(() => { if (ambientDroneOsc) ambientDroneOsc.stop(); }, 1000);
+                isAmbientActive = false;
+                document.getElementById('btn-ambient-toggle').innerText = "🧘 Attiva Drone Armonico 432 Hz";
+            } else {
+                ambientDroneOsc = audioCtx.createOscillator();
+                ambientDroneGain = audioCtx.createGain();
+
+                ambientDroneOsc.type = 'triangle';
+                ambientDroneOsc.frequency.setValueAtTime(432 / 2, audioCtx.currentTime); // 216 Hz Warm drone
+
+                ambientDroneGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+                ambientDroneGain.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 1.5);
+
+                ambientDroneOsc.connect(ambientDroneGain);
+                ambientDroneGain.connect(audioAnalyser);
+
+                ambientDroneOsc.start();
+                isAmbientActive = true;
+                document.getElementById('btn-ambient-toggle').innerText = "⏹️ Spegni Drone Armonico";
+            }
+        }
+
+        function strikeSingingBowl() {
+            initAudioEngine();
+            if (!audioCtx) return;
+
+            const freqs = [432, 864, 1296];
+            freqs.forEach((f, i) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+
+                gain.gain.setValueAtTime(0.2 / (i + 1), audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 4.0 - i);
+
+                osc.connect(gain);
+                gain.connect(audioAnalyser);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 4.1);
+            });
+        }
+
+        // Audio Spectrum Visualizer Canvas Loop
+        function loopAudioVisualizer() {
+            const canvas = document.getElementById('audioVisualizerCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            audioVisualizerFrame = requestAnimationFrame(loopAudioVisualizer);
+
+            ctx.fillStyle = '#090D0B';
+            ctx.fillRect(0, 0, w, h);
+
+            if (!audioAnalyser) return;
+
+            const bufferLength = audioAnalyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            audioAnalyser.getByteFrequencyData(dataArray);
+
+            const barWidth = (w / bufferLength) * 2.2;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = (dataArray[i] / 255) * h;
+                ctx.fillStyle = `hsl(${i * 4 + 140}, 75%, 50%)`;
+                ctx.fillRect(x, h - barHeight, barWidth, barHeight);
+                x += barWidth + 1;
+            }
+        }
+
+        // ==========================================
+        // REALISTIC BIO-FIELD PHYSICS CANVAS SIMULATOR
+        // ==========================================
+        let simCanvas, simCtx;
+        let simParticles = [];
+        let simMode = 'microcosmic';
+        let breathPhase = 'inhale'; // inhale, hold, exhale
+        let simDensity = 400;
+        let simCoherence = 7;
+        let simAnimFrame;
+
+        class Particle {
+            constructor(w, h) {
+                this.reset(w, h);
+            }
+
+            reset(w, h) {
+                this.x = Math.random() * w;
+                this.y = Math.random() * h;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.radius = Math.random() * 2.5 + 1;
+                this.alpha = Math.random() * 0.7 + 0.3;
+                this.hue = Math.random() > 0.4 ? 145 : 30;
+                this.orbitAngle = Math.random() * Math.PI * 2;
+                this.orbitRadius = Math.random() * 180 + 30;
+            }
+
+            update(w, h) {
+                const cx = w / 2;
+                const cy = h / 2;
+
+                if (simMode === 'microcosmic') {
+                    const speed = (breathPhase === 'inhale' ? 0.03 : breathPhase === 'exhale' ? -0.03 : 0.005) * (simCoherence / 5);
+                    this.orbitAngle += speed;
+                    const rx = 90;
+                    const ry = 210;
+                    const targetX = cx + Math.cos(this.orbitAngle) * rx;
+                    const targetY = cy + Math.sin(this.orbitAngle) * ry;
+
+                    this.x += (targetX - this.x) * 0.08;
+                    this.y += (targetY - this.y) * 0.08;
+                } else if (simMode === 'spherical') {
+                    const factor = breathPhase === 'inhale' ? 1.02 : breathPhase === 'exhale' ? 0.98 : 1;
+                    this.orbitRadius *= factor;
+                    if (this.orbitRadius > 240) this.orbitRadius = 40;
+                    if (this.orbitRadius < 30) this.orbitRadius = 220;
+
+                    this.orbitAngle += 0.01 * (simCoherence / 5);
+                    this.x = cx + Math.cos(this.orbitAngle) * this.orbitRadius;
+                    this.y = cy + Math.sin(this.orbitAngle) * this.orbitRadius;
+                } else if (simMode === 'dantian') {
+                    const dx = cx - this.x;
+                    const dy = (cy + 60) - this.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if (dist > 10) {
+                        this.vx += (dx / dist) * 0.15;
+                        this.vy += (dy / dist) * 0.15;
+                    } else {
+                        this.x = cx + (Math.random() - 0.5) * 60;
+                        this.y = (cy + 60) + (Math.random() - 0.5) * 60;
+                        this.vx = (Math.random() - 0.5) * 2;
+                        this.vy = (Math.random() - 0.5) * 2;
+                    }
+                    this.vx *= 0.92;
+                    this.vy *= 0.92;
+                    this.x += this.vx;
+                    this.y += this.vy;
+                } else if (simMode === 'bell') {
+                    const angle = Math.atan2(this.y - (cy - 180), this.x - cx);
+                    this.x += Math.cos(angle) * 1.5;
+                    this.y += 1.2;
+                    if (this.y > cy + 220) {
+                        this.x = cx + (Math.random() - 0.5) * 20;
+                        this.y = cy - 180;
+                    }
+                } else if (simMode === 'splash') {
+                    this.y -= 4 + Math.random() * 3;
+                    this.x += (Math.random() - 0.5) * 2;
+                    if (this.y < cy - 240) {
+                        this.x = cx + (Math.random() - 0.5) * 40;
+                        this.y = cy + 60;
+                    }
+                } else if (simMode === 'phantom') {
+                    const targetCX = (this.orbitAngle > Math.PI) ? cx - 120 : cx + 120;
+                    const dx = targetCX - this.x;
+                    const dy = cy - this.y;
+                    this.x += dx * 0.05 + (Math.random() - 0.5) * 1.5;
+                    this.y += dy * 0.05 + (Math.random() - 0.5) * 1.5;
+                }
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 70%, 60%, ${this.alpha})`;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = `hsl(${this.hue}, 80%, 50%)`;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        function initSimCanvas() {
+            simCanvas = document.getElementById('fieldSimCanvas');
+            if (!simCanvas) return;
+            simCtx = simCanvas.getContext('2d');
+            
+            simParticles = [];
+            for (let i = 0; i < simDensity; i++) {
+                simParticles.push(new Particle(simCanvas.width, simCanvas.height));
+            }
+
+            if (simAnimFrame) cancelAnimationFrame(simAnimFrame);
+            loopSimCanvas();
+        }
+
+        function loopSimCanvas() {
+            simCtx.fillStyle = 'rgba(22, 40, 31, 0.25)';
+            simCtx.fillRect(0, 0, simCanvas.width, simCanvas.height);
+
+            const cx = simCanvas.width / 2;
+            const cy = simCanvas.height / 2;
+            
+            simCtx.strokeStyle = 'rgba(212, 175, 55, 0.15)';
+            simCtx.lineWidth = 1.5;
+            simCtx.beginPath();
+            simCtx.moveTo(cx, cy - 230);
+            simCtx.lineTo(cx, cy + 230);
+            simCtx.stroke();
+
+            simParticles.forEach(p => {
+                p.update(simCanvas.width, simCanvas.height);
+                p.draw(simCtx);
+            });
+
+            simAnimFrame = requestAnimationFrame(loopSimCanvas);
+        }
+
+        function changeSimMode(mode) {
+            simMode = mode;
+            const exp = document.getElementById('sim-explanation-text');
+            if (mode === 'microcosmic') {
+                exp.innerText = "Orbita Microcosmica: L'energia risale lungo la colonna vertebrale (Du Mai) nell'inspirazione e scende lungo la linea anteriore (Ren Mai) nell'espirazione.";
+            } else if (mode === 'spherical') {
+                exp.innerText = "Espansione Aurica Sferica: Il campo bioenergetico si espande tridimensionalmente in tutte le direzioni creando una bolla protettiva.";
+            } else if (mode === 'dantian') {
+                exp.innerText = "Condensazione Dantian / Palla: Le particelle di carica vengono attirate verso il centro viscerale o il palmo delle mani, modellando la sfera condensata.";
+            } else if (mode === 'bell') {
+                exp.innerText = "Campana Energetica: Flusso conico coordinato che scarica i sovraccarichi cerebrali e riequilibra la pressione verso il basso o verso l'alto.";
+            } else if (mode === 'splash') {
+                exp.innerText = "Inserimento Energetico (Splash / Всплеск): Impulso verticale esplosivo dall'addome verso la corona, gli occhi o le mani per una ricarica istantanea.";
+            } else if (mode === 'phantom') {
+                exp.innerText = "Proiezione Fante Virtuale: Scissione della matrice informazionale tra il corpo fisico statico e il duplicato percettivo proiettato.";
+            }
+        }
+
+        function setBreathPhase(phase) {
+            breathPhase = phase;
+            document.getElementById('val-phase-disp').innerText = phase === 'inhale' ? 'Inspirazione' : phase === 'exhale' ? 'Espirazione' : 'Trattenimento';
+            
+            ['inhale', 'hold', 'exhale'].forEach(p => {
+                const btn = document.getElementById(`btn-phase-${p}`);
+                if (btn) {
+                    btn.className = (p === phase) ? "py-1.5 px-2 bg-sage-700 text-white rounded text-xs font-bold transition" : "py-1.5 px-2 bg-stone-700 text-stone-300 rounded text-xs font-bold transition";
+                }
+            });
+        }
+
+        function updateSimParams() {
+            simDensity = parseInt(document.getElementById('sim-density').value);
+            simCoherence = parseInt(document.getElementById('sim-coherence').value);
+            document.getElementById('val-count-disp').innerText = `${simDensity} Particelle`;
+
+            while (simParticles.length < simDensity) {
+                simParticles.push(new Particle(simCanvas.width, simCanvas.height));
+            }
+            if (simParticles.length > simDensity) {
+                simParticles.length = simDensity;
+            }
+        }
+
+        // ==========================================
+        // EEG OSCILLOSCOPE REAL-TIME CANVAS
+        // ==========================================
+        let eegTraceCanvas, eegTraceCtx;
+        let eegState = 'meditation';
+        let eegOffset = 0;
+        let eegAnimFrame;
+
+        function initEEGTraceCanvas() {
+            eegTraceCanvas = document.getElementById('eegTraceCanvas');
+            if (!eegTraceCanvas) return;
+            eegTraceCtx = eegTraceCanvas.getContext('2d');
+            if (eegAnimFrame) cancelAnimationFrame(eegAnimFrame);
+            loopEEGTrace();
+        }
+
+        function setEEGState(state) {
+            eegState = state;
+            const deltaEl = document.getElementById('eeg-val-delta');
+            const thetaEl = document.getElementById('eeg-val-theta');
+            const alphaEl = document.getElementById('eeg-val-alpha');
+            const gammaEl = document.getElementById('eeg-val-gamma');
+
+            ['awake', 'meditation', 'direct'].forEach(s => {
+                const btn = document.getElementById(`eeg-btn-${s}`);
+                if (btn) {
+                    if (s === state) {
+                        btn.className = s === 'awake' ? "px-3 py-1 bg-stone-600 text-white rounded text-xs font-bold" :
+                                        s === 'meditation' ? "px-3 py-1 bg-sage-700 text-white rounded text-xs font-bold" :
+                                        "px-3 py-1 bg-terracotta-600 text-white rounded text-xs font-bold";
+                    } else {
+                        btn.className = "px-3 py-1 bg-stone-800 text-stone-400 hover:text-stone-200 rounded text-xs font-bold";
+                    }
+                }
+            });
+
+            if (state === 'awake') {
+                deltaEl.innerText = "15%"; thetaEl.innerText = "20%"; alphaEl.innerText = "50%"; gammaEl.innerText = "10%";
+            } else if (state === 'meditation') {
+                deltaEl.innerText = "35%"; thetaEl.innerText = "85%"; alphaEl.innerText = "90%"; gammaEl.innerText = "25%";
+            } else if (state === 'direct') {
+                deltaEl.innerText = "20%"; thetaEl.innerText = "40%"; alphaEl.innerText = "95%"; gammaEl.innerText = "90%";
+            }
+        }
+
+        function loopEEGTrace() {
+            const w = eegTraceCanvas.width;
+            const h = eegTraceCanvas.height;
+
+            eegTraceCtx.fillStyle = '#090D0B';
+            eegTraceCtx.fillRect(0, 0, w, h);
+
+            eegTraceCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            eegTraceCtx.lineWidth = 1;
+            for (let x = 0; x < w; x += 40) {
+                eegTraceCtx.beginPath(); eegTraceCtx.moveTo(x, 0); eegTraceCtx.lineTo(x, h); eegTraceCtx.stroke();
+            }
+            for (let y = 0; y < h; y += 30) {
+                eegTraceCtx.beginPath(); eegTraceCtx.moveTo(0, y); eegTraceCtx.lineTo(w, y); eegTraceCtx.stroke();
+            }
+
+            eegOffset += 0.08;
+            eegTraceCtx.lineWidth = 2;
+            
+            if (eegState === 'awake') {
+                eegTraceCtx.strokeStyle = '#E6C35C';
+            } else if (eegState === 'meditation') {
+                eegTraceCtx.strokeStyle = '#3D6852';
+            } else {
+                eegTraceCtx.strokeStyle = '#C86D51';
+            }
+
+            eegTraceCtx.beginPath();
+            for (let x = 0; x < w; x++) {
+                let t = x * 0.03 + eegOffset;
+                let y = h / 2;
+
+                if (eegState === 'awake') {
+                    y += Math.sin(t * 3) * 15 + Math.sin(t * 12) * 8 + (Math.random() - 0.5) * 6;
+                } else if (eegState === 'meditation') {
+                    y += Math.sin(t * 1.5) * 45 + Math.sin(t * 3.2) * 20;
+                } else if (eegState === 'direct') {
+                    y += Math.sin(t * 2) * 30 + Math.sin(t * 25) * 18 + Math.cos(t * 40) * 8;
+                }
+
+                if (x === 0) eegTraceCtx.moveTo(x, y);
+                else eegTraceCtx.lineTo(x, y);
+            }
+            eegTraceCtx.stroke();
+
+            eegAnimFrame = requestAnimationFrame(loopEEGTrace);
+        }
+
+        // ==========================================
+        // DATA STORE: XINGQI STEPPER & RESOURCES
+        // ==========================================
+        const xingqiSteps = [
+            { num: 1, char: "行氣", pinyin: "Xíngqì", trans: "Per circolare il Respiro Vitale:", desc: "Attivazione dell'intenzione (Yi) per mobilitare il Qi all'inizio del ciclo respiratorio." },
+            { num: 2, char: "深則蓄", pinyin: "Shēn zé xù", trans: "Respira profondamente, così si accumula.", desc: "Inspirazione diaframmatica profonda. Il respiro scende verso il Dantian inferiore e la pelvi." },
+            { num: 3, char: "蓄則伸", pinyin: "Xù zé shēn", trans: "Quando è accumulato, si espande.", desc: "Diffusione e saturazione dell'energia all'interno della cavità addominale e viscerale." },
+            { num: 4, char: "伸則下", pinyin: "Shēn zé xià", trans: "Quando si espande, scende.", desc: "Radicamento verso il punto Huiyin (perineo) e stabilizzazione della pressione intra-addominale." },
+            { num: 5, char: "下則定", pinyin: "Xià zé dìng", trans: "Quando scende, si stabilizza.", desc: "Arresto delle fluttuazioni mentali. Il respiro e la mente entrano in uno stato di quiete." },
+            { num: 6, char: "定則固", pinyin: "Dìng zé gù", trans: "Quando è stabile, si consolida.", desc: "Condensazione del Qi fluido in Essenza (Jing) concentrata all'interno del centro gravitoso." },
+            { num: 7, char: "固則萌", pinyin: "Gù zé méng", trans: "Quando è consolidato, germoglia.", desc: "Risveglio della vera energia originaria (Yuan Qi) sotto forma di calore o pulsazione sottile." },
+            { num: 8, char: "萌則長", pinyin: "Méng zé zhǎng", trans: "Quando germoglia, cresce.", desc: "Movimento ascendente lungo il canale posteriore (Du Mai) risalendo la colonna vertebrale." },
+            { num: 9, char: "長則退", pinyin: "Zhǎng zé tuì", trans: "Quando cresce, si ritira.", desc: "Ritorno all'origine lungo il canale anteriore (Ren Mai), completando l'Orbita Microcosmica." },
+            { num: 10, char: "退則天", pinyin: "Tuì zé tiān", trans: "Quando si ritira, diventa celeste.", desc: "Sublimazione del respiro fisico in energia spirituale (Shen) purificata a contatto con la sommità." }
+        ];
+
+        let currentXingqiIndex = 0;
+
+        const resourcesData = [
+            { cat: "2005", title: "Studfile Archive — Bronnikov V.M. Metod Bronnikova DOC", platform: "Studfile", link: "https://studfile.net/preview/5109553/", desc: "Archivio accademico originale contenente la dispensa di tutte le esercitazioni, regole di sicurezza e pronto soccorso bioenergetico." },
+            { cat: "rutube", title: "Playlist RUTUBE: Podgotovitelnaya Stupen' (42 Video)", platform: "RUTUBE", link: "https://rutube.ru/plst/153059/", desc: "Corso preparatorio completo del Metodo Bronnikov. Introduzione all'energetica e alla sensibilità." },
+            { cat: "rutube", title: "Playlist RUTUBE: Bazovye Praktiki (105 Video)", platform: "RUTUBE", link: "https://rutube.ru/plst/283547/", desc: "Archivio enciclopedico di esercizi pratici per recuperare energia, difese e sensibilità." },
+            { cat: "2005", title: "Corso Autoriale II Stupen' (2005) — Playlist 151780", platform: "RUTUBE", link: "https://rutube.ru/plst/151780/", desc: "Registrazioni integrali di V.M. Bronnikov del 2005: Corpo di cera, fante virtuale e schermo interiore." },
+            { cat: "2005", title: "Conferenze San Pietroburgo (2005) — Operatori Speciali", platform: "RUTUBE", link: "https://rutube.ru/plst/148931/", desc: "10 lezioni teoriche approfondite tenute da Bronnikov sul contesto cibernetico e psicotronico." },
+            { cat: "rutube", title: "Tutorial I Stupen' — Canale Nikolaj Bakalin", platform: "RUTUBE", link: "https://rutube.ru/video/30fde166acae2316f880476646a974e2/", desc: "Video brevi e rigorosi dell'istruttore certificato Bakalin su Pesantezza-Leggerezza e Proiezioni." },
+            { cat: "classici", title: "Yang Jwing-Ming — Embryonic Breathing (PDF / YMAA)", platform: "Archive.org", link: "https://archive.org/details/QigongMeditationEmbryonicBreathing", desc: "Opera fondamentale contenente la traduzione e il commento di oltre 150 testi cinesi antichi su Tai Xi." },
+            { cat: "classici", title: "Taixi Jing — Lapis Lazuli Texts", platform: "Web / Text", link: "https://www.lapislazulitexts.com/", desc: "Traduzione inglese integrale del Canone dell'Imperatore di Giada sulla Respirazione Embrionale." }
+        ];
+
+        // ==========================================
+        // NAVIGATION & XINGQI STEPPER LOGIC
+        // ==========================================
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            const target = document.getElementById(`sec-${tabId}`);
+            if (target) target.classList.remove('hidden');
+
+            const btn = document.getElementById(`tab-${tabId}`);
+            if (btn) btn.classList.add('active');
+
+            if (tabId === 'ontologia' && !radarChartInstance) renderRadarChart();
+            if (tabId === 'model3d') setTimeout(init3DMannequin, 50);
+            if (tabId === 'audio') setTimeout(() => { loopAudioVisualizer(); }, 50);
+            if (tabId === 'simulatore') setTimeout(initSimCanvas, 50);
+            if (tabId === 'neuro') {
+                setTimeout(initEEGTraceCanvas, 50);
+                if (!eegChartInstance) renderEEGChart();
+            }
+        }
+
+        function initXingqiStepper() {
+            const grid = document.getElementById('xingqi-buttons-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            xingqiSteps.forEach((step, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `p-2 text-xs font-bold rounded-lg border transition ${idx === currentXingqiIndex ? 'bg-terracotta-600 text-white border-terracotta-600' : 'bg-white text-stone-700 border-stone-300 hover:bg-stone-100'}`;
+                btn.innerText = `${step.num}. ${step.char}`;
+                btn.onclick = () => setXingqiStep(idx);
+                grid.appendChild(btn);
+            });
+            updateXingqiCard();
+        }
+
+        function setXingqiStep(idx) {
+            currentXingqiIndex = idx;
+            initXingqiStepper();
+        }
+
+        function nextXingqiStep() {
+            currentXingqiIndex = (currentXingqiIndex + 1) % xingqiSteps.length;
+            initXingqiStepper();
+        }
+
+        function prevXingqiStep() {
+            currentXingqiIndex = (currentXingqiIndex - 1 + xingqiSteps.length) % xingqiSteps.length;
+            initXingqiStepper();
+        }
+
+        function updateXingqiCard() {
+            const data = xingqiSteps[currentXingqiIndex];
+            document.getElementById('xingqi-step-num').innerText = `Fase ${data.num} / 10`;
+            document.getElementById('xingqi-char').innerText = data.char;
+            document.getElementById('xingqi-pinyin').innerText = data.pinyin;
+            document.getElementById('xingqi-trans').innerText = `"${data.trans}"`;
+            document.getElementById('xingqi-desc').innerText = data.desc;
+        }
+
+        // ==========================================
+        // RESOURCE FILTER LOGIC
+        // ==========================================
+        let currentResCat = 'all';
+        function setResourceCategory(cat) {
+            currentResCat = cat;
+            document.querySelectorAll('.res-cat-btn').forEach(btn => {
+                btn.classList.remove('bg-sage-700', 'text-white');
+                btn.classList.add('bg-stone-200', 'text-stone-700');
+            });
+            event.target.classList.remove('bg-stone-200', 'text-stone-700');
+            event.target.classList.add('bg-sage-700', 'text-white');
+            filterResources();
+        }
+
+        function filterResources() {
+            const query = document.getElementById('resource-search').value.toLowerCase();
+            const grid = document.getElementById('resources-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const filtered = resourcesData.filter(item => {
+                const matchCat = (currentResCat === 'all' || item.cat === currentResCat);
+                const matchQuery = item.title.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query) || item.platform.toLowerCase().includes(query);
+                return matchCat && matchQuery;
+            });
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-xl border border-stone-200 shadow-sm flex flex-col justify-between hover:border-sage-600 transition";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold px-2 py-0.5 bg-amber-100 text-amber-800 rounded">${item.platform}</span>
+                            <span class="text-xs text-stone-400">Open-Source</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-sage-800 mb-2">${item.title}</h4>
+                        <p class="text-xs text-stone-600 leading-relaxed mb-4">${item.desc}</p>
+                    </div>
+                    <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-block text-center w-full py-2 bg-stone-100 hover:bg-terracotta-600 hover:text-white text-stone-800 text-xs font-bold rounded-lg transition">
+                        Apri Risorsa Esterna ↗
+                    </a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // CHART.JS IMPLEMENTATIONS
+        // ==========================================
+        let radarChartInstance = null;
+        let eegChartInstance = null;
+
+        function renderRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Consapevolezza Corporea', 'Respirazione Fisiologica', 'Controllo Segnale/Bioenergia', 'Integrazione Corticale/Schermo', 'Sublimazione Spirituale (Shen)', 'Ritenzione Metabolica'],
+                    datasets: [
+                        {
+                            label: 'Qi Gong Tradizionale',
+                            data: [90, 95, 70, 60, 95, 90],
+                            backgroundColor: 'rgba(46, 80, 63, 0.25)',
+                            borderColor: '#2E503F',
+                            pointBackgroundColor: '#2E503F',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Metodo Bronnikov',
+                            data: [75, 60, 95, 98, 70, 40],
+                            backgroundColor: 'rgba(200, 109, 81, 0.25)',
+                            borderColor: '#C86D51',
+                            pointBackgroundColor: '#C86D51',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#E6E1D5' },
+                            grid: { color: '#E6E1D5' },
+                            pointLabels: { font: { size: 10, weight: 'bold' }, color: '#2C3E35' },
+                            ticks: { display: false, max: 100 }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+
+        function updateRadarChart(mode) {
+            if (!radarChartInstance) return;
+            if (mode === 'all') {
+                radarChartInstance.data.datasets[0].hidden = false;
+                radarChartInstance.data.datasets[1].hidden = false;
+            } else if (mode === 'qigong') {
+                radarChartInstance.data.datasets[0].hidden = false;
+                radarChartInstance.data.datasets[1].hidden = true;
+            } else if (mode === 'bronnikov') {
+                radarChartInstance.data.datasets[0].hidden = true;
+                radarChartInstance.data.datasets[1].hidden = false;
+            }
+            radarChartInstance.update();
+        }
+
+        function renderEEGChart() {
+            const ctx = document.getElementById('eegChart').getContext('2d');
+            eegChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Delta (0.5-4Hz)\nRigenerazione', 'Theta (4-8Hz)\nTrance / Meditazione', 'Alfa (8-12Hz)\nPonte Consapevole', 'Gamma (30-80Hz)\nSuper-Cognizione'],
+                    datasets: [
+                        {
+                            label: 'Veglia Ordinaria',
+                            data: [15, 20, 50, 10],
+                            backgroundColor: '#A8A29E'
+                        },
+                        {
+                            label: 'Qi Gong (Tai Xi)',
+                            data: [35, 85, 90, 25],
+                            backgroundColor: '#2E503F'
+                        },
+                        {
+                            label: 'Bronnikov (Visione Diretta)',
+                            data: [20, 40, 95, 90],
+                            backgroundColor: '#C86D51'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Ampiezza Relativa (%)', font: { size: 11 } },
+                            grid: { color: '#F5F2EB' }
+                        },
+                        x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+
+        // ==========================================
+        // INITIALIZATION ON DOM READY
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initLzjPlayer();
+            renderCorpus();
+            initXingqiStepper();
+            filterResources();
+            renderRadarChart();
+        });
+    </script>
+</body>
+</html>
