@@ -93,6 +93,8 @@
             font-size: 9px; line-height: 1; padding: 1px 4px; border-radius: 4px;
             background: rgba(12, 10, 9, .72); color: #fde68a; border: 1px solid rgba(212, 175, 55, .35);
         }
+        .sub3d { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); max-width: 92%; text-align: center; font-size: 13px; font-weight: 600; color: #fff; background: rgba(0,0,0,.62); padding: 4px 10px; border-radius: 6px; pointer-events: none; z-index: 5; }
+        .sub3d:empty { display: none; }
         .evi { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; vertical-align: middle; }
         .evi-trad { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
         .evi-sci { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
@@ -139,6 +141,8 @@
                     <button onclick="switchTab('sicurezza')" id="tab-sicurezza" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Sicurezza</button>
                     <button onclick="switchTab('corpus')" id="tab-corpus" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Corpus Pratiche</button>
                     <button onclick="switchTab('model3d')" id="tab-model3d" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Modello 3D Posizioni</button>
+                    <button onclick="switchTab('obiettivi')" id="tab-obiettivi" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Pratica per Obiettivo</button>
+                    <button onclick="switchTab('zhoutian')" id="tab-zhoutian" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Respirazione Circolare</button>
                     <button onclick="switchTab('audio')" id="tab-audio" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Acustica & Audio Synth</button>
                     <button onclick="switchTab('simulatore')" id="tab-simulatore" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Simulatore Campo</button>
                     <button onclick="switchTab('classici')" id="tab-classici" class="tab-btn px-2.5 py-2 text-stone-300 hover:text-white rounded-t-md transition">Testi Classici</button>
@@ -152,6 +156,8 @@
                         <option value="sicurezza">2. Sicurezza & Pronto Soccorso</option>
                         <option value="corpus">3. Corpus Pratiche e Finalità</option>
                         <option value="model3d">4. Modelli 3D Posizioni e Respirazione</option>
+                        <option value="obiettivi">★ Pratica per Obiettivo</option>
+                        <option value="zhoutian">★ Respirazione Circolare (Zhou Tian)</option>
                         <option value="audio">5. Teoria Acustica & Generatore Audio Sonoro</option>
                         <option value="simulatore">6. Simulatore Campo Energetico</option>
                         <option value="classici">7. Testi Classici & Xingqi</option>
@@ -428,6 +434,68 @@
 
                 <div id="lzj-chapters" class="flex flex-wrap gap-1.5"></div>
 
+                <!-- Viso animato: occhi, bocca e sottotitoli sincronizzati con la musica -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
+                    <div class="md:col-span-4 bg-stone-950 rounded-xl border border-stone-700 p-3 flex flex-col items-center">
+                        <svg id="face-svg" viewBox="0 0 200 220" class="w-full max-w-[220px]" role="img" aria-label="Viso animato: forma di occhi e bocca">
+                            <defs>
+                                <clipPath id="mouth-clip"><path id="mouth-clip-path" d=""></path></clipPath>
+                            </defs>
+                            <ellipse cx="100" cy="112" rx="70" ry="92" fill="#c9a07c"></ellipse>
+                            <ellipse cx="100" cy="40" rx="66" ry="34" fill="#2b2420"></ellipse>
+                            <g id="face-eyes">
+                                <path id="brow-l" d="" stroke="#3b2f28" stroke-width="4" stroke-linecap="round" fill="none"></path>
+                                <path id="brow-r" d="" stroke="#3b2f28" stroke-width="4" stroke-linecap="round" fill="none"></path>
+                                <ellipse id="eye-l" cx="74" cy="100" rx="14" ry="7" fill="#fbf7ef"></ellipse>
+                                <ellipse id="eye-r" cx="126" cy="100" rx="14" ry="7" fill="#fbf7ef"></ellipse>
+                                <circle id="iris-l" cx="74" cy="100" r="5.5" fill="#3a2a1e"></circle>
+                                <circle id="iris-r" cx="126" cy="100" r="5.5" fill="#3a2a1e"></circle>
+                                <path id="lid-l" d="" stroke="#7a5a44" stroke-width="2.2" fill="none" stroke-linecap="round"></path>
+                                <path id="lid-r" d="" stroke="#7a5a44" stroke-width="2.2" fill="none" stroke-linecap="round"></path>
+                            </g>
+                            <path d="M100 108 Q96 130 92 136 Q100 141 108 136" stroke="#9c7556" stroke-width="2.4" fill="none" stroke-linecap="round"></path>
+                            <g id="nose-air" opacity="0">
+                                <path d="M88 146 q-6 4 -14 3" stroke="#7fd1ff" stroke-width="2" fill="none" stroke-linecap="round"></path>
+                                <path d="M112 146 q6 4 14 3" stroke="#7fd1ff" stroke-width="2" fill="none" stroke-linecap="round"></path>
+                            </g>
+                            <path id="mouth" d="" fill="#4a1f1c"></path>
+                            <g clip-path="url(#mouth-clip)">
+                                <rect id="teeth-top" x="70" y="0" width="60" height="6" fill="#f6f1e6"></rect>
+                                <rect id="teeth-bot" x="70" y="0" width="60" height="5" fill="#ece5d6"></rect>
+                                <ellipse id="tongue" cx="100" cy="0" rx="14" ry="6" fill="#c85a5a"></ellipse>
+                            </g>
+                            <path id="lips" d="" fill="none" stroke="#a45a4f" stroke-width="3" stroke-linejoin="round"></path>
+                            <g id="mouth-air" opacity="0">
+                                <path d="M100 196 q-4 8 0 16" stroke="#ffb18a" stroke-width="2.2" fill="none" stroke-linecap="round"></path>
+                                <path d="M88 194 q-8 8 -6 16" stroke="#ffb18a" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
+                                <path d="M112 194 q8 8 6 16" stroke="#ffb18a" stroke-width="1.8" fill="none" stroke-linecap="round"></path>
+                            </g>
+                        </svg>
+                        <div class="flex flex-wrap justify-center gap-1 mt-2">
+                            <button onclick="facePreview('xu')" class="px-1.5 py-0.5 text-[11px] rounded bg-stone-800 hover:bg-stone-700 border border-stone-700">噓 Xu</button>
+                            <button onclick="facePreview('he')" class="px-1.5 py-0.5 text-[11px] rounded bg-stone-800 hover:bg-stone-700 border border-stone-700">呵 He</button>
+                            <button onclick="facePreview('hu')" class="px-1.5 py-0.5 text-[11px] rounded bg-stone-800 hover:bg-stone-700 border border-stone-700">呼 Hu</button>
+                            <button onclick="facePreview('si')" class="px-1.5 py-0.5 text-[11px] rounded bg-stone-800 hover:bg-stone-700 border border-stone-700">呬 Si</button>
+                            <button onclick="facePreview('chui')" class="px-1.5 py-0.5 text-[11px] rounded bg-stone-800 hover:bg-stone-700 border border-stone-700">吹 Chui</button>
+                            <button onclick="facePreview('xi')" class="px-1.5 py-0.5 text-[11px] rounded bg-stone-800 hover:bg-stone-700 border border-stone-700">嘻 Xi</button>
+                        </div>
+                        <p class="text-[10px] text-stone-500 mt-1 text-center">Clic su un suono per vedere la bocca in espirazione (3 s).</p>
+                    </div>
+                    <div class="md:col-span-8 flex flex-col gap-2 min-w-0">
+                        <div class="bg-black/80 rounded-xl border border-stone-700 px-4 py-3 min-h-[86px] flex flex-col justify-center">
+                            <p id="sub-main" class="text-base sm:text-lg font-semibold text-white leading-snug">Premi ▶ per iniziare la pratica guidata.</p>
+                            <p id="sub-detail" class="text-xs sm:text-sm text-amber-200/90 leading-snug mt-1"></p>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                            <div class="bg-stone-800/80 rounded-lg p-2 border border-stone-700"><p class="text-stone-400">Occhi</p><p id="cue-eyes" class="font-semibold text-stone-100">—</p></div>
+                            <div class="bg-stone-800/80 rounded-lg p-2 border border-stone-700"><p class="text-stone-400">Bocca</p><p id="cue-mouth" class="font-semibold text-stone-100">—</p></div>
+                            <div class="bg-stone-800/80 rounded-lg p-2 border border-stone-700"><p class="text-stone-400">Lingua</p><p id="cue-tongue" class="font-semibold text-stone-100">—</p></div>
+                            <div class="bg-stone-800/80 rounded-lg p-2 border border-stone-700"><p class="text-stone-400">Suono</p><p id="cue-voice" class="font-semibold text-stone-100">—</p></div>
+                        </div>
+                        <p class="text-[11px] text-stone-400 leading-relaxed">Nella sequenza HQA i primi giorni si emette il suono in modo udibile e leggero, per imparare la forma della bocca. Poi lo si sussurra e alla fine resta solo la forma, senza voce. L'espirazione è lunga e morbida e non arriva mai allo svuotamento forzato.</p>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <div class="md:col-span-7 bg-stone-800/80 rounded-xl p-4 border border-stone-700 space-y-2">
                         <div class="flex items-baseline gap-3 flex-wrap">
@@ -464,6 +532,7 @@
                     <div class="lg:col-span-8 flex flex-col items-center">
                         <div id="three-canvas-container" class="three-container w-full">
                             <!-- Three.js Canvas injected here -->
+                            <div id="sub-3d" class="sub3d"></div>
                         </div>
                         <div class="w-full flex justify-between items-center text-xs text-stone-400 mt-3 px-2">
                             <span>Vista: <strong class="text-gold-400">trascina per ruotare, rotella per lo zoom</strong></span>
@@ -494,6 +563,9 @@
                                     <option value="chui">吹 Chui — Rene</option>
                                     <option value="xi">嘻 Xi — Triplo Riscaldatore</option>
                                     <option value="shou">收 Chiusura (Shou Shi)</option>
+                                </optgroup>
+                                <optgroup label="Respirazione circolare">
+                                    <option value="zhoutian">小周天 Xiao Zhou Tian (seduto)</option>
                                 </optgroup>
                             </select>
                             <p class="text-[10px] text-stone-400 mt-1">Se il player è in riproduzione con "Sincronizza" attivo, il manichino segue la musica. Per scegliere qui una posizione, disattiva la sincronizzazione.</p>
@@ -736,6 +808,152 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- SECTION: RESPIRAZIONE CIRCOLARE — PICCOLA CIRCOLAZIONE CELESTE (XIAO ZHOU TIAN 小周天) -->
+        <section id="sec-zhoutian" class="tab-content hidden fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200 space-y-3">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800">Respirazione circolare: Xiao Zhou Tian 小周天</h2>
+                <p class="text-stone-700 leading-relaxed">La «Piccola Circolazione Celeste», detta anche Orbita Microcosmica, è la respirazione circolare della tradizione daoista. Il respiro resta addominale e lento. Ciò che circola è l'<strong>attenzione</strong>: inspirando sale lungo la schiena (Du Mai, Vaso Governatore), espirando scende lungo la parte anteriore del corpo (Ren Mai, Vaso Concezione) e torna al Dantian inferiore. La lingua appoggiata al palato chiude il circuito. I testi la chiamano «ponte della gazza», 鵲橋.</p>
+                <p class="text-xs text-stone-500"><span class="evi evi-class">Fonte classica</span> per mappa e terminologia, <span class="evi evi-trad">Tradizione</span> per gli effetti energetici, <span class="evi evi-sci">Evidenza</span> per gli effetti del respiro lento.</p>
+            </div>
+
+            <!-- Quadro teorico -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <h3 class="text-base font-bold text-sage-800">1. La mappa <span class="evi evi-class">Classica</span></h3>
+                    <ul class="text-xs text-stone-600 leading-relaxed space-y-1 list-disc pl-4">
+                        <li><strong>Du Mai 督脈</strong>: parte da Huiyin (perineo), sale lungo la colonna e oltre la testa e termina al labbro superiore.</li>
+                        <li><strong>Ren Mai 任脈</strong>: parte da Huiyin, sale lungo la linea mediana anteriore e termina sotto il labbro inferiore.</li>
+                        <li><strong>Tre passi posteriori 三關</strong>: Weilü 尾閭 (coccige), Jiaji 夾脊 (tra le scapole), Yuzhen 玉枕 (base dell'occipite). Sono i punti in cui, secondo i testi, la circolazione «si blocca» più facilmente.</li>
+                        <li><strong>Tre Dantian</strong>: inferiore (sotto l'ombelico, Qi/vitalità), medio (Shanzhong, emozioni), superiore (Yintang, mente).</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <h3 class="text-base font-bold text-sage-800">2. La logica interna <span class="evi evi-trad">Tradizione</span></h3>
+                    <ul class="text-xs text-stone-600 leading-relaxed space-y-1 list-disc pl-4">
+                        <li><strong>意到氣到</strong>: «dove va l'intenzione, va il Qi». L'attenzione guida, il respiro accompagna, il corpo non si sforza.</li>
+                        <li><strong>似守非守</strong>: «custodire come se non si custodisse». L'attenzione è leggera e non diventa concentrazione forzata.</li>
+                        <li>Lo scopo dichiarato è riequilibrare lo Yang del dorso con lo Yin della parte anteriore e raccogliere l'energia al Dantian. Nell'alchimia interna è il primo stadio, la trasformazione del Jing in Qi (煉精化氣).</li>
+                        <li><strong>Via del fuoco</strong> (sale dietro, scende davanti): tonifica ed è quella usata qui. <strong>Via dell'acqua</strong> (verso inverso): calma, ed è usata da alcune scuole per chi è agitato o ha la pressione alta.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm space-y-2">
+                    <h3 class="text-base font-bold text-sage-800">3. Cosa succede nel corpo <span class="evi evi-sci">Evidenza</span></h3>
+                    <ul class="text-xs text-stone-600 leading-relaxed space-y-1 list-disc pl-4">
+                        <li>Un ciclo da circa 10 s corrisponde a ~6 respiri al minuto. Questo ritmo aumenta la variabilità cardiaca (HRV) e la sensibilità del baroriflesso, segnali di prevalenza vagale (rassegna di Zaccaro et al., <em>Front. Hum. Neurosci.</em> 2018).</li>
+                        <li>Un'espirazione più lunga dell'inspirazione accentua l'effetto calmante.</li>
+                        <li>Scorrere con l'attenzione lungo il corpo è una forma di <em>body scan</em>: allena l'interocezione e ancora la mente.</li>
+                        <li><span class="evi evi-spec">Non verificato</span> Non ci sono studi controllati sulla «circolazione» del Qi in sé. Gli effetti misurabili sono quelli del respiro lento e dell'attenzione.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Guida interattiva -->
+            <div class="bg-stone-900 p-5 sm:p-6 rounded-2xl text-stone-100 shadow-xl border border-stone-800">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <div class="lg:col-span-5 flex flex-col items-center">
+                        <svg id="zt-svg" viewBox="0 0 220 300" class="w-full max-w-[300px]" role="img" aria-label="Profilo del corpo seduto con il percorso della circolazione">
+                            <path d="M120 40 C150 40 156 70 146 88 C140 98 132 100 130 108 L132 118 C150 124 160 140 160 170 C160 200 150 220 150 236 L188 250 C196 254 196 270 186 272 L62 272 C46 272 44 254 60 250 L92 238 C82 214 80 190 82 166 C84 140 92 122 108 116 L108 104 C96 98 88 84 92 66 C96 50 106 40 120 40 Z" fill="#1f3329" stroke="#3d5a4b" stroke-width="1.5"></path>
+                            <path id="zt-du" d="M118 240 C104 236 92 222 90 200 C88 176 92 150 100 128 C104 116 104 104 100 90 C96 72 104 50 122 46" fill="none" stroke="#6fd3ff" stroke-width="3" stroke-linecap="round" opacity=".55"></path>
+                            <path id="zt-ren" d="M122 46 C138 48 148 62 146 78 C145 88 140 96 138 104 C140 116 148 128 152 146 C156 168 154 196 146 216 C140 230 130 240 118 240" fill="none" stroke="#ff9a5c" stroke-width="3" stroke-linecap="round" opacity=".55"></path>
+                            <g font-size="8" fill="#e7e5e4" font-family="inherit">
+                                <circle cx="118" cy="240" r="3.5" fill="#ffe08a"></circle><text x="100" y="256">Huiyin</text>
+                                <circle cx="90" cy="205" r="3" fill="#ffe08a"></circle><text x="50" y="208">Weilü·Mingmen</text>
+                                <circle cx="98" cy="134" r="3" fill="#ffe08a"></circle><text x="62" y="136">Jiaji</text>
+                                <circle cx="100" cy="90" r="3" fill="#ffe08a"></circle><text x="64" y="92">Yuzhen</text>
+                                <circle cx="122" cy="46" r="3.5" fill="#ffe08a"></circle><text x="112" y="36">Baihui</text>
+                                <circle cx="146" cy="74" r="3" fill="#ffe08a"></circle><text x="154" y="74">Yintang</text>
+                                <circle cx="150" cy="140" r="3" fill="#ffe08a"></circle><text x="160" y="140">Shanzhong</text>
+                                <circle cx="148" cy="206" r="3" fill="#ffe08a"></circle><text x="158" y="210">Dantian</text>
+                            </g>
+                            <circle id="zt-dot" cx="118" cy="240" r="7" fill="#ffd36b" stroke="#fff" stroke-width="1.5"></circle>
+                        </svg>
+                        <p class="text-[11px] text-stone-400 mt-1"><span style="color:#6fd3ff">Du Mai</span>: sale inspirando · <span style="color:#ff9a5c">Ren Mai</span>: scende espirando</p>
+                    </div>
+                    <div class="lg:col-span-7 space-y-4 min-w-0">
+                        <div class="bg-black/70 rounded-xl border border-stone-700 px-4 py-3">
+                            <p id="zt-phase" class="text-lg font-semibold text-white">Pronto</p>
+                            <p id="zt-cue" class="text-sm text-amber-200/90 mt-1">Siediti con la schiena eretta, lingua al palato, occhi socchiusi o chiusi.</p>
+                            <div class="h-2 bg-stone-800 rounded mt-3 overflow-hidden"><div id="zt-bar" class="h-full bg-emerald-400" style="width:0%"></div></div>
+                            <div class="flex justify-between text-[11px] text-stone-400 font-mono mt-1"><span id="zt-cycles">Cicli: 0</span><span id="zt-clock">0:00</span></div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <label class="block">Ritmo
+                                <select id="zt-rhythm" class="mt-1 w-full bg-stone-800 border border-stone-600 rounded p-1.5">
+                                    <option value="4,6">Principiante 4 s su / 6 s giù (6/min)</option>
+                                    <option value="5,5">Bilanciato 5 / 5 (6/min)</option>
+                                    <option value="4,8">Calmante 4 / 8 (5/min)</option>
+                                    <option value="6,9">Avanzato 6 / 9 (4/min)</option>
+                                </select>
+                            </label>
+                            <label class="block">Durata
+                                <select id="zt-duration" class="mt-1 w-full bg-stone-800 border border-stone-600 rounded p-1.5">
+                                    <option value="300">5 minuti</option>
+                                    <option value="600" selected>10 minuti</option>
+                                    <option value="900">15 minuti</option>
+                                    <option value="1200">20 minuti</option>
+                                </select>
+                            </label>
+                            <label class="block">Direzione
+                                <select id="zt-dir" class="mt-1 w-full bg-stone-800 border border-stone-600 rounded p-1.5">
+                                    <option value="fire">Via del fuoco (su dietro, giù davanti)</option>
+                                    <option value="water">Via dell'acqua (su davanti, giù dietro)</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button id="zt-start" onclick="ztToggle()" class="px-4 py-2 bg-terracotta-600 hover:bg-terracotta-700 rounded-lg text-sm font-bold">▶ Inizia</button>
+                            <label class="flex items-center gap-2 text-xs text-stone-300"><input type="checkbox" id="zt-tone" checked class="accent-amber-500"> Segnale sonoro morbido al cambio di fase</label>
+                            <button onclick="switchTab('model3d'); setTimeout(()=>{document.getElementById('lzj-sync').checked=false; lzjDrive=null; document.getElementById('select-3d-posture').value='zhoutian'; change3DPosture('zhoutian');},120)" class="px-3 py-2 bg-stone-700 hover:bg-stone-600 rounded-lg text-xs font-semibold">Vedi sul manichino 3D</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fasi di apprendimento -->
+            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                <h3 class="text-xl font-bold text-sage-800">Come si impara: 4 fasi</h3>
+                <ol class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-stone-700">
+                    <li class="p-4 bg-stone-50 rounded-lg border border-stone-200"><p class="font-bold text-sage-800">Fase 1 · Postura e respiro (1ª settimana)</p><p class="text-xs leading-relaxed mt-1">Seduti sul bordo di una sedia o a gambe incrociate, colonna eretta, mento rientrato, lingua al palato. Respiro addominale naturale dal naso, senza contare. 5–10 minuti al giorno.</p></li>
+                    <li class="p-4 bg-stone-50 rounded-lg border border-stone-200"><p class="font-bold text-sage-800">Fase 2 · Raccogliere al Dantian (2–4 settimane)</p><p class="text-xs leading-relaxed mt-1">L'attenzione riposa leggera 3–4 cm sotto l'ombelico, all'interno. Si notano il calore e il movimento del ventre. I testi chiedono di non passare oltre finché questa zona non si «riempie», cioè finché non si avverte calore stabile.</p></li>
+                    <li class="p-4 bg-stone-50 rounded-lg border border-stone-200"><p class="font-bold text-sage-800">Fase 3 · Aprire il circuito</p><p class="text-xs leading-relaxed mt-1">Inspirando, l'attenzione scende a Huiyin e sale per Weilü, Mingmen, Jiaji, Yuzhen fino a Baihui. Espirando scende per Yintang, il palato (lingua), Shanzhong e torna al Dantian. Si usa la guida qui sopra. Se un tratto non «passa», lo si attraversa comunque con leggerezza, senza insistere.</p></li>
+                    <li class="p-4 bg-stone-50 rounded-lg border border-stone-200"><p class="font-bold text-sage-800">Fase 4 · Chiudere sempre al Dantian</p><p class="text-xs leading-relaxed mt-1">Ultimi 2–3 minuti con l'attenzione ferma nel basso ventre. Poi si strofinano i palmi, si massaggiano viso e reni e si aprono gli occhi lentamente. Non si chiude mai con l'attenzione nella testa.</p></li>
+                </ol>
+                <div class="p-4 rounded-lg border border-red-200 bg-red-50 text-xs text-red-900 leading-relaxed space-y-1">
+                    <p class="font-bold">Sicurezza</p>
+                    <p>Non trattenere il respiro e non forzare le sensazioni. Se compaiono mal di testa, pressione alla testa, palpitazioni o agitazione, si porta l'attenzione al Dantian o alle piante dei piedi (Yongquan) e si sospende. La letteratura cinese descrive una «sindrome da deviazione del qigong» (走火入魔), associata a pratica forzata e prolungata.</p>
+                    <p>Prudenza, e meglio farlo con un insegnante, in caso di psicosi o disturbi dissociativi, epilessia, gravidanza o ipertensione non controllata. Con la pressione alta si preferisce il ritmo «calmante» e la via dell'acqua.</p>
+                </div>
+                <p class="text-[11px] text-stone-500">Fonti: Zhang Boduan, <em>Wuzhen Pian</em> 悟真篇 (1075); Wu Shouyang, <em>Tianxian Zhengli</em> 天仙正理 (XVII sec.); Liu Huayang, <em>Huiming Jing</em> 慧命經 (1794), con il celebre diagramma della circolazione; Zaccaro A. et al., «How Breath-Control Can Change Your Life», <em>Front. Hum. Neurosci.</em> 12:353 (2018).</p>
+            </div>
+        </section>
+
+        <!-- SECTION: PRATICA PER OBIETTIVO -->
+        <section id="sec-obiettivi" class="tab-content hidden fade-in space-y-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-200 space-y-3">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-sage-800">Pratica per obiettivo</h2>
+                <p class="text-stone-700 leading-relaxed">Scegli cosa vuoi ottenere. Per ogni obiettivo trovi il protocollo pratico (cosa, quando, quanto), il quadro teorico cinese, il meccanismo fisiologico, il livello di evidenza e le attenzioni. Un pulsante porta direttamente alla pratica giusta.</p>
+            </div>
+            <div id="goal-chips" class="flex flex-wrap gap-2"></div>
+            <div id="goal-card" class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden"></div>
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
+                <h3 class="text-base font-bold text-sage-800 mb-3">Mappa dei cinque organi (Wu Zang) per il riequilibrio</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left">
+                        <thead class="text-stone-500 uppercase tracking-wide"><tr><th class="p-2">Suono</th><th class="p-2">Organo</th><th class="p-2">Elemento · stagione</th><th class="p-2">Emozione in eccesso</th><th class="p-2">Segni tipici (lettura tradizionale)</th><th class="p-2">Si apre in</th></tr></thead>
+                        <tbody class="text-stone-700 divide-y divide-stone-100">
+                            <tr><td class="p-2 font-bold">噓 Xu</td><td class="p-2">Fegato</td><td class="p-2">Legno · primavera</td><td class="p-2">Rabbia, irritabilità</td><td class="p-2">Tensione al collo e alle spalle, occhi stanchi o arrossati, sospiri, ciclo irregolare</td><td class="p-2">Occhi</td></tr>
+                            <tr><td class="p-2 font-bold">呵 He</td><td class="p-2">Cuore</td><td class="p-2">Fuoco · estate</td><td class="p-2">Agitazione, euforia</td><td class="p-2">Insonnia, palpitazioni, sonno disturbato dai sogni, afte</td><td class="p-2">Lingua</td></tr>
+                            <tr><td class="p-2 font-bold">呼 Hu</td><td class="p-2">Milza</td><td class="p-2">Terra · tarda estate</td><td class="p-2">Rimuginio</td><td class="p-2">Digestione lenta, gonfiore, stanchezza dopo i pasti, voglia di dolci</td><td class="p-2">Bocca</td></tr>
+                            <tr><td class="p-2 font-bold">呬 Si</td><td class="p-2">Polmone</td><td class="p-2">Metallo · autunno</td><td class="p-2">Tristezza</td><td class="p-2">Respiro corto, raffreddori frequenti, pelle secca</td><td class="p-2">Naso</td></tr>
+                            <tr><td class="p-2 font-bold">吹 Chui</td><td class="p-2">Rene</td><td class="p-2">Acqua · inverno</td><td class="p-2">Paura</td><td class="p-2">Lombari deboli, piedi freddi, stanchezza di fondo, urgenza urinaria</td><td class="p-2">Orecchie</td></tr>
+                            <tr><td class="p-2 font-bold">嘻 Xi</td><td class="p-2">San Jiao</td><td class="p-2">Fuoco ministeriale</td><td class="p-2">—</td><td class="p-2">Squilibrio diffuso fra torace, addome superiore e inferiore; usato per chiudere la sequenza</td><td class="p-2">—</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-[11px] text-stone-500 mt-2"><span class="evi evi-trad">Tradizione</span> Sono corrispondenze della medicina cinese, utili come linguaggio per orientare la pratica. Non sono diagnosi mediche: sintomi persistenti vanno valutati da un medico.</p>
             </div>
         </section>
 
@@ -1222,7 +1440,8 @@
         let acuLabels = [];
         let renMaiLine, duMaiLine;
         let curPose = null;
-        let lzjDrive = null;      // { pose, breath, organ } quando la musica guida il manichino
+        let lzjDrive = null;
+        let ztOrb = null;      // { pose, breath, organ } quando la musica guida il manichino
         let camOrbit = { theta: 0.35, phi: 1.25, r: 3.6, target: new THREE.Vector3(0, 0.95, 0) };
         let show3D = { points: true, meridians: true, organs: false };
 
@@ -1576,6 +1795,11 @@
                 acuLabels.push({ anchor: ANCH[k], el, dot: d });
             });
 
+            // Sfera della Piccola Circolazione Celeste
+            ztOrb = new THREE.Mesh(new THREE.SphereGeometry(0.035, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffd36b, depthTest: false }));
+            ztOrb.renderOrder = 12; ztOrb.visible = false;
+            threeScene.add(ztOrb);
+
             // Particelle del campo
             particlesGroup = new THREE.Group();
             const pCount = 260, pPos = new Float32Array(pCount * 3);
@@ -1660,6 +1884,7 @@
                 bronnikov_ball: ["Bronnikov — Palla", "Postura eretta, gomiti piegati, palmi affacciati davanti all'ombelico a circa 20 cm, come a contenere una palla. (Metodo Bronnikov: esercizio della 1ª Stupen.)"],
                 bronnikov_bell: ["Bronnikov — Campana", "Corpo eretto, braccia aperte verso il basso a formare un cono attorno al corpo. (Metodo Bronnikov.)"],
                 jingzuo: ["Jing Zuo (Meditazione seduta)", "Gambe incrociate su un cuscino, ginocchia più basse delle anche, colonna verticale, mani sovrapposte sul grembo davanti al Dantian. Postura usata per la respirazione embrionale (Tai Xi)."],
+                zhoutian: ["Xiao Zhou Tian (Piccola Circolazione Celeste)", "Seduti, lingua al palato. Inspirando, l'attenzione sale da Huiyin lungo la colonna fino a Baihui; espirando, scende davanti fino al Dantian. Ritmo 4 s / 6 s. Teoria e guida completa nella scheda Respirazione Circolare."],
                 supine: ["Posizione supina", "Disteso, braccia lungo i fianchi, gambe leggermente divaricate. Posizione di rilassamento e di lavoro in coppia."]
             };
             const L = LZJ_INFO[posture];
@@ -1711,11 +1936,24 @@
                 const r = lzjPoseAt(current3DPosture, t, rep);
                 target = r.pose; lung = r.lung; organKey = current3DPosture;
                 setBreathLabel3D(r.breath);
+            } else if (current3DPosture === 'zhoutian') {
+                target = POSTURES.jingzuo;
+                const T = 10, x = breath3DTime % T;
+                const up = x < 4, f = up ? x / 4 : (x - 4) / 6;
+                lung = up ? smooth(f) : 1 - smooth(f);
+                const names = up ? ['Huiyin', 'Mingmen', 'Du_lumb', 'Du_thor', 'Dazhui', 'Fengfu', 'Baihui']
+                                 : ['Baihui', 'Yintang', 'Renzhong', 'Chengjiang', 'Ren_neck', 'Shanzhong', 'Ren_abd', 'Shenque', 'Guanyuan'];
+                const curve = new THREE.CatmullRomCurve3(names.map(n => ANCH[n].getWorldPosition(new THREE.Vector3())));
+                ztOrb.position.copy(curve.getPoint(Math.min(1, f)));
+                setBreathLabel3D(up ? 'in' : 'out');
+                const sub = document.getElementById('sub-3d');
+                if (sub) sub.textContent = up ? 'Inspira: sali lungo la schiena (Du Mai)' : 'Espira: scendi davanti fino al Dantian (Ren Mai)';
             } else {
                 target = POSTURES[current3DPosture] || POSTURES.zhanzhuang;
                 const s = Math.sin(breath3DTime * 0.9) * 0.5 + 0.5;
                 lung = breath3DPhase === 'inhale' ? s : breath3DPhase === 'exhale' ? 1 - s : 1;
             }
+            if (ztOrb) ztOrb.visible = current3DPosture === 'zhoutian' && !lzjDrive;
             curPose = lerpPose(curPose, target, 0.12);
             setSkeleton(curPose);
 
@@ -1905,6 +2143,10 @@
                 bb.style.width = (r.lung * 100) + '%';
                 bb.style.background = r.breath === 'out' ? '#e07a5f' : r.breath === 'in' ? '#34d399' : '#a8a29e';
                 bl.innerText = r.breath === 'in' ? '↑ Inspira dal naso' : r.breath === 'out' ? (info.reps ? `↓ Espira dalla bocca: «${info.name.split(' ')[0]}»` : '↓ Espira') : '· Pausa';
+                if (lzjAudio.currentTime > 0) {
+                    faceSetTarget(seg.id, r.breath);
+                    if (performance.now() >= facePrevUntil) setSubtitles(LZJ_SUBS[seg.id][r.breath === 'out' ? 'out' : 'in']);
+                }
                 const syncOn = document.getElementById('lzj-sync').checked;
                 if (syncOn && (!lzjAudio.paused || lzjAudio.currentTime > 0)) {
                     lzjDrive = { pose: r.pose, lung: r.lung, id: seg.id };
@@ -1948,6 +2190,284 @@
             lzjStart = Object.assign({}, LZJ_DEFAULT_START);
             try { localStorage.removeItem('lzjStart'); } catch (e) {}
             window._lzjRender(); lzjCurSeg = null;
+        }
+
+        // ==========================================
+        // VISO ANIMATO + SOTTOTITOLI (sincronizzati con il player Liu Zi Jue)
+        // ==========================================
+        // Parametri bocca: w = semi-larghezza, open = apertura, round = arrotondamento labbra,
+        // smile = sollevamento angoli, teeth = denti visibili (0-1), tongue = posizione lingua (-1 dietro/basso … 1 avanti)
+        // Occhi: eye = apertura (0 chiusi, 1 normali, 1.7 spalancati)
+        const FACE_REST = { w: 22, open: 0, round: 0, smile: 1.5, teeth: 0, tongue: -1, eye: 1, air: 0, nose: 0 };
+        const FACE_SHAPES = {
+            inhale: { w: 22, open: 0, round: 0, smile: 1.5, teeth: 0, tongue: -1, eye: 1, air: 0, nose: 1 },
+            xu:   { w: 26, open: 6, round: 0, smile: -1, teeth: 0.9, tongue: 0.6, eye: 1.75, air: 1, nose: 0 },
+            he:   { w: 21, open: 17, round: 0.1, smile: 0, teeth: 0.6, tongue: -0.4, eye: 1, air: 1, nose: 0 },
+            hu:   { w: 12, open: 10, round: 1, smile: 0, teeth: 0, tongue: 0, eye: 1, air: 1, nose: 0 },
+            si:   { w: 24, open: 5.5, round: 0, smile: 2, teeth: 1, tongue: 0.2, eye: 1, air: 1, nose: 0 },
+            chui: { w: 28, open: 5, round: 0, smile: 0, teeth: 0.5, tongue: -0.6, eye: 1, air: 1, nose: 0 },
+            xi:   { w: 26, open: 5, round: 0, smile: 4.5, teeth: 0.9, tongue: 0.1, eye: 0.85, air: 1, nose: 0 },
+            calm: { w: 22, open: 0, round: 0, smile: 2, teeth: 0, tongue: -1, eye: 0.45, air: 0, nose: 0 }
+        };
+        // Sottotitoli per fase e respiro: [testo principale, dettaglio, occhi, bocca, lingua, suono]
+        const LZJ_SUBS = {
+            prep: { in: ['Inspira dal naso, lentamente', 'Piedi paralleli, ginocchia morbide, mento rientrato.', 'Sguardo morbido all\'orizzonte', 'Chiusa, labbra rilassate', 'Al palato dietro i denti', 'Nessuno'],
+                    out: ['Espira dal naso, lascia scendere le spalle', 'Il respiro diventa naturale, senza guidarlo.', 'Sguardo morbido', 'Chiusa', 'Al palato', 'Nessuno'] },
+            qishi: { in: ['Inspira: i palmi salgono fino al petto', 'Palmi in su, le mani salgono come a sollevare acqua.', 'Seguono le mani', 'Chiusa', 'Al palato', 'Nessuno'],
+                     out: ['Espira: i palmi scendono all\'ombelico e spingono avanti', 'Le ginocchia si piegano un poco, poi le mani si raccolgono al Dantian.', 'Sguardo davanti', 'Chiusa', 'Al palato', 'Nessuno'] },
+            xu: { in: ['Inspira: la mano torna al fianco, il busto al centro', 'Bocca chiusa, la lingua torna al palato.', 'Normali', 'Chiusa', 'Al palato', 'Nessuno'],
+                  out: ['Espira «Xū…»: ruota il busto e allunga la mano opposta', 'Gli angoli della bocca vanno indietro, i denti sono quasi chiusi, l\'aria passa tra lingua e denti.', 'SPALANCATI, guardano lontano oltre la mano', 'Socchiusa, angoli tirati indietro', 'Distesa in avanti, non tocca i denti', 'Xū, sussurrato'] },
+            he: { in: ['Inspira: le mani raccolgono e salgono al petto', 'Gomiti alti, palmi in su come a sollevare una ciotola.', 'Seguono le mani', 'Chiusa', 'Al palato', 'Nessuno'],
+                  out: ['Espira «Hē…»: i palmi girano e premono verso il basso', 'Bocca semiaperta, la mandibola cade morbida; le ginocchia si piegano.', 'Normali, sguardo che scende', 'Semiaperta, mandibola rilassata', 'Punta dietro gli incisivi inferiori, dorso sollevato', 'Hē, sussurrato'] },
+            hu: { in: ['Inspira: le mani tornano verso l\'ombelico', 'Le gambe si distendono lentamente.', 'Normali', 'Chiusa', 'Al palato', 'Nessuno'],
+                  out: ['Espira «Hū…»: le mani si allontanano dall\'addome', 'Labbra rotonde e protese come un piccolo tubo; le braccia abbracciano una palla.', 'Normali', 'Labbra rotonde e protese', 'Distesa, bordi sollevati a canale', 'Hū, sussurrato'] },
+            si: { in: ['Inspira: le mani salgono al petto, i gomiti vanno indietro', 'Le scapole si avvicinano, il petto si apre, la testa si inclina un poco indietro.', 'Normali, sguardo leggermente in alto', 'Chiusa', 'Al palato', 'Nessuno'],
+                  out: ['Espira «Sī…»: i palmi spingono in avanti', 'Denti a contatto con una sottile fessura, l\'aria sibila tra i denti.', 'Normali, sguardo davanti', 'Labbra appena aperte, denti visibili', 'Punta appena dietro i denti', 'Sī, sussurrato'] },
+            chui: { in: ['Inspira: risali, le braccia girano avanti e tornano ai reni', 'Le mani passano davanti all\'addome e poi sulla zona lombare.', 'Normali', 'Chiusa', 'Al palato', 'Nessuno'],
+                    out: ['Espira «Chuī…»: scendi piegando le ginocchia', 'Le mani scivolano lungo glutei e cosce. Le labbra si tirano verso i lati.', 'Normali, sguardo davanti', 'Labbra tirate indietro e ai lati', 'Arretrata, l\'aria passa ai lati', 'Chuī, sussurrato'] },
+            xi: { in: ['Inspira: le mani salgono davanti al viso e si aprono in alto', 'Dorsi delle mani affiancati, poi le braccia si aprono come un ventaglio.', 'Seguono le mani', 'Chiusa', 'Al palato', 'Nessuno'],
+                  out: ['Espira «Xī…»: le mani premono in basso e si aprono ai lati', 'Un leggero sorriso, i denti quasi chiusi, l\'aria esce tra i molari.', 'Morbidi, sorridenti', 'Leggero sorriso, denti quasi chiusi', 'Punta che sfiora gli incisivi inferiori', 'Xī, sussurrato'] },
+            shou: { in: ['Inspira: mani sovrapposte sull\'ombelico', 'Massaggio circolare dell\'addome: 6 giri in un senso, 6 nell\'altro.', 'Socchiusi', 'Chiusa', 'Al palato', 'Nessuno'],
+                    out: ['Espira e raccogli l\'attenzione nel basso ventre', 'Alla fine le braccia tornano lungo i fianchi e gli occhi si aprono lentamente.', 'Socchiusi', 'Chiusa', 'Al palato', 'Nessuno'] }
+        };
+        let faseFace = Object.assign({}, FACE_REST), faceTarget = Object.assign({}, FACE_REST), facePrevUntil = 0;
+
+        function faceSetTarget(seg, breath) {
+            if (performance.now() < facePrevUntil) return;
+            if (breath === 'out' && FACE_SHAPES[seg]) faceTarget = FACE_SHAPES[seg];
+            else if (seg === 'shou') faceTarget = FACE_SHAPES.calm;
+            else if (breath === 'in') faceTarget = FACE_SHAPES.inhale;
+            else faceTarget = FACE_REST;
+        }
+        function facePreview(k) {
+            faceTarget = FACE_SHAPES[k];
+            facePrevUntil = performance.now() + 3000;
+            const s = LZJ_SUBS[k].out;
+            setSubtitles(s);
+        }
+        function setSubtitles(s) {
+            const ids = ['sub-main', 'sub-detail', 'cue-eyes', 'cue-mouth', 'cue-tongue', 'cue-voice'];
+            ids.forEach((id, i) => { const el = document.getElementById(id); if (el && el.textContent !== s[i]) el.textContent = s[i]; });
+            const o = document.getElementById('sub-3d');
+            if (o && o.textContent !== s[0]) o.textContent = s[0];
+        }
+        function renderFace() {
+            requestAnimationFrame(renderFace);
+            const svg = document.getElementById('face-svg');
+            if (!svg || svg.getBoundingClientRect().width === 0) return;
+            for (const k in faceTarget) faseFace[k] += (faceTarget[k] - faseFace[k]) * 0.12;
+            const f = faseFace;
+            const blink = (Math.floor(performance.now() / 4200) % 1 === 0 && performance.now() % 4200 < 130 && f.eye > 0.6) ? 0.1 : 1;
+            const ey = 7 * f.eye * blink;
+            ['l', 'r'].forEach((s, i) => {
+                const cx = i ? 126 : 74;
+                document.getElementById('eye-' + s).setAttribute('ry', Math.max(0.4, ey).toFixed(2));
+                const ir = document.getElementById('iris-' + s);
+                ir.setAttribute('r', Math.min(5.5, Math.max(0, ey * 0.85)).toFixed(2));
+                document.getElementById('lid-' + s).setAttribute('d', `M${cx - 15} ${100 - ey + 0.5} Q${cx} ${100 - ey * 1.5 - 1} ${cx + 15} ${100 - ey + 0.5}`);
+                const by = 84 - (f.eye - 1) * 9;
+                document.getElementById('brow-' + s).setAttribute('d', `M${cx - 14} ${by + 2} Q${cx} ${by - 4} ${cx + 14} ${by + 2}`);
+            });
+            const y0 = 168, w = f.w, op = f.open, r = f.round, sm = f.smile;
+            const top = y0 - op * 0.45 - r * 3, bot = y0 + op * 0.55 + r * 3;
+            const cxl = 100 - w, cxr = 100 + w, cy = y0 - sm;
+            const d = r > 0.3
+                ? `M${cxl} ${cy} C${cxl} ${top - 3} ${cxr} ${top - 3} ${cxr} ${cy} C${cxr} ${bot + 3} ${cxl} ${bot + 3} ${cxl} ${cy} Z`
+                : `M${cxl} ${cy} Q100 ${top - 3} ${cxr} ${cy} Q100 ${bot + 2} ${cxl} ${cy} Z`;
+            document.getElementById('mouth').setAttribute('d', d);
+            document.getElementById('mouth-clip-path').setAttribute('d', d);
+            document.getElementById('lips').setAttribute('d', d);
+            document.getElementById('mouth').setAttribute('opacity', op > 0.6 ? 1 : 0);
+            const tt = document.getElementById('teeth-top'), tb = document.getElementById('teeth-bot');
+            tt.setAttribute('y', (top - 4 + (1 - f.teeth) * -6).toFixed(1));
+            tb.setAttribute('y', (bot - 1 + (1 - f.teeth) * 6).toFixed(1));
+            const tg = document.getElementById('tongue');
+            tg.setAttribute('cy', (bot + 3 - Math.max(0, f.tongue) * op * 0.3).toFixed(1));
+            tg.setAttribute('ry', (4 + Math.max(0, f.tongue) * 2).toFixed(1));
+            document.getElementById('mouth-air').setAttribute('opacity', (f.air * (0.5 + 0.5 * Math.sin(performance.now() / 180))).toFixed(2));
+            document.getElementById('nose-air').setAttribute('opacity', (f.nose * (0.5 + 0.5 * Math.sin(performance.now() / 220))).toFixed(2));
+        }
+
+        // ==========================================
+        // XIAO ZHOU TIAN — GUIDA RESPIRATORIA CIRCOLARE
+        // ==========================================
+        let zt = { running: false, t0: 0, elapsed: 0, cycles: -1, lastPhase: null, ctx: null };
+        function ztTone(freq) {
+            if (!document.getElementById('zt-tone').checked) return;
+            try {
+                zt.ctx = zt.ctx || new (window.AudioContext || window.webkitAudioContext)();
+                const o = zt.ctx.createOscillator(), g = zt.ctx.createGain();
+                o.type = 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(0.0001, zt.ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.12, zt.ctx.currentTime + 0.08);
+                g.gain.exponentialRampToValueAtTime(0.0001, zt.ctx.currentTime + 1.6);
+                o.connect(g); g.connect(zt.ctx.destination);
+                o.start(); o.stop(zt.ctx.currentTime + 1.7);
+            } catch (e) {}
+        }
+        function ztToggle() {
+            zt.running = !zt.running;
+            const b = document.getElementById('zt-start');
+            if (zt.running) { zt.t0 = performance.now() - zt.elapsed * 1000; b.textContent = '❚❚ Pausa'; ztTone(392); }
+            else b.textContent = '▶ Riprendi';
+        }
+        // Posizione sul circuito (0..1): 0 = Huiyin, 0.5 = Baihui, 1 = Huiyin
+        function ztCycle(t) {
+            const [a, b] = document.getElementById('zt-rhythm').value.split(',').map(Number);
+            const T = a + b, x = t % T, n = Math.floor(t / T);
+            if (x < a) return { pos: 0.5 * (x / a), phase: 'in', frac: x / a, n, a, b };
+            return { pos: 0.5 + 0.5 * ((x - a) / b), phase: 'out', frac: (x - a) / b, n, a, b };
+        }
+        const ZT_POINTS_UP = [[0, 'Huiyin (perineo)'], [0.12, 'Weilü · Mingmen'], [0.28, 'Jiaji, tra le scapole'], [0.4, 'Yuzhen, base del cranio'], [0.48, 'Baihui, sommità']];
+        const ZT_POINTS_DOWN = [[0.5, 'Yintang, tra le sopracciglia'], [0.62, 'lingua al palato, gola'], [0.75, 'Shanzhong, centro del petto'], [0.9, 'Dantian, sotto l\'ombelico']];
+        function ztLoop() {
+            requestAnimationFrame(ztLoop);
+            const svg = document.getElementById('zt-svg');
+            if (!svg) return;
+            if (zt.running) zt.elapsed = (performance.now() - zt.t0) / 1000;
+            const dur = +document.getElementById('zt-duration').value;
+            const ending = zt.elapsed > dur - 120;
+            const c = ztCycle(zt.elapsed);
+            const water = document.getElementById('zt-dir').value === 'water';
+            const du = document.getElementById('zt-du'), ren = document.getElementById('zt-ren');
+            // fuoco: sale su Du, scende su Ren. acqua: sale su Ren (invertito), scende su Du (invertito)
+            let path, f;
+            if (!water) { path = c.pos < 0.5 ? du : ren; f = c.pos < 0.5 ? c.pos * 2 : (c.pos - 0.5) * 2; }
+            else { path = c.pos < 0.5 ? ren : du; f = c.pos < 0.5 ? 1 - c.pos * 2 : 1 - (c.pos - 0.5) * 2; }
+            const dot = document.getElementById('zt-dot');
+            if (zt.elapsed === 0 || ending) { dot.setAttribute('cx', 148); dot.setAttribute('cy', 206); }
+            else {
+                const L = path.getTotalLength(), p = path.getPointAtLength(L * f);
+                dot.setAttribute('cx', p.x.toFixed(1)); dot.setAttribute('cy', p.y.toFixed(1));
+            }
+            dot.setAttribute('r', (6 + (c.phase === 'in' ? c.frac : 1 - c.frac) * 3).toFixed(1));
+            if (zt.elapsed === 0) return;
+            const pts = c.phase === 'in' ? ZT_POINTS_UP : ZT_POINTS_DOWN;
+            let where = pts[0][1];
+            for (const p of pts) if (c.pos >= p[0]) where = p[1];
+            const phaseEl = document.getElementById('zt-phase'), cueEl = document.getElementById('zt-cue');
+            if (zt.elapsed >= dur) {
+                if (zt.running) { zt.running = false; document.getElementById('zt-start').textContent = '▶ Ricomincia'; zt.elapsed = 0; ztTone(262); }
+                phaseEl.textContent = 'Fine. Strofina i palmi e massaggia viso e reni.';
+                cueEl.textContent = 'Apri gli occhi lentamente.';
+                return;
+            }
+            if (ending) {
+                phaseEl.textContent = c.phase === 'in' ? 'Inspira nel basso ventre' : 'Espira e lascia riposare l\'attenzione al Dantian';
+                cueEl.textContent = 'Ultimi 2 minuti: il circuito si ferma, l\'attenzione resta nel Dantian.';
+            } else if (water) {
+                phaseEl.textContent = c.phase === 'in' ? `Inspira (${c.a} s): sali davanti` : `Espira (${c.b} s): scendi lungo la schiena`;
+                cueEl.textContent = 'Attenzione leggera, senza spingere.';
+            } else {
+                phaseEl.textContent = c.phase === 'in' ? `Inspira (${c.a} s): sali lungo la schiena` : `Espira (${c.b} s): scendi davanti`;
+                cueEl.textContent = 'Ora: ' + where + '. Lingua al palato, attenzione leggera.';
+            }
+            const bar = document.getElementById('zt-bar');
+            bar.style.width = ((c.phase === 'in' ? c.frac : 1 - c.frac) * 100).toFixed(0) + '%';
+            bar.style.background = c.phase === 'in' ? '#34d399' : '#e07a5f';
+            document.getElementById('zt-cycles').textContent = 'Cicli: ' + c.n;
+            document.getElementById('zt-clock').textContent = lzjFmt(zt.elapsed) + ' / ' + lzjFmt(dur);
+            const key = c.n + c.phase;
+            if (zt.running && key !== zt.lastPhase) { if (zt.lastPhase !== null) ztTone(c.phase === 'in' ? 440 : 330); zt.lastPhase = key; }
+        }
+
+        // ==========================================
+        // PRATICA PER OBIETTIVO
+        // ==========================================
+        const GOALS = [
+            { id: 'stress', icon: '🌿', name: 'Stress e ansia', evi: ['sci', 'Evidenza moderata'],
+              what: 'Xiao Zhou Tian con ritmo «Calmante» 4/8 per 10 minuti. In alternativa, Liu Zi Jue completo con 3 ripetizioni in più di Xu e He.',
+              when: 'Ogni giorno, nello stesso momento. Nei momenti acuti bastano 3 minuti di ritmo 4/8 anche in piedi.',
+              tcm: 'Lo stress è letto come stagnazione del Qi del Fegato (噓 Xu la scioglie) e «fuoco» del Cuore che sale (呵 He lo fa scendere). La circolazione riporta l\'energia dalla testa al Dantian.',
+              body: 'Respirare a circa 6 cicli al minuto con espirazione lunga aumenta l\'HRV e il tono vagale e riduce l\'attivazione simpatica. Rassegne su qigong e tai chi riportano riduzioni di ansia e stress percepito, con studi di qualità variabile.',
+              care: 'Se il respiro lento provoca fame d\'aria, accorcia l\'espirazione. Un disturbo d\'ansia clinico richiede un percorso con un professionista.',
+              go: [['Avvia Zhou Tian 4/8', "goalGo('zt','4,8')"], ['Vai a Xu nel player', "goalGo('lzj','xu')"]] },
+            { id: 'sleep', icon: '🌙', name: 'Sonno', evi: ['sci', 'Evidenza bassa-moderata'],
+              what: 'La sera, 1 ora prima di dormire: He (6 ripetizioni) e Chui (6 ripetizioni), poi 5 minuti di Zhou Tian 4/8 seduti, chiudendo al Dantian.',
+              when: 'Ogni sera per almeno 4 settimane. Evita la pratica dinamica e vigorosa dopo cena.',
+              tcm: 'Insonnia = Cuore (Fuoco) e Rene (Acqua) che non comunicano (心腎不交). He rinfresca il Fuoco e Chui nutre l\'Acqua, così lo Shen torna a «riposare» nel Cuore.',
+              body: 'Respiro lento e attenzione al corpo riducono l\'arousal pre-sonno. Meta-analisi su esercizi mente-corpo (tai chi, qigong) mostrano miglioramenti della qualità del sonno misurata con il PSQI.',
+              care: 'Con l\'apnea notturna il problema è respiratorio-strutturale: consulta un medico.',
+              go: [['Vai a He nel player', "goalGo('lzj','he')"], ['Vai a Chui nel player', "goalGo('lzj','chui')"]] },
+            { id: 'organs', icon: '☯', name: 'Riequilibrio degli organi', evi: ['trad', 'Tradizione'],
+              what: 'Liu Zi Jue completo (15 min) seguendo l\'ordine HQA. Per l\'organo da sostenere, ripeti il suo suono altre 6 volte alla fine (vedi la tabella sotto).',
+              when: 'Ogni giorno, meglio al mattino. In ogni stagione si può insistere sul suono della stagione: primavera Xu, estate He, fine estate Hu, autunno Si, inverno Chui.',
+              tcm: 'Ogni suono «drena» l\'eccesso dell\'organo collegato. L\'ordine Xu→He→Hu→Si→Chui segue il ciclo di generazione dei cinque elementi (Legno→Fuoco→Terra→Metallo→Acqua) e Xi armonizza i tre livelli del tronco.',
+              body: 'Ogni suono cambia la forma della bocca e quindi la resistenza all\'espirazione: è una forma di respirazione a labbra socchiuse, che rallenta e allunga l\'espirazione. Movimenti di torsione, apertura del torace e piegamento delle gambe mobilizzano diaframma, gabbia toracica e muscoli posturali. Non è dimostrato un effetto selettivo dei singoli suoni sui singoli organi.',
+              care: 'La lettura «organo debole» è un linguaggio tradizionale, non una diagnosi.',
+              go: [['Avvia il Liu Zi Jue completo', "goalGo('lzj','prep')"]] },
+            { id: 'breath', icon: '🫁', name: 'Respiro e polmoni', evi: ['sci', 'Evidenza buona (BPCO)'],
+              what: 'Liu Zi Jue completo, con più attenzione a Si (Polmone) e Chui (Rene, che secondo la teoria cinese «riceve» il Qi).',
+              when: 'Almeno 3 volte a settimana, 20–30 minuti, per almeno 3 mesi: è la dose degli studi positivi.',
+              tcm: 'Il Polmone governa il Qi e il respiro, il Rene lo «afferra». Si apre il petto, Chui lo radica in basso.',
+              body: 'Nella BPCO stabile due meta-analisi (2020, 2024) mostrano miglioramenti di FEV1, FEV1%, dispnea, tolleranza allo sforzo e qualità della vita. Il meccanismo plausibile è un allenamento dei muscoli respiratori con espirazione prolungata contro resistenza, come nel pursed-lip breathing.',
+              care: 'Non sostituisce terapia e riabilitazione polmonare: le integra. Con riacutizzazioni o desaturazione, pratica solo con l\'ok del pneumologo.',
+              go: [['Vai a Si nel player', "goalGo('lzj','si')"]] },
+            { id: 'bp', icon: '🩺', name: 'Pressione alta', evi: ['sci', 'Evidenza bassa-moderata'],
+              what: 'Zhou Tian con ritmo «Calmante» 4/8 e via dell\'acqua, 10 minuti, chiudendo con l\'attenzione ai piedi (Yongquan). Liu Zi Jue senza scendere troppo nei piegamenti.',
+              when: 'Ogni giorno, 8–12 settimane, misurando la pressione prima e dopo.',
+              tcm: 'Ipertensione = Yang del Fegato che sale. Si porta l\'energia verso il basso (Dantian, piedi) e si evita di fissare l\'attenzione sulla testa.',
+              body: 'Respirazione lenta e qigong sono associati a riduzioni medie modeste della pressione sistolica nelle revisioni sistematiche (es. Xiong et al., Medicine 2015). Gli studi sono eterogenei.',
+              care: 'Niente apnee e niente spinte. Non modificare i farmaci senza il medico.',
+              go: [['Avvia Zhou Tian (acqua 4/8)', "goalGo('zt','4,8','water')"]] },
+            { id: 'energy', icon: '☀️', name: 'Energia e stanchezza', evi: ['trad', 'Tradizione + evidenza bassa'],
+              what: 'Al mattino: Zhan Zhuang (abbracciare l\'albero) da 3 a 15 minuti, poi Zhou Tian «Bilanciato» 5/5 per 5 minuti con la via del fuoco.',
+              when: 'Al mattino, a stomaco vuoto o leggero. Aumenta la durata di 1 minuto a settimana.',
+              tcm: 'Lo Zhan Zhuang «radica» e accumula il Qi nel Dantian. La via del fuoco tonifica lo Yang lungo la colonna.',
+              body: 'Il lavoro isometrico a basso carico delle gambe e la postura eretta attivano la circolazione. Il respiro ritmico migliora la vigilanza senza l\'attivazione dello stress.',
+              care: 'Ginocchia morbide, mai oltre le punte dei piedi. La stanchezza cronica va indagata da un medico (anemia, tiroide, sonno).',
+              go: [['Vedi Zhan Zhuang in 3D', "goalGo('pose','zhanzhuang')"], ['Avvia Zhou Tian 5/5', "goalGo('zt','5,5')"]] },
+            { id: 'eyes', icon: '👁', name: 'Visione a occhi chiusi', evi: ['spec', 'Speculativo'],
+              what: 'Il Metodo Bronnikov propone esercizi di «visione alternativa» a occhi bendati. Quello che si può allenare davvero è l\'immaginazione visiva e l\'attenzione: Zhan Zhuang 5 minuti, poi a occhi chiusi richiamare per 2–3 minuti un oggetto osservato prima (forma, colore, dettagli) e verificarlo riaprendo gli occhi.',
+              when: '10 minuti al giorno, sempre a occhi aperti nelle fasi iniziali come richiede il Metodo (1ª Stupen).',
+              tcm: 'Nel daoismo l\'attenzione a Yintang (Dantian superiore) è collegata alla «luce interiore» (回光, «far tornare la luce»). Il Fegato si apre negli occhi: Xu è il suono tradizionalmente usato per la vista stanca.',
+              body: 'Non esistono studi controllati pubblicati che dimostrino la percezione visiva senza gli occhi. Le dimostrazioni con benda non escludono la visione dai bordi della benda. È invece documentato che l\'allenamento dell\'immaginazione visiva migliora vividezza e memoria di lavoro visiva.',
+              care: 'Se l\'obiettivo è la salute degli occhi, Xu e il riposo visivo hanno senso. Promesse di «vedere senza occhi» non hanno basi verificate.',
+              go: [['Vai a Xu nel player', "goalGo('lzj','xu')"]] },
+            { id: 'focus', icon: '🎯', name: 'Concentrazione', evi: ['sci', 'Evidenza bassa-moderata'],
+              what: 'Zhou Tian 5/5 per 10 minuti contando i cicli. Quando ti accorgi di esserti distratto, riparti da 1 senza giudizio.',
+              when: 'Prima di studio o lavoro intenso.',
+              tcm: 'Spirito (Shen) raccolto e Qi radicato: «quando il Qi è raccolto lo Shen si stabilizza».',
+              body: 'È un allenamento dell\'attenzione sostenuta e della meta-consapevolezza, cioè accorgersi di essersi distratti, come negli studi sulla meditazione focalizzata.',
+              care: 'Nessuna in particolare. Non praticare a stomaco pieno.',
+              go: [['Avvia Zhou Tian 5/5', "goalGo('zt','5,5')"]] }
+        ];
+        let goalSel = 'stress';
+        function renderGoals() {
+            const chips = document.getElementById('goal-chips');
+            if (!chips) return;
+            chips.innerHTML = GOALS.map(g => `<button onclick="goalSel='${g.id}';renderGoals()" class="px-3 py-2 rounded-lg text-sm font-semibold border transition ${g.id === goalSel ? 'bg-sage-800 text-white border-sage-800' : 'bg-white text-stone-700 border-stone-300 hover:border-sage-600'}">${g.icon} ${g.name}</button>`).join('');
+            const g = GOALS.find(x => x.id === goalSel);
+            const ev = { sci: 'evi-sci', trad: 'evi-trad', spec: 'evi-spec' }[g.evi[0]];
+            document.getElementById('goal-card').innerHTML = `
+                <div class="p-5 sm:p-6 border-b border-stone-200 flex flex-wrap items-center gap-3">
+                    <h3 class="text-xl font-bold text-sage-800">${g.icon} ${g.name}</h3>
+                    <span class="evi ${ev}">${g.evi[1]}</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-stone-200">
+                    <div class="bg-white p-5"><p class="text-[11px] uppercase tracking-wide text-terracotta-600 font-bold">Cosa fare</p><p class="text-sm text-stone-800 leading-relaxed mt-1">${g.what}</p></div>
+                    <div class="bg-white p-5"><p class="text-[11px] uppercase tracking-wide text-terracotta-600 font-bold">Quando e quanto</p><p class="text-sm text-stone-800 leading-relaxed mt-1">${g.when}</p></div>
+                    <div class="bg-white p-5"><p class="text-[11px] uppercase tracking-wide text-amber-700 font-bold">Teoria cinese</p><p class="text-sm text-stone-700 leading-relaxed mt-1">${g.tcm}</p></div>
+                    <div class="bg-white p-5"><p class="text-[11px] uppercase tracking-wide text-emerald-700 font-bold">Cosa succede nel corpo</p><p class="text-sm text-stone-700 leading-relaxed mt-1">${g.body}</p></div>
+                </div>
+                <div class="p-5 flex flex-col sm:flex-row sm:items-center gap-3 justify-between bg-stone-50">
+                    <p class="text-xs text-red-800"><strong>Attenzioni:</strong> ${g.care}</p>
+                    <div class="flex flex-wrap gap-2 shrink-0">${g.go.map(([l, fn]) => `<button onclick="${fn}" class="px-3 py-2 rounded-lg bg-terracotta-600 hover:bg-terracotta-700 text-white text-xs font-bold">${l} →</button>`).join('')}</div>
+                </div>`;
+        }
+        function goalGo(kind, a, b) {
+            if (kind === 'lzj') {
+                switchTab('model3d');
+                setTimeout(() => { document.getElementById('lzj-sync').checked = true; lzjSeek(lzjStart[a]); lzjAudio.play(); document.getElementById('lzj-audio').scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 150);
+            } else if (kind === 'zt') {
+                switchTab('zhoutian');
+                document.getElementById('zt-rhythm').value = a;
+                document.getElementById('zt-dir').value = b || 'fire';
+                setTimeout(() => document.getElementById('zt-svg').scrollIntoView({ block: 'center', behavior: 'smooth' }), 100);
+            } else if (kind === 'pose') {
+                switchTab('model3d');
+                setTimeout(() => { document.getElementById('lzj-sync').checked = false; lzjDrive = null; document.getElementById('select-3d-posture').value = a; change3DPosture(a); }, 150);
+            }
         }
 
         // ==========================================
@@ -2697,6 +3217,9 @@
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             initLzjPlayer();
+            renderFace();
+            ztLoop();
+            renderGoals();
             renderCorpus();
             initXingqiStepper();
             filterResources();
