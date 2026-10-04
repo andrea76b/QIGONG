@@ -95,7 +95,9 @@
         }
         .bron-card, #goal-card, #lzj-play, #zt-svg, #three-canvas-container { scroll-margin-top: 88px; }
         .bron-card summary::-webkit-details-marker { display: none; }
-        .sub3d { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); max-width: 92%; text-align: center; font-size: 13px; font-weight: 600; color: #fff; background: rgba(0,0,0,.62); padding: 4px 10px; border-radius: 6px; pointer-events: none; z-index: 5; }
+        .three-host { position: absolute; inset: 0; }
+        .b3-role { transform: translate(-50%, -100%); font-size: 11px; color: #fff; background: rgba(160, 122, 88, .85); border-color: rgba(255, 255, 255, .25); }
+        .sub3d { position: absolute; left: 0; right: 0; bottom: 10px; margin: 0 auto; width: fit-content; max-width: 94%; text-align: center; font-size: clamp(11px, 3vw, 13px); font-weight: 600; color: #fff; background: rgba(0,0,0,.62); padding: 4px 10px; border-radius: 6px; pointer-events: none; z-index: 5; }
         .sub3d:empty { display: none; }
         .evi { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; vertical-align: middle; }
         .evi-trad { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
@@ -563,10 +565,8 @@
                             <select id="select-3d-posture" onchange="change3DPosture(this.value)" class="w-full bg-stone-900 text-stone-100 border border-stone-600 rounded-lg p-2 text-xs focus:ring-1 focus:ring-gold-400">
                                 <option value="zhanzhuang">1. Zhan Zhuang (Postura del Palo / Albero - Qi Gong)</option>
                                 <option value="mabu">2. Ma Bu / Dragone (Posizione del Cavaliere - Qi Gong)</option>
-                                <option value="bronnikov_ball">3. Bronnikov Palla Energetica (Mani parallele Dantian)</option>
-                                <option value="bronnikov_bell">4. Bronnikov Campana (cono di braccia)</option>
-                                <option value="jingzuo">5. Tai Xi / Jing Zuo (Meditazione Seduta Loto)</option>
-                                <option value="supine">6. Posizione Supina</option>
+                                <option value="jingzuo">3. Tai Xi / Jing Zuo (Meditazione Seduta Loto)</option>
+                                <option value="supine">4. Posizione Supina</option>
                                 <optgroup label="Liu Zi Jue (anteprima in loop)">
                                     <option value="qishi">起 Apertura (Qi Shi)</option>
                                     <option value="xu">噓 Xu — Fegato</option>
@@ -1008,6 +1008,17 @@
                         <button onclick="bsSetKind('completa')" id="bs-k-completa" class="px-3 py-1.5 rounded border border-stone-600 bg-stone-800 font-bold">1° livello completo · 31 min</button>
                         <button onclick="bsSetKind('secondo')" id="bs-k-secondo" class="px-3 py-1.5 rounded border border-stone-600 bg-stone-800 font-bold">2° livello · 25 min</button>
                     </div>
+                </div>
+                <div class="space-y-2">
+                    <div id="bron-3d" class="three-container w-full"><div id="bron-3d-sub" class="sub3d"></div></div>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-stone-300">
+                        <label class="flex items-center gap-1.5"><input id="b3-sync" type="checkbox" checked onchange="b3SetSync(this.checked)" class="accent-amber-500"> Segui la pratica guidata</label>
+                        <label class="flex items-center gap-1.5 min-w-0">Esercizio <select id="b3-sel" onchange="b3Select(this.value)" class="bg-stone-800 text-stone-100 border border-stone-600 rounded px-2 py-1 text-xs max-w-[58vw] sm:max-w-xs"></select></label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" checked onchange="b3.fx = this.checked" class="accent-amber-500"> Effetti</label>
+                        <label class="flex items-center gap-1.5"><input type="checkbox" checked onchange="b3.peek = this.checked" class="accent-amber-500"> Spiraglio della benda</label>
+                    </div>
+                    <p class="text-[11px] text-stone-400 leading-relaxed"><strong id="b3-title" class="text-gold-400"></strong> <span id="b3-note" class="text-amber-200"></span></p>
+                    <p class="text-[11px] text-stone-500 leading-relaxed">Ricostruzione dai testi delle dispense: i video originali non sono stati visti. <span style="color:#ffd36b">Oro</span>: dove va l'attenzione · <span style="color:#7fd3ff">azzurro</span>: ciò che si immagina entrare · <span style="color:#ffa04d">arancio</span>: ciò che si immagina uscire · <span style="color:#ff4d4d">rosso tratteggiato</span>: lo spiraglio sotto la benda. Trascina per ruotare la vista.</p>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                     <div class="lg:col-span-8 bg-black/70 rounded-xl border border-stone-700 p-4 space-y-3 min-w-0">
@@ -1769,6 +1780,7 @@
         // ==========================================
         let threeScene, threeCamera, threeRenderer, threeContainer;
         let mannequinRoot, chestMesh, dantianMesh, particlesGroup;
+        let mainFig = null, threeHost = null;
         let leftArmGroup, rightArmGroup, leftThighGroup, rightThighGroup, spineGroup;
         let current3DPosture = 'zhanzhuang';
         let breath3DPhase = 'inhale'; // inhale, hold, exhale
@@ -1836,8 +1848,6 @@
         const POSTURES = {
             zhanzhuang: P({ aL: [-1.05, -0.55, 0.42, -1.1, 0, 0.4], lL: [-0.28, 0.07, 0.56, 0] }),
             mabu: P({ aL: [-1.0, -0.35, 0.3, -0.7, 0.3, -0.3], lL: [-0.95, 0.42, 1.55, 0.35], spX: 0.05 }),
-            bronnikov_ball: P({ aL: [-0.55, -0.55, 0.12, -1.35, 0, 0.6], lL: [-0.1, 0.06, 0.2, 0] }),
-            bronnikov_bell: P({ aL: [-0.05, 0, 0.62, -0.1, 0, 0], lL: [-0.06, 0.05, 0.12, 0] }),
             jingzuo: P({ rootY: 0.27, aL: [-0.55, -0.45, 0.2, -1.25, 0, 0.9], lL: [-1.35, 0.35, 2.6, -1.25] }),
             supine: P({ rootRx: -Math.PI / 2, rootY: 0.12, aL: [0, 0, 0.18, -0.05, 0, 0], lL: [0, 0.06, 0, 0] })
         };
@@ -1933,16 +1943,17 @@
             m.scale.set(rx, ry, rz);
             return m;
         }
-        function anchor(parent, name, x, y, z) {
+        function anchor(parent, name, x, y, z, A) {
             const o = new THREE.Object3D();
             o.position.set(x, y, z);
             parent.add(o);
-            ANCH[name] = o;
+            (A || ANCH)[name] = o;
             return o;
         }
 
-        function buildArm(side, matBody, matJoint) {
+        function buildArm(side, matBody, matJoint, F) {
             const s = side === 'L' ? 1 : -1;
+            F = F || { J, ANCH };
             const shoulder = new THREE.Group();
             shoulder.rotation.order = 'YZX';
             shoulder.add(new THREE.Mesh(new THREE.SphereGeometry(0.058, 18, 14), matJoint));
@@ -1966,12 +1977,15 @@
             hand.rotation.y = -Math.PI / 2 * s; // palmo (locale +Z) rivolto verso la coscia
             hand.add(palm, fingers, thumb);
             wrist.add(hand);
-            anchor(hand, 'Laogong' + side, 0, -0.07, 0.02);
-            J['sh' + side] = shoulder; J['el' + side] = elbow; J['wr' + side] = wrist;
+            anchor(hand, 'Laogong' + side, 0, -0.07, 0.02, F.ANCH);
+            anchor(hand, 'Dito' + side, 0, -0.19, 0, F.ANCH);
+            anchor(hand, 'Dorso' + side, 0, -0.07, -0.02, F.ANCH);
+            F.J['sh' + side] = shoulder; F.J['el' + side] = elbow; F.J['wr' + side] = wrist; F.J['hand' + side] = hand;
             return shoulder;
         }
-        function buildLeg(side, matBody, matJoint) {
+        function buildLeg(side, matBody, matJoint, F) {
             const s = side === 'L' ? 1 : -1;
+            F = F || { J, ANCH };
             const hip = new THREE.Group();
             hip.rotation.order = 'YZX';
             hip.add(limb(0.078, 0.055, BODY.L1, matBody));
@@ -1986,16 +2000,110 @@
             const foot = new THREE.Mesh(new THREE.BoxGeometry(0.085, 0.05, 0.24), matBody);
             foot.position.set(0.005 * s, -BODY.sole + 0.025, 0.06);
             ankle.add(foot);
-            anchor(ankle, 'Yongquan' + side, 0, -BODY.sole - 0.002, 0.07);
-            J['hip' + side] = hip; J['kn' + side] = knee; J['an' + side] = ankle;
+            anchor(ankle, 'Yongquan' + side, 0, -BODY.sole - 0.002, 0.07, F.ANCH);
+            anchor(knee, 'Ginocchio' + side, 0, 0, 0.06, F.ANCH);
+            anchor(hip, 'Coscia' + side, 0, -0.22, 0.075, F.ANCH);
+            F.J['hip' + side] = hip; F.J['kn' + side] = knee; F.J['an' + side] = ankle;
             return hip;
         }
 
-        function init3DMannequin() {
-            const container = document.getElementById('three-canvas-container');
-            if (!container || is3DInitialized) return;
+        // Figura completa: usata per il manichino principale, per il compagno e per il «fantasma» del Metodo Bronnikov
+        function buildFigure(matBody, matJoint, F) {
+            F = F || { J: {}, ANCH: {} };
+            const A = (parent, name, x, y, z) => anchor(parent, name, x, y, z, F.ANCH);
+            const root = new THREE.Group();
+            root.rotation.order = 'YXZ';
+            const pelvis = blob(0.15, 0.11, 0.1, matBody);
+            root.add(pelvis);
+            A(root, 'Huiyin', 0, -0.1, 0);
+            A(root, 'Guanyuan', 0, 0.02, 0.1);
+            A(root, 'Coccige', 0, -0.06, -0.105);
+
+            const spine = new THREE.Group();
+            spine.position.y = 0.06;
+            spine.rotation.order = 'YZX';
+            root.add(spine);
+            const abdomen = blob(0.13, 0.13, 0.095, matBody);
+            abdomen.position.y = 0.1;
+            spine.add(abdomen);
+            A(spine, 'Shenque', 0, 0.06, 0.095);
+            A(spine, 'Mingmen', 0, 0.06, -0.09);
+            A(spine, 'Ren_abd', 0, 0.16, 0.09);
+            A(spine, 'Du_lumb', 0, 0.16, -0.085);
+            A(spine, 'RenoL', 0.06, 0.07, -0.085);
+            A(spine, 'RenoR', -0.06, 0.07, -0.085);
+
+            const chest = new THREE.Group();
+            chest.position.y = 0.2;
+            chest.rotation.order = 'YZX';
+            spine.add(chest);
+            F.J.chest = chest;
+            const chestMesh = blob(0.165, 0.2, 0.115, matBody);
+            chestMesh.position.y = 0.13;
+            chest.add(chestMesh);
+            A(chest, 'Shanzhong', 0, 0.13, 0.118);
+            A(chest, 'Ren_neck', 0, 0.3, 0.06);
+            A(chest, 'Du_thor', 0, 0.15, -0.115);
+            A(chest, 'Dazhui', 0, 0.31, -0.06);
+            A(chest, 'Plesso', 0, 0.02, 0.092);
+
+            const neck = new THREE.Group();
+            neck.position.y = 0.31;
+            neck.rotation.order = 'YXZ';
+            chest.add(neck);
+            F.J.neck = neck;
+            neck.add(limb(0.045, 0.05, 0.08, matJoint));
+            const head = blob(0.095, 0.118, 0.108, matBody);
+            head.position.y = 0.17;
+            neck.add(head);
+            const nose = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.04, 10), matBody);
+            nose.rotation.x = Math.PI / 2; nose.position.set(0, 0.16, 0.115);
+            neck.add(nose);
+            // occhi (si chiudono negli esercizi a occhi chiusi) e benda opaca
+            const eyeMat = new THREE.MeshBasicMaterial({ color: 0x1c1917 });
+            F.eyes = [1, -1].map(s => {
+                const e = new THREE.Mesh(new THREE.SphereGeometry(0.013, 12, 8), eyeMat);
+                e.scale.set(1, 0.7, 0.45); e.position.set(0.034 * s, 0.185, 0.097);
+                neck.add(e);
+                return e;
+            });
+            F.blind = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 0.05, 36, 1, true), new THREE.MeshStandardMaterial({ color: 0x141210, roughness: 0.9, side: THREE.DoubleSide }));
+            F.blind.scale.set(0.1, 1, 0.114); F.blind.position.y = 0.19; F.blind.visible = false;
+            neck.add(F.blind);
+            A(neck, 'Baihui', 0, 0.29, 0);
+            A(neck, 'Yintang', 0, 0.2, 0.105);
+            A(neck, 'Chengjiang', 0, 0.1, 0.095);
+            A(neck, 'Renzhong', 0, 0.135, 0.11);
+            A(neck, 'Fengfu', 0, 0.13, -0.1);
+            A(neck, 'TestaCentro', 0, 0.17, 0);
+            A(neck, 'OcchioL', 0.034, 0.185, 0.104);
+            A(neck, 'OcchioR', -0.034, 0.185, 0.104);
+            A(neck, 'Bocca', 0, 0.12, 0.102);
+            A(neck, 'Fronte', 0, 0.235, 0.097);
+            A(neck, 'Nuca', 0, 0.16, -0.108);
+            A(neck, 'OccipiteL', 0.045, 0.15, -0.098);
+            A(neck, 'OccipiteR', -0.045, 0.15, -0.098);
+            A(neck, 'TempiaL', 0.092, 0.19, 0.035);
+            A(neck, 'TempiaR', -0.092, 0.19, 0.035);
+            A(neck, 'Parietale', 0, 0.28, -0.03);
+
+            const shL = buildArm('L', matBody, matJoint, F); shL.position.set(0.2, 0.25, 0); chest.add(shL);
+            const shR = buildArm('R', matBody, matJoint, F); shR.position.set(-0.2, 0.25, 0); chest.add(shR);
+            const hipL = buildLeg('L', matBody, matJoint, F); hipL.position.set(BODY.hipX, -BODY.hipY, 0); root.add(hipL);
+            const hipR = buildLeg('R', matBody, matJoint, F); hipR.position.set(-BODY.hipX, -BODY.hipY, 0); root.add(hipR);
+            Object.assign(F, { root, spine, chestMesh, head, parts: { torso: [pelvis, abdomen, chestMesh], head: [neck], arms: [shL, shR], legs: [hipL, hipR] } });
+            return F;
+        }
+
+        function init3DMannequin(target) {
+            const container = target || document.getElementById('three-canvas-container');
+            if (!container) return;
+            if (is3DInitialized) { mount3D(container); return; }
             threeContainer = container;
             const w = container.clientWidth, h = container.clientHeight;
+            threeHost = document.createElement('div');
+            threeHost.className = 'three-host';
+            container.insertBefore(threeHost, container.firstChild);
 
             threeScene = new THREE.Scene();
             threeScene.fog = new THREE.FogExp2(0x0d1712, 0.06);
@@ -2003,7 +2111,7 @@
             threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             threeRenderer.setSize(w, h);
             threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            container.appendChild(threeRenderer.domElement);
+            threeHost.appendChild(threeRenderer.domElement);
 
             threeScene.add(new THREE.HemisphereLight(0xfff3dd, 0x1d3027, 0.75));
             const key = new THREE.DirectionalLight(0xffe2b0, 0.9);
@@ -2026,62 +2134,11 @@
             bodyMats = [matBody, matJoint];
 
             // Gerarchia: radice (bacino) → lombare → torace → collo → testa
-            mannequinRoot = new THREE.Group();
+            mainFig = buildFigure(matBody, matJoint, { J, ANCH });
+            mannequinRoot = mainFig.root; spineGroup = mainFig.spine; chestMesh = mainFig.chestMesh;
             threeScene.add(mannequinRoot);
-            const pelvis = blob(0.15, 0.11, 0.1, matBody);
-            mannequinRoot.add(pelvis);
-            anchor(mannequinRoot, 'Huiyin', 0, -0.1, 0);
-            anchor(mannequinRoot, 'Guanyuan', 0, 0.02, 0.1);
-
-            spineGroup = new THREE.Group();
-            spineGroup.position.y = 0.06;
-            spineGroup.rotation.order = 'YZX';
-            mannequinRoot.add(spineGroup);
-            const abdomen = blob(0.13, 0.13, 0.095, matBody);
-            abdomen.position.y = 0.1;
-            spineGroup.add(abdomen);
-            anchor(spineGroup, 'Shenque', 0, 0.06, 0.095);
-            anchor(spineGroup, 'Mingmen', 0, 0.06, -0.09);
-            anchor(spineGroup, 'Ren_abd', 0, 0.16, 0.09);
-            anchor(spineGroup, 'Du_lumb', 0, 0.16, -0.085);
-
-            const chest = new THREE.Group();
-            chest.position.y = 0.2;
-            chest.rotation.order = 'YZX';
-            spineGroup.add(chest);
-            J.chest = chest;
-            chestMesh = blob(0.165, 0.2, 0.115, matBody);
-            chestMesh.position.y = 0.13;
-            chest.add(chestMesh);
-            anchor(chest, 'Shanzhong', 0, 0.13, 0.118);
-            anchor(chest, 'Ren_neck', 0, 0.3, 0.06);
-            anchor(chest, 'Du_thor', 0, 0.15, -0.115);
-            anchor(chest, 'Dazhui', 0, 0.31, -0.06);
-
-            const neck = new THREE.Group();
-            neck.position.y = 0.31;
-            neck.rotation.order = 'YXZ';
-            chest.add(neck);
-            J.neck = neck;
-            neck.add(limb(0.045, 0.05, 0.08, matJoint)).rotation.x = Math.PI;
-            const head = blob(0.095, 0.118, 0.108, matBody);
-            head.position.y = 0.17;
-            neck.add(head);
-            const nose = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.04, 10), matBody);
-            nose.rotation.x = Math.PI / 2; nose.position.set(0, 0.16, 0.115);
-            neck.add(nose);
-            anchor(neck, 'Baihui', 0, 0.29, 0);
-            anchor(neck, 'Yintang', 0, 0.2, 0.105);
-            anchor(neck, 'Chengjiang', 0, 0.1, 0.095);
-            anchor(neck, 'Renzhong', 0, 0.135, 0.11);
-            anchor(neck, 'Fengfu', 0, 0.13, -0.1);
-
-            // Arti
-            const shL = buildArm('L', matBody, matJoint); shL.position.set(0.2, 0.25, 0); chest.add(shL);
-            const shR = buildArm('R', matBody, matJoint); shR.position.set(-0.2, 0.25, 0); chest.add(shR);
-            const hipL = buildLeg('L', matBody, matJoint); hipL.position.set(BODY.hipX, -BODY.hipY, 0); mannequinRoot.add(hipL);
-            const hipR = buildLeg('R', matBody, matJoint); hipR.position.set(-BODY.hipX, -BODY.hipY, 0); mannequinRoot.add(hipR);
-            leftArmGroup = shL; rightArmGroup = shR; leftThighGroup = hipL; rightThighGroup = hipR;
+            const chest = J.chest;
+            leftArmGroup = J.shL; rightArmGroup = J.shR; leftThighGroup = J.hipL; rightThighGroup = J.hipR;
 
             // Dantian inferiore (Xia Dantian): sfera luminosa interna
             dantianMesh = new THREE.Mesh(new THREE.SphereGeometry(0.045, 20, 16), new THREE.MeshBasicMaterial({ color: 0xffd36b, transparent: true, opacity: 0.9 }));
@@ -2135,7 +2192,7 @@
                 const el = document.createElement('div');
                 el.className = 'acu-label';
                 el.textContent = label;
-                container.appendChild(el);
+                threeHost.appendChild(el);
                 acuLabels.push({ anchor: ANCH[k], el, dot: d });
             });
 
@@ -2158,25 +2215,21 @@
 
             // Orbita camera: mouse, touch, rotella
             let drag = null;
-            const down = (x, y) => { drag = { x, y }; };
+            const down = (x, y) => { drag = { x, y }; camTween = null; };
             const move = (x, y) => {
                 if (!drag) return;
                 camOrbit.theta -= (x - drag.x) * 0.008;
                 camOrbit.phi = Math.min(2.6, Math.max(0.35, camOrbit.phi - (y - drag.y) * 0.006));
                 drag = { x, y };
             };
-            container.addEventListener('mousedown', e => down(e.clientX, e.clientY));
+            threeHost.addEventListener('mousedown', e => down(e.clientX, e.clientY));
             window.addEventListener('mouseup', () => { drag = null; });
             window.addEventListener('mousemove', e => move(e.clientX, e.clientY));
-            container.addEventListener('touchstart', e => { const t = e.touches[0]; down(t.clientX, t.clientY); }, { passive: true });
-            container.addEventListener('touchmove', e => { const t = e.touches[0]; move(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
-            container.addEventListener('touchend', () => { drag = null; });
-            container.addEventListener('wheel', e => { e.preventDefault(); camOrbit.r = Math.min(7, Math.max(1.4, camOrbit.r * (1 + e.deltaY * 0.001))); }, { passive: false });
-            window.addEventListener('resize', () => {
-                const w2 = container.clientWidth, h2 = container.clientHeight;
-                if (!w2) return;
-                threeCamera.aspect = w2 / h2; threeCamera.updateProjectionMatrix(); threeRenderer.setSize(w2, h2);
-            });
+            threeHost.addEventListener('touchstart', e => { const t = e.touches[0]; down(t.clientX, t.clientY); }, { passive: true });
+            threeHost.addEventListener('touchmove', e => { const t = e.touches[0]; move(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
+            threeHost.addEventListener('touchend', () => { drag = null; });
+            threeHost.addEventListener('wheel', e => { e.preventDefault(); camTween = null; camOrbit.r = Math.min(9, Math.max(1.4, camOrbit.r * (1 + e.deltaY * 0.001))); }, { passive: false });
+            window.addEventListener('resize', resize3D);
 
             curPose = POSTURES.zhanzhuang;
             is3DInitialized = true;
@@ -2184,8 +2237,26 @@
             animate3D();
         }
 
-        // Applica una posa allo scheletro, con radice calcolata perché i piedi restino a terra
-        function setSkeleton(p) {
+        // Sposta il disegno 3D in un altro contenitore (scheda Liu Zi Jue o scheda Bronnikov)
+        function mount3D(container) {
+            if (!threeHost || !container) return;
+            if (threeHost.parentNode !== container) container.insertBefore(threeHost, container.firstChild);
+            threeContainer = container;
+            resize3D();
+        }
+        function resize3D() {
+            if (!threeContainer) return;
+            const w2 = threeContainer.clientWidth, h2 = threeContainer.clientHeight;
+            if (!w2) return;
+            threeCamera.aspect = w2 / h2; threeCamera.updateProjectionMatrix(); threeRenderer.setSize(w2, h2);
+        }
+
+        // Applica una posa allo scheletro, con radice calcolata perché i piedi restino a terra.
+        // F.x, F.z, F.ry collocano una figura nella scena (compagno, «fantasma»); F.blend raccorda i cambi di altezza del bacino.
+        const legH = l => (BODY.L1 * Math.cos(l[0]) + BODY.L2 * Math.cos(l[0] + l[2])) * Math.cos(l[1]);
+        const legZ = l => -(BODY.L1 * Math.sin(l[0]) + BODY.L2 * Math.sin(l[0] + l[2]));
+        function setSkeletonOf(F, p, direct) {
+            const J = F.J;
             const sideArm = (s, a) => {
                 const m = s === 'L' ? 1 : -1;
                 J['sh' + s].rotation.set(a[0], a[1] * m, a[2] * m);
@@ -2200,22 +2271,32 @@
             };
             sideArm('L', p.aL); sideArm('R', p.aR);
             sideLeg('L', p.lL); sideLeg('R', p.lR);
-            spineGroup.rotation.set(p.spX, p.spY * 0.6, p.spZ);
+            F.spine.rotation.set(p.spX, p.spY * 0.6, p.spZ);
             J.chest.rotation.set(p.chX + p.spX * 0.3, p.spY * 0.4, 0);
             J.neck.rotation.set(p.nkX - p.spX * 0.6, p.nkY, 0);
 
-            // cinematica diretta della gamba sinistra per altezza e arretramento del bacino
-            const legH = l => (BODY.L1 * Math.cos(l[0]) + BODY.L2 * Math.cos(l[0] + l[2])) * Math.cos(l[1]);
-            const legZ = l => -(BODY.L1 * Math.sin(l[0]) + BODY.L2 * Math.sin(l[0] + l[2]));
+            // cinematica diretta delle gambe per altezza e arretramento del bacino
+            let y, z0 = 0;
             if (p.rootY !== null && p.rootY !== undefined) {
-                mannequinRoot.position.set(0, p.rootY, 0);
+                y = p.rootY;
             } else {
-                const h = (legH(p.lL) + legH(p.lR)) / 2;
-                const z = (legZ(p.lL) + legZ(p.lR)) / 2;
-                mannequinRoot.position.set(0, BODY.hipY + h + BODY.sole, -z * 0.8);
+                const h = p.support === 'max' ? Math.max(legH(p.lL), legH(p.lR)) : (legH(p.lL) + legH(p.lR)) / 2;
+                z0 = -(legZ(p.lL) + legZ(p.lR)) / 2 * 0.8;
+                y = BODY.hipY + h + BODY.sole;
             }
-            mannequinRoot.rotation.set(p.rootRx, p.rootRy, 0);
+            const ry = F.ry || 0;
+            const tx = (F.x || 0) + Math.sin(ry) * z0, tz = (F.z || 0) + Math.cos(ry) * z0;
+            if (F.blend && !direct) {
+                F.blend.t = Math.min(1, F.blend.t + 0.05);
+                const k = smooth(F.blend.t), f = F.blend.from;
+                F.root.position.set(f.x + (tx - f.x) * k, f.y + (y - f.y) * k, f.z + (tz - f.z) * k);
+                if (F.blend.t >= 1) F.blend = null;
+            } else {
+                F.root.position.set(tx, y, tz);
+            }
+            F.root.rotation.set(p.rootRx, p.rootRy + ry, 0);
         }
+        function setSkeleton(p) { setSkeletonOf(mainFig, p); }
 
         function change3DPosture(posture) {
             current3DPosture = posture;
@@ -2225,15 +2306,15 @@
             const D = {
                 zhanzhuang: ["Zhan Zhuang (Postura del Palo / Abbracciare l'albero)", "Piedi alla larghezza delle spalle e paralleli, ginocchia morbide che non superano le punte, coccige rilasciato verso il basso, braccia arrotondate davanti al petto come ad abbracciare un tronco, palmi verso il torace. Spalle e gomiti abbassati."],
                 mabu: ["Ma Bu (Posizione del Cavaliere)", "Piedi a circa due larghezze di spalle, ginocchia flesse in linea con le punte dei piedi, busto verticale, peso centrato tra i piedi. Nella pratica di salute si scende solo quanto si riesce a mantenere senza tensione alle ginocchia."],
-                bronnikov_ball: ["Bronnikov — Palla", "Postura eretta, gomiti piegati, palmi affacciati davanti all'ombelico a circa 20 cm, come a contenere una palla. (Metodo Bronnikov: esercizio della 1ª Stupen.)"],
-                bronnikov_bell: ["Bronnikov — Campana", "Corpo eretto, braccia aperte verso il basso a formare un cono attorno al corpo. (Metodo Bronnikov.)"],
                 jingzuo: ["Jing Zuo (Meditazione seduta)", "Gambe incrociate su un cuscino, ginocchia più basse delle anche, colonna verticale, mani sovrapposte sul grembo davanti al Dantian. Postura usata per la respirazione embrionale (Tai Xi)."],
                 zhoutian: ["Xiao Zhou Tian (Piccola Circolazione Celeste)", "Seduti, lingua al palato. Inspirando, l'attenzione sale da Huiyin lungo la colonna fino a Baihui; espirando, scende davanti fino al Dantian. Ritmo 4 s / 6 s. Teoria e guida completa nella scheda Respirazione Circolare."],
                 supine: ["Posizione supina", "Disteso, braccia lungo i fianchi, gambe leggermente divaricate. Posizione di rilassamento e di lavoro in coppia."]
             };
             const L = LZJ_INFO[posture];
+            const BX = posture.startsWith('b:') ? BRON_EX.find(x => x.id === posture.slice(2)) : null;
             if (D[posture]) { titleEl.innerText = D[posture][0]; descEl.innerText = D[posture][1]; }
             else if (L) { titleEl.innerText = L.name; descEl.innerText = L.move; }
+            else if (BX) { titleEl.innerText = `Metodo Bronnikov · ${BX.it}`; descEl.innerText = BX.steps.slice(0, 3).join(' ') + ' Scheda completa e pratica guidata nella sezione Metodo Bronnikov.'; }
         }
 
         function apply3DPosture(posture) {
@@ -2265,12 +2346,17 @@
 
         function animate3D() {
             requestAnimationFrame(animate3D);
+            if (!threeContainer || !threeContainer.offsetParent) return; // scheda nascosta: niente calcoli
             const dt = 0.016 * (threeSpeed / 5);
             breath3DTime += dt;
 
             // Posa obiettivo: guidata dalla musica, anteprima di un movimento Liu Zi Jue, oppure postura statica
             let target, lung, organKey = null;
-            if (lzjDrive) {
+            const bmode = b3Mode();
+            if (bmode) {
+                const r = b3Frame(dt);
+                target = r.pose; lung = r.lung;
+            } else if (lzjDrive) {
                 target = lzjDrive.pose; lung = lzjDrive.lung; organKey = lzjDrive.id;
             } else if (LZJ_MOVES[current3DPosture]) {
                 const m = LZJ_MOVES[current3DPosture];
@@ -2297,21 +2383,32 @@
                 const s = Math.sin(breath3DTime * 0.9) * 0.5 + 0.5;
                 lung = breath3DPhase === 'inhale' ? s : breath3DPhase === 'exhale' ? 1 - s : 1;
             }
-            if (ztOrb) ztOrb.visible = current3DPosture === 'zhoutian' && !lzjDrive;
+            if (!bmode && b3.id) b3Leave();
+            if (ztOrb) ztOrb.visible = current3DPosture === 'zhoutian' && !lzjDrive && !bmode;
+            if (bmode && b3.snap) { curPose = clonePose(target); b3.snap = false; mainFig.blend = null; }
             curPose = lerpPose(curPose, target, 0.12);
+            // altezza del bacino fissa (seduti, sdraiati) o calcolata dalle gambe: il passaggio è raccordato
+            if ((curPose.rootY === null || curPose.rootY === undefined) !== (target.rootY === null || target.rootY === undefined)) {
+                curPose.rootY = target.rootY;
+                mainFig.blend = { from: mannequinRoot.position.clone(), t: 0 };
+            }
             setSkeleton(curPose);
+            if (bmode) b3After();
+            b3CamStep();
 
             const bs = 1 + lung * 0.07;
             chestMesh.scale.set(0.165 * bs, 0.2 * (1 + lung * 0.02), 0.115 * bs);
             const ds = 0.85 + (1 - lung) * 0.35;
             dantianMesh.scale.set(ds, ds, ds);
             dantianMesh.material.opacity = 0.55 + 0.4 * (1 - lung);
+            dantianMesh.visible = !bmode;
+            if (particlesGroup) particlesGroup.visible = !bmode;
 
             // Organi
-            const active = organKey && ORGAN_OF[organKey] ? ORGAN_OF[organKey] : [];
+            const active = !bmode && organKey && ORGAN_OF[organKey] ? ORGAN_OF[organKey] : [];
             ['liver', 'heart', 'spleen', 'lung', 'kidney', 'sj0', 'sj1', 'sj2'].forEach(k => {
                 const on = active.includes(k);
-                const base = show3D.organs ? 0.35 : 0;
+                const base = show3D.organs && !bmode ? 0.35 : 0;
                 const op = on ? 0.55 + 0.4 * (1 - lung) : base;
                 ORGANS[k].traverse(c => { if (c.material) c.material.opacity += (op - c.material.opacity) * 0.1; });
             });
@@ -2319,8 +2416,8 @@
             // Meridiani
             const v = new THREE.Vector3();
             const fill = (line, names) => {
-                line.visible = show3D.meridians;
-                if (!show3D.meridians) return;
+                line.visible = show3D.meridians && !bmode;
+                if (!line.visible) return;
                 const pts = names.map(n => ANCH[n].getWorldPosition(new THREE.Vector3()));
                 const arr = line.geometry.attributes.position.array;
                 const N = 40;
@@ -2333,10 +2430,12 @@
 
             // Camera
             const c = camOrbit;
+            // schermo verticale (cellulare): la telecamera arretra per far stare tutta la figura
+            const rr = c.r * (threeCamera.aspect < 1 ? Math.min(1.6, 1 + (1 - threeCamera.aspect) * 0.9) : 1);
             threeCamera.position.set(
-                c.target.x + c.r * Math.sin(c.phi) * Math.sin(c.theta),
-                c.target.y + c.r * Math.cos(c.phi),
-                c.target.z + c.r * Math.sin(c.phi) * Math.cos(c.theta));
+                c.target.x + rr * Math.sin(c.phi) * Math.sin(c.theta),
+                c.target.y + rr * Math.cos(c.phi),
+                c.target.z + rr * Math.sin(c.phi) * Math.cos(c.theta));
             threeCamera.lookAt(c.target);
 
             if (particlesGroup) particlesGroup.rotation.y += 0.003 + (1 - lung) * 0.004;
@@ -2346,9 +2445,9 @@
             // Etichette dei punti
             const W = threeContainer.clientWidth, H = threeContainer.clientHeight;
             acuLabels.forEach(a => {
-                a.dot.visible = show3D.points;
+                a.dot.visible = show3D.points && !bmode;
                 if (!a.el) return;
-                if (!show3D.points) { a.el.style.display = 'none'; return; }
+                if (!a.dot.visible) { a.el.style.display = 'none'; return; }
                 a.anchor.getWorldPosition(v);
                 const camSide = v.clone().sub(threeCamera.position).length();
                 v.project(threeCamera);
@@ -3787,6 +3886,7 @@
                     </span>
                 </summary>
                 <div class="px-4 pb-4 space-y-2 text-sm text-stone-700">
+                    ${B3[x.id] ? `<p><button onclick="b3Show('${x.id}')" class="px-2.5 py-1 rounded-lg bg-stone-900 hover:bg-stone-700 text-amber-300 text-xs font-bold">▶ Vedi in 3D</button></p>` : ''}
                     ${x.partial ? '<p class="text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-1">Descrizione parziale: le fonti consultabili non riportano tutti i passaggi. La tecnica completa è nei video indicati.</p>' : ''}
                     ${x.note ? `<p class="text-[11px] text-amber-900 bg-amber-50 border border-amber-200 rounded px-2 py-1">${x.note}</p>` : ''}
                     ${x.pos && x.pos !== '—' ? `<p><strong class="text-sage-800">Posizione:</strong> ${x.pos}</p>` : ''}
@@ -3944,6 +4044,1213 @@
             bsRender(false);
         }
         function bsOpenCard() { const st = BRON_SESSIONS[bs.kind][bs.idx]; bronOpen(st[0]); }
+
+        // ==========================================
+        // METODO BRONNIKOV IN 3D: il manichino esegue gli esercizi, da solo o seguendo la pratica guidata.
+        // Ricostruzione dai testi delle dispense (i video originali non sono consultabili da qui).
+        // Bersagli delle mani: nel sistema del bacino della figura (x verso la sua sinistra, y in alto, z in avanti), in metri.
+        // ==========================================
+        const C_ATT = 0xffd36b, C_IN = 0x7fd3ff, C_OUT = 0xffa04d, C_HEAVY = 0x8796ff, C_LIGHT = 0xfff3b0, C_WARM = 0xff7a4d, C_PEEK = 0xff4d4d;
+
+        // ---------- Cinematica inversa del braccio (discesa per coordinate, con preferenza per pose naturali) ----------
+        const IK_LIM = [[-3.1, 1.2], [-1.6, 1.6], [-0.9, 2.9], [-2.6, 0], [-1.3, 1.3], [-2.2, 2.2]];
+        const IK_SEEDS = [[-0.55, -0.55, 0.12, -1.35, 0, 0.6], [-1.3, 0, 0.3, -0.4, 0, 0], [0.4, 0, 0.3, -1.2, 0, 0], [-2.5, 0, -0.2, -0.4, 0, 0]];
+        const IKC = {};
+        const ikT = { p: new THREE.Vector3(), e: new THREE.Vector3(), s: new THREE.Vector3(), d: new THREE.Vector3(), n: new THREE.Vector3(), q: new THREE.Quaternion() };
+        function ikChain(side) {
+            const s = side === 'L' ? 1 : -1;
+            const base = new THREE.Object3D(); base.matrixAutoUpdate = false;
+            const sh = new THREE.Object3D(); sh.rotation.order = 'YZX'; sh.position.set(0.2 * s, 0.25, 0); base.add(sh);
+            const el = new THREE.Object3D(); el.position.y = -0.29; sh.add(el);
+            const wr = new THREE.Object3D(); wr.rotation.order = 'YXZ'; wr.position.y = -0.255; el.add(wr);
+            const hand = new THREE.Object3D(); hand.rotation.y = -Math.PI / 2 * s; wr.add(hand);
+            const palm = new THREE.Object3D(); palm.position.set(0, -0.07, 0.02); hand.add(palm);
+            return { s, base, sh, el, wr, hand, palm };
+        }
+        function ikCost(C, a, g) {
+            C.sh.rotation.set(a[0], a[1] * C.s, a[2] * C.s);
+            C.el.rotation.set(a[3], 0, 0);
+            C.wr.rotation.set(a[4], a[5] * C.s, 0);
+            C.sh.updateMatrixWorld(true);
+            C.palm.getWorldPosition(ikT.p);
+            let c = 200 * ikT.p.distanceToSquared(g.p);
+            if (g.n || g.f) {
+                C.hand.getWorldQuaternion(ikT.q);
+                if (g.n) c += 0.2 * (1 - ikT.n.set(0, 0, 1).applyQuaternion(ikT.q).dot(g.n));
+                if (g.f) c += 0.08 * (1 - ikT.n.set(0, -1, 0).applyQuaternion(ikT.q).dot(g.f));
+            }
+            C.sh.getWorldPosition(ikT.s); C.el.getWorldPosition(ikT.e);
+            ikT.e.sub(ikT.s).normalize();
+            c += (g.pole ? 0.04 : 0.015) * (1 - ikT.e.dot(g.pole ? ikT.d.copy(g.pole).sub(ikT.s).normalize() : g.poleDir));
+            return c + 0.006 * a[4] * a[4] + 0.0015 * a[5] * a[5] + 0.002 * a[1] * a[1];
+        }
+        function ikSolve(F, side, g, seed) {
+            const C = IKC[side] || (IKC[side] = ikChain(side));
+            C.base.matrix.copy(F.J.chest.matrixWorld); C.base.matrixWorld.copy(F.J.chest.matrixWorld); // la base resta il torace anche quando three.js risale la catena
+            g.poleDir = new THREE.Vector3(0.35 * C.s, -1, -0.15).transformDirection(F.J.chest.matrixWorld);
+            let best = null, bestC = Infinity;
+            for (const s0 of (seed ? [seed] : []).concat(IK_SEEDS)) {
+                const a = s0.slice();
+                let cur = ikCost(C, a, g), step = 0.35;
+                for (let it = 0; it < 300 && step > 0.002; it++) {
+                    let imp = false;
+                    for (let k = 0; k < 6; k++) {
+                        for (const dir of [1, -1]) {
+                            const old = a[k];
+                            a[k] = Math.min(IK_LIM[k][1], Math.max(IK_LIM[k][0], old + dir * step));
+                            const c = ikCost(C, a, g);
+                            if (c < cur - 1e-9) { cur = c; imp = true; break; }
+                            a[k] = old;
+                        }
+                    }
+                    if (!imp) step *= 0.5;
+                }
+                if (cur < bestC) { bestC = cur; best = a; }
+                if (bestC < 0.02) break; // abbastanza vicino: inutile provare altri punti di partenza
+            }
+            C.sh.rotation.set(best[0], best[1] * C.s, best[2] * C.s); C.el.rotation.set(best[3], 0, 0); C.wr.rotation.set(best[4], best[5] * C.s, 0);
+            C.sh.updateMatrixWorld(true);
+            ikSolve.lastErr = C.palm.getWorldPosition(ikT.p).distanceTo(g.p);
+            return best.map(v => Math.round(v * 1000) / 1000);
+        }
+        // bersaglio della mano → punto, normale del palmo, direzione delle dita e polo del gomito nel mondo
+        // { at: 'Ancora' | [x,y,z], off, n ('in' = verso il centro della testa), f, pole, of: 'm' (ancore del manichino principale),
+        //   arm: 'L'|'R', u: 0..1 lungo il braccio, side: 'out'|'in', gap }
+        function b3Goal(spec, F) {
+            const R = spec.of === 'm' ? mainFig : F;
+            const q = R.root.getWorldQuaternion(new THREE.Quaternion());
+            const dir = v => v ? new THREE.Vector3(...v).normalize().applyQuaternion(q) : null;
+            let p, n = null;
+            if (spec.arm) {
+                const sd = spec.arm, sg = sd === 'L' ? 1 : -1;
+                const pts = [R.J['sh' + sd], R.J['el' + sd], R.J['wr' + sd]].map(o => o.getWorldPosition(new THREE.Vector3()));
+                pts.push(R.ANCH['Dito' + sd].getWorldPosition(new THREE.Vector3()));
+                const seg = spec.u < 0.45 ? 0 : spec.u < 0.85 ? 1 : 2;
+                const f = seg === 0 ? spec.u / 0.45 : seg === 1 ? (spec.u - 0.45) / 0.4 : (spec.u - 0.85) / 0.15;
+                p = pts[seg].clone().lerp(pts[seg + 1], f);
+                const jo = [R.J['sh' + sd], R.J['el' + sd], R.J['hand' + sd]][seg];
+                const out = (spec.side === 'in' ? -sg : sg);
+                const v = seg === 2 ? new THREE.Vector3(0, 0, spec.side === 'in' ? 1 : -1) : new THREE.Vector3(out, 0, 0);
+                v.transformDirection(jo.matrixWorld);
+                p.addScaledVector(v, spec.gap || 0.045);
+                n = v.clone().negate();
+            } else {
+                p = typeof spec.at === 'string' ? R.ANCH[spec.at].getWorldPosition(new THREE.Vector3()) : R.root.localToWorld(new THREE.Vector3(...spec.at));
+            }
+            if (spec.off) p.add(new THREE.Vector3(...spec.off).applyQuaternion(q));
+            if (spec.n === 'in') n = R.ANCH.TestaCentro.getWorldPosition(new THREE.Vector3()).sub(p).normalize();
+            else if (spec.n) n = dir(spec.n);
+            return { p, n, f: dir(spec.f), pole: spec.pole ? R.root.localToWorld(new THREE.Vector3(...spec.pole)) : null };
+        }
+        const clonePose = p => { const q = Object.assign({}, p); ['aL', 'aR', 'lL', 'lR'].forEach(k => q[k] = p[k].slice()); return q; };
+        // posa con mani guidate: { b: posa di base, L: bersaglio, R: bersaglio, order }
+        // le soluzioni che dipendono solo dalla posa di base e dal bersaglio si memorizzano
+        const ikMemo = new WeakMap();
+        function b3SolvePose(F, sp) {
+            const pose = clonePose(sp.b);
+            setSkeletonOf(F, pose, true); F.root.updateMatrixWorld(true);
+            if (!ikMemo.has(sp.b)) ikMemo.set(sp.b, new Map());
+            const M = ikMemo.get(sp.b);
+            for (const side of (sp.order || ['L', 'R'])) {
+                const gs = sp[side];
+                if (!gs) continue;
+                const other = side === 'L' ? 'aR' : 'aL';
+                const key = gs.of ? null : side + JSON.stringify(gs) + (gs.arm ? JSON.stringify(pose[other]) : '') + (F === mainFig ? 'm' : 'x');
+                if (key && M.has(key)) pose['a' + side] = M.get(key).slice();
+                else {
+                    pose['a' + side] = ikSolve(F, side, b3Goal(gs, F), gs.seed || pose['a' + side]);
+                    if (key) M.set(key, pose['a' + side].slice());
+                }
+                setSkeletonOf(F, pose, true); F.root.updateMatrixWorld(true);
+            }
+            return pose;
+        }
+        // posa interpolata tra fotogrammi chiave [[secondi, posa], ...]
+        function keyPoseAt(keys, t) {
+            if (keys.length === 1 || t <= keys[0][0]) return keys[0][1];
+            for (let i = 0; i < keys.length - 1; i++) {
+                const k0 = keys[i], k1 = keys[i + 1];
+                if (t < k1[0]) return lerpPose(k0[1], k1[1], smooth((t - k0[0]) / (k1[0] - k0[0])));
+            }
+            return keys[keys.length - 1][1];
+        }
+
+        // ---------- Effetti: sfere luminose, flussi di particelle, raggi, gusci, schermo interiore, oggetti di scena ----------
+        let B3X = null;
+        function b3Mat(c, op) { return new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false }); }
+        function b3FxInit() {
+            const g = new THREE.Group();
+            threeScene.add(g);
+            const add = o => { o.visible = false; g.add(o); return o; };
+            const X = { g, orbs: [], flows: [], rays: [], flashes: [], all: [] };
+            for (let i = 0; i < 6; i++) {
+                const m = add(new THREE.Mesh(new THREE.SphereGeometry(1, 18, 12), b3Mat(C_ATT, 0.85)));
+                m.material.depthTest = false; m.renderOrder = 13; X.orbs.push(m);
+            }
+            for (let i = 0; i < 9; i++) {
+                const n = 40, geo = new THREE.BufferGeometry();
+                geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+                geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(n * 3), 3));
+                const pts = add(new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.03, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false })));
+                pts.frustumCulled = false; pts.renderOrder = 14;
+                X.flows.push({ pts, n, jit: Array.from({ length: n }, () => new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5)), off: Math.random() });
+            }
+            for (let i = 0; i < 4; i++) { const m = add(new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 10, 1, true), b3Mat(0xfff1b8, 0.9))); m.material.depthTest = false; m.renderOrder = 13; X.rays.push(m); }
+            for (let i = 0; i < 3; i++) { const m = add(new THREE.Mesh(new THREE.RingGeometry(0.02, 0.1, 32), b3Mat(0xfff1b8, 0.8))); m.material.side = THREE.DoubleSide; X.flashes.push(m); }
+            X.shell = add(new THREE.Mesh(new THREE.SphereGeometry(1, 40, 26), b3Mat(C_ATT, 0.1)));
+            X.shell.material.side = THREE.DoubleSide;
+            X.shellW = add(new THREE.Mesh(new THREE.SphereGeometry(1, 20, 12), new THREE.MeshBasicMaterial({ color: C_ATT, wireframe: true, transparent: true, opacity: 0.14, depthWrite: false })));
+            const cone = new THREE.ConeGeometry(1, 1, 40, 1, true); cone.translate(0, -0.5, 0); // vertice nell'origine, base verso -y
+            X.cone = add(new THREE.Mesh(cone, b3Mat(0x9fd8ff, 0.1))); X.cone.material.side = THREE.DoubleSide;
+            X.coneW = add(new THREE.Mesh(cone, new THREE.MeshBasicMaterial({ color: 0x9fd8ff, wireframe: true, transparent: true, opacity: 0.25, depthWrite: false })));
+            // schermo interiore: tela disegnata e rivolta sempre verso chi guarda
+            X.cv = document.createElement('canvas'); X.cv.width = 512; X.cv.height = 320;
+            X.cx = X.cv.getContext('2d'); X.tex = new THREE.CanvasTexture(X.cv); X.scrKey = '';
+            X.screen = add(new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.375), new THREE.MeshBasicMaterial({ map: X.tex, transparent: true, depthWrite: false, side: THREE.DoubleSide })));
+            X.screen.renderOrder = 15;
+            X.link = add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0, 1, 0)]), new THREE.LineDashedMaterial({ color: 0xfff1b8, dashSize: 0.02, gapSize: 0.015, transparent: true, opacity: 0.55 })));
+            X.peek = add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0, 1, 0)]), new THREE.LineDashedMaterial({ color: C_PEEK, dashSize: 0.025, gapSize: 0.015, depthTest: false })));
+            X.peek.renderOrder = 16;
+            X.sun = add(new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 16), b3Mat(0xffc35a, 0.95)));
+            X.sunHalo = add(new THREE.Mesh(new THREE.SphereGeometry(0.32, 24, 16), b3Mat(0xff9a3c, 0.2)));
+            // oggetti di scena
+            const wood = new THREE.MeshStandardMaterial({ color: 0x8b6a47, roughness: 0.8 });
+            const box = (w, h, d, x, y, z, m) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m || wood); b.position.set(x, y, z); return b; };
+            X.chair = add(new THREE.Group());
+            X.chair.add(box(0.44, 0.035, 0.42, 0, 0.437, 0));
+            [[0.19, 0.18], [-0.19, 0.18], [0.19, -0.18], [-0.19, -0.18]].forEach(([x, z]) => X.chair.add(box(0.03, 0.437, 0.03, x, 0.2185, z)));
+            X.chair.add(box(0.44, 0.34, 0.03, 0, 0.7, -0.2)); X.chair.add(box(0.03, 0.42, 0.03, 0.2, 0.66, -0.2)); X.chair.add(box(0.03, 0.42, 0.03, -0.2, 0.66, -0.2));
+            X.table = add(new THREE.Group());
+            X.table.add(box(0.9, 0.035, 0.6, 0, 0.6825, 0));
+            [[0.4, 0.26], [-0.4, 0.26], [0.4, -0.26], [-0.4, -0.26]].forEach(([x, z]) => X.table.add(box(0.04, 0.665, 0.04, x, 0.3325, z)));
+            X.bed = add(new THREE.Group());
+            X.bed.add(box(0.66, 0.08, 1.95, 0, 0.56, 0, new THREE.MeshStandardMaterial({ color: 0x4d6f8f, roughness: 0.95 })));
+            [[0.28, 0.9], [-0.28, 0.9], [0.28, -0.9], [-0.28, -0.9]].forEach(([x, z]) => X.bed.add(box(0.05, 0.52, 0.05, x, 0.26, z)));
+            X.room = add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(2.6, 2.5, 2.6)), new THREE.LineBasicMaterial({ color: 0xa9c4b4, transparent: true, opacity: 0.4 })));
+            X.room.position.y = 1.25;
+            X.cup = add(new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.036, 0.1, 20), new THREE.MeshStandardMaterial({ color: 0xc0392b, roughness: 0.45 })));
+            X.sheet = add(new THREE.Mesh(new THREE.PlaneGeometry(0.21, 0.297), new THREE.MeshStandardMaterial({ color: 0xd63a3a, roughness: 0.9, side: THREE.DoubleSide })));
+            X.sheet.rotation.x = -Math.PI / 2;
+            X.all = g.children.slice();
+            return X;
+        }
+        const b3v = (x, y, z) => new THREE.Vector3(x, y, z);
+        function fxOrb(p, r, c, op) {
+            const m = B3X.orbs[B3X.no++]; if (!m) return;
+            m.position.copy(p); m.scale.setScalar(r); m.material.color.set(c); m.material.opacity = op === undefined ? 0.85 : op; m.visible = true;
+        }
+        function fxRay(a, b, r, c, op) {
+            const m = B3X.rays[B3X.nr++]; if (!m) return;
+            const d = b.clone().sub(a), L = d.length(); if (L < 1e-4) return;
+            m.position.copy(a).addScaledVector(d, 0.5);
+            m.quaternion.setFromUnitVectors(b3v(0, 1, 0), d.normalize());
+            m.scale.set(r, L, r); m.material.color.set(c); m.material.opacity = op === undefined ? 0.8 : op; m.visible = true;
+        }
+        function fxFlash(p, normal, size, c, op) {
+            const m = B3X.flashes[B3X.nf++]; if (!m) return;
+            m.position.copy(p); m.quaternion.setFromUnitVectors(b3v(0, 0, 1), normal.clone().normalize());
+            m.scale.setScalar(size); m.material.color.set(c || 0xfff1b8); m.material.opacity = op === undefined ? 0.8 : op; m.visible = true;
+        }
+        // flusso di particelle lungo un percorso; o.spread: 'in' (largo all'inizio), 'out' (largo alla fine)
+        function fxFlow(pts, c, o) {
+            const F = B3X.flows[B3X.nl++]; if (!F || pts.length < 2) return;
+            o = o || {};
+            const curve = new THREE.CatmullRomCurve3(pts);
+            const pos = F.pts.geometry.attributes.position.array, col = F.pts.geometry.attributes.color.array;
+            const cc = new THREE.Color(c), v = new THREE.Vector3(), w = o.w === undefined ? 0.022 : o.w;
+            const ph = (b3.clock * (o.speed || 0.35) + F.off) % 1, a0 = o.a === undefined ? 1 : o.a;
+            for (let i = 0; i < F.n; i++) {
+                const u = (i / F.n + ph) % 1;
+                curve.getPoint(u, v);
+                const env = o.spread === 'in' ? 1 - u : o.spread === 'out' ? u : Math.sin(Math.PI * u);
+                v.addScaledVector(F.jit[i], 2 * w * (o.spread ? env * 4 : env));
+                pos[i * 3] = v.x; pos[i * 3 + 1] = v.y; pos[i * 3 + 2] = v.z;
+                const a = a0 * Math.min(1, Math.sin(Math.PI * u) * 2.5);
+                col[i * 3] = cc.r * a; col[i * 3 + 1] = cc.g * a; col[i * 3 + 2] = cc.b * a;
+            }
+            F.pts.material.size = o.size || 0.03;
+            F.pts.geometry.attributes.position.needsUpdate = true; F.pts.geometry.attributes.color.needsUpdate = true;
+            F.pts.visible = true;
+        }
+        // flusso che arriva in un punto dallo spazio (dir: da dove arriva) o che ne esce
+        const fxIn = (p, dir, c, o) => (dir = dir.clone().normalize(), fxFlow([p.clone().addScaledVector(dir, 0.5), p.clone().addScaledVector(dir, 0.22), p.clone()], c, Object.assign({ spread: 'in', w: 0.03 }, o)));
+        const fxOut = (p, dir, c, o) => (dir = dir.clone().normalize(), fxFlow([p.clone(), p.clone().addScaledVector(dir, 0.22), p.clone().addScaledVector(dir, 0.5)], c, Object.assign({ spread: 'out', w: 0.03 }, o)));
+        function fxShell(c, sx, sy, sz, col, op, rotY) {
+            const X = B3X;
+            X.shell.position.copy(c); X.shell.scale.set(sx, sy, sz); X.shell.material.color.set(col); X.shell.material.opacity = op; X.shell.visible = true;
+            X.shellW.position.copy(c); X.shellW.scale.set(sx, sy, sz); X.shellW.material.color.set(col); X.shellW.rotation.y = rotY || 0; X.shellW.material.opacity = Math.min(0.3, op * 1.4); X.shellW.visible = true;
+        }
+        // campana: vertice, centro della base, raggio della base
+        function fxCone(apex, base, r, col, rotY) {
+            const X = B3X, d = base.clone().sub(apex), h = d.length();
+            const q = new THREE.Quaternion().setFromUnitVectors(b3v(0, -1, 0), d.normalize());
+            const qy = new THREE.Quaternion().setFromAxisAngle(b3v(0, 1, 0), rotY || 0);
+            [X.cone, X.coneW].forEach(m => { m.position.copy(apex); m.quaternion.copy(q).multiply(qy); m.scale.set(r, h, r); m.material.color.set(col || 0x9fd8ff); m.visible = true; });
+        }
+        function fxLine(L, a, b) {
+            const p = L.geometry.attributes.position.array;
+            p[0] = a.x; p[1] = a.y; p[2] = a.z; p[3] = b.x; p[4] = b.y; p[5] = b.z;
+            L.geometry.attributes.position.needsUpdate = true; L.computeLineDistances(); L.visible = true;
+        }
+        // linea di vista dallo spiraglio della benda: dall'occhio, sotto il bordo, lungo il naso, fino all'oggetto
+        function fxPeek(S, target) {
+            if (!b3.peek) return;
+            fxLine(B3X.peek, S.A('OcchioR').addScaledVector(S.dirM(0, -0.45, 1), 0.012), target);
+        }
+
+        // ---------- Schermo interiore (2° livello): disegno su tela ----------
+        const B3_DIGITS = [7, 3, 9, 1, 1, 5, 4, 8, 2, 6, 3, 7, 5, 9, 2, 8];
+        const B3_COLS = ['#d63a3a', '#2f6fd8', '#3aa655', '#f2c12e', '#8e44ad', '#f08a24', '#1abc9c', '#e84393', '#34495e'];
+        // s: { m: modo, k: avanzamento 0..1, ... }; ridisegna solo quando cambia
+        function fxScreen(S, s) {
+            const X = B3X;
+            const key = JSON.stringify(s);
+            if (key !== X.scrKey) { X.scrKey = key; b3Draw(X.cx, X.cv.width, X.cv.height, s); X.tex.needsUpdate = true; }
+            const head = S.A('TestaCentro');
+            const pos = head.clone().add(S.dirM(0, 1, 0).multiplyScalar(0.4)).add(S.dirM(0, 0, 1).multiplyScalar(0.3));
+            X.screen.position.copy(pos);
+            X.screen.quaternion.copy(threeCamera.quaternion);
+            X.screen.visible = true;
+            fxLine(X.link, S.A('Yintang'), pos.clone().add(S.dirM(0, -1, 0).multiplyScalar(0.18)));
+        }
+        function b3Draw(c, W, H, s) {
+            const rr = (x, y, w, h) => { c.beginPath(); c.rect(x, y, w, h); };
+            c.clearRect(0, 0, W, H);
+            const k = s.k === undefined ? 1 : s.k;
+            // cornice scura dello «spazio interiore»
+            c.fillStyle = 'rgba(8,10,12,0.92)'; c.beginPath(); c.roundRect ? c.roundRect(0, 0, W, H, 18) : c.rect(0, 0, W, H); c.fill();
+            const cx = W / 2, cy = H / 2, sw = W - 40, sh = H - 40;
+            const white = (x0, y0, w, h, a) => { c.fillStyle = `rgba(255,255,255,${a === undefined ? 1 : a})`; c.fillRect(x0, y0, w, h); };
+            const glow = (x, y, r, col) => { const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, col); g.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); };
+            if (s.m === 'dark') {
+                for (let i = 0; i < 7; i++) {
+                    const t = (s.t || 0) * 0.3 + i * 1.7;
+                    const x = cx + Math.sin(t * 1.3 + i) * sw * 0.38, y = cy + Math.cos(t * 0.9 + i * 2) * sh * 0.35;
+                    glow(x, y, 26 + 14 * Math.sin(t * 2 + i), ['rgba(120,90,200,0.35)', 'rgba(60,140,200,0.3)', 'rgba(200,120,60,0.28)'][i % 3]);
+                }
+                return;
+            }
+            if (s.m === 'point') { glow(cx, cy, 18 + 18 * k, 'rgba(255,255,255,1)'); return; }
+            if (s.m === 'line') { glow(cx, cy, 16, 'rgba(255,255,255,0.9)'); white(cx - sw / 2 * k, cy - 3, sw * k, 6); return; }
+            if (s.m === 'white') { white(20, cy - (sh / 2) * k - 3, sw, sh * k + 6, s.a); return; }
+            if (s.m === 'color') {
+                white(20, 20, sw, sh); c.fillStyle = s.c0 || '#ffffff'; c.fillRect(20, 20, sw, sh);
+                c.globalAlpha = k; c.fillStyle = s.c; c.fillRect(20, 20, sw, sh); c.globalAlpha = 1;
+                if (k > 0.85) { c.fillStyle = s.c === '#ffffff' ? '#1c1917' : '#ffffff'; c.font = 'bold 44px sans-serif'; c.textAlign = 'center'; c.fillText('Есть! · C\'è!', cx, cy + 15); }
+                return;
+            }
+            if (s.m === 'swatch') { white(20, 20, sw, sh); c.globalAlpha = k; c.fillStyle = s.c; c.fillRect(20, 20, sw, sh); c.globalAlpha = 1; return; }
+            if (s.m === 'table' || s.m === 'cells' || s.m === 'images') {
+                white(20, 20, sw, sh);
+                const n = s.n || 3, size = Math.min(sw, sh) - 30, x0 = cx - size / 2, y0 = cy - size / 2, cs = size / n;
+                for (let i = 0; i < n * n; i++) {
+                    const r = Math.floor(i / n), q = i % n, x = x0 + q * cs, y = y0 + r * cs;
+                    const shown = s.m !== 'table' || i === Math.floor(n * n / 2) || i < Math.round((s.fill === undefined ? 1 : s.fill) * n * n);
+                    if (s.row !== undefined && r === s.row) { c.fillStyle = 'rgba(255,214,107,0.45)'; c.fillRect(x, y, cs, cs); }
+                    if (!shown) continue;
+                    if (s.m === 'cells') { c.fillStyle = B3_COLS[i % B3_COLS.length]; c.fillRect(x + 3, y + 3, cs - 6, cs - 6); }
+                    else if (s.m === 'images') {
+                        c.fillStyle = B3_COLS[(i * 4) % B3_COLS.length]; const m = x + cs / 2, mY = y + cs / 2, R = cs * 0.32;
+                        c.beginPath();
+                        if (i % 4 === 0) c.arc(m, mY, R, 0, Math.PI * 2);
+                        else if (i % 4 === 1) c.rect(m - R, mY - R, 2 * R, 2 * R);
+                        else if (i % 4 === 2) { c.moveTo(m, mY - R); c.lineTo(m + R, mY + R); c.lineTo(m - R, mY + R); c.closePath(); }
+                        else for (let j = 0; j < 10; j++) { const a = -Math.PI / 2 + j * Math.PI / 5, rr2 = j % 2 ? R * 0.45 : R; c.lineTo(m + Math.cos(a) * rr2, mY + Math.sin(a) * rr2); }
+                        c.fill();
+                    } else {
+                        const d = i === Math.floor(n * n / 2) && n === 3 ? 1 : B3_DIGITS[i % B3_DIGITS.length];
+                        c.fillStyle = '#111'; c.font = `bold ${Math.round(cs * 0.6)}px sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(String(d), x + cs / 2, y + cs / 2 + 2);
+                    }
+                }
+                c.strokeStyle = '#111'; c.lineWidth = 3;
+                for (let i = 0; i <= n; i++) { c.beginPath(); c.moveTo(x0 + i * cs, y0); c.lineTo(x0 + i * cs, y0 + size); c.stroke(); c.beginPath(); c.moveTo(x0, y0 + i * cs); c.lineTo(x0 + size, y0 + i * cs); c.stroke(); }
+                return;
+            }
+            if (s.m === 'cube') {
+                white(20, 20, sw, sh);
+                const a = s.ang || 0, b = 0.5, R = 70;
+                const V = [[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1], [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]].map(([x, y, z]) => {
+                    const x1 = x * Math.cos(a) + z * Math.sin(a), z1 = -x * Math.sin(a) + z * Math.cos(a);
+                    const y1 = y * Math.cos(b) - z1 * Math.sin(b), z2 = y * Math.sin(b) + z1 * Math.cos(b);
+                    return [cx + x1 * R, cy - y1 * R, z2];
+                });
+                const faces = [[[4, 5, 6, 7], '#d63a3a'], [[0, 3, 2, 1], '#f08a24'], [[3, 7, 6, 2], '#2f6fd8'], [[0, 1, 5, 4], '#8e44ad'], [[1, 2, 6, 5], '#3aa655'], [[0, 4, 7, 3], '#f2c12e']];
+                faces.map(([f, col]) => [f, col, f.reduce((s2, i) => s2 + V[i][2], 0)]).sort((p, q) => p[2] - q[2]).forEach(([f, col, z]) => {
+                    if (z < -0.2) return;
+                    c.beginPath(); f.forEach((i, j) => j ? c.lineTo(V[i][0], V[i][1]) : c.moveTo(V[i][0], V[i][1])); c.closePath();
+                    c.globalAlpha = k; c.fillStyle = col; c.fill(); c.strokeStyle = '#111'; c.lineWidth = 2; c.stroke(); c.globalAlpha = 1;
+                });
+                return;
+            }
+            if (s.m === 'hand' || s.m === 'xray') {
+                if (s.m === 'hand') white(20, 20, sw, sh); else { c.fillStyle = '#0b1a24'; c.fillRect(20, 20, sw, sh); }
+                const wig = s.t || 0, base = cy + 95;
+                c.lineCap = 'round';
+                c.strokeStyle = s.m === 'hand' ? '#c99b7a' : 'rgba(170,220,255,0.55)'; c.lineWidth = 64; c.beginPath(); c.moveTo(cx, base + 30); c.lineTo(cx, base - 40); c.stroke();
+                for (let f = 0; f < 5; f++) {
+                    const ang = -0.75 + f * 0.37 + (f === 0 ? -0.35 : 0), len = [62, 92, 102, 94, 74][f] * (1 - 0.12 * Math.max(0, Math.sin(wig * 6 + f * 1.3)));
+                    const x0 = cx + Math.sin(ang) * 30, y0 = base - 60, x1 = x0 + Math.sin(ang) * len, y1 = y0 - Math.cos(ang) * len;
+                    c.strokeStyle = s.m === 'hand' ? '#c99b7a' : 'rgba(170,220,255,0.45)'; c.lineWidth = 20; c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
+                    if (s.m === 'xray') {
+                        c.strokeStyle = '#f5f5f5'; c.lineWidth = 6;
+                        for (let j = 0; j < 3; j++) { const t0 = j / 3 + 0.04, t1 = (j + 1) / 3 - 0.04; c.beginPath(); c.moveTo(x0 + (x1 - x0) * t0, y0 + (y1 - y0) * t0); c.lineTo(x0 + (x1 - x0) * t1, y0 + (y1 - y0) * t1); c.stroke(); }
+                        c.strokeStyle = 'rgba(230,60,60,0.8)'; c.lineWidth = 2; c.beginPath(); c.moveTo(x0 + 6, y0); c.lineTo(x1 + 6, y1 + 8); c.stroke();
+                    }
+                }
+                return;
+            }
+            if (s.m === 'heart') {
+                c.fillStyle = '#0b1a24'; c.fillRect(20, 20, sw, sh);
+                const sc = 3.2 * (1 + 0.08 * Math.sin((s.t || 0) * 7));
+                c.save(); c.translate(cx, cy + 10); c.scale(sc, sc); c.beginPath(); c.moveTo(0, 12);
+                c.bezierCurveTo(-22, -4, -12, -24, 0, -12); c.bezierCurveTo(12, -24, 22, -4, 0, 12); c.fillStyle = '#d63a3a'; c.fill(); c.restore();
+                return;
+            }
+            if (s.m === 'plot') {
+                const t = s.t || 0, g = c.createLinearGradient(0, 20, 0, H - 20); g.addColorStop(0, '#f6b26b'); g.addColorStop(0.55, '#fde7c4'); g.addColorStop(0.56, '#3d85c6'); g.addColorStop(1, '#1c4587');
+                c.fillStyle = g; c.fillRect(20, 20, sw, sh);
+                glow(cx + 120, cy - 20 + 20 * Math.sin(t * 0.2), 40, 'rgba(255,240,180,1)');
+                c.fillStyle = '#222'; const bx = 40 + ((t * 25) % (sw - 40));
+                c.beginPath(); c.moveTo(bx, cy + 40); c.lineTo(bx + 60, cy + 40); c.lineTo(bx + 50, cy + 55); c.lineTo(bx + 10, cy + 55); c.closePath(); c.fill();
+                c.fillRect(bx + 28, cy, 3, 40); c.beginPath(); c.moveTo(bx + 31, cy); c.lineTo(bx + 52, cy + 34); c.lineTo(bx + 31, cy + 34); c.fillStyle = '#fff'; c.fill();
+                return;
+            }
+            if (s.m === 'cup') {
+                white(20, 20, sw, sh);
+                c.filter = `blur(${(s.blur || 0).toFixed(1)}px)`;
+                c.fillStyle = '#c0392b'; c.beginPath(); c.moveTo(cx - 45, cy - 55); c.lineTo(cx + 45, cy - 55); c.lineTo(cx + 36, cy + 60); c.lineTo(cx - 36, cy + 60); c.closePath(); c.fill();
+                c.lineWidth = 12; c.strokeStyle = '#c0392b'; c.beginPath(); c.arc(cx + 55, cy, 26, -1.2, 1.2); c.stroke();
+                c.filter = 'none';
+                return;
+            }
+            if (s.m === 'text') {
+                white(20, 20, sw, sh);
+                c.fillStyle = '#555';
+                for (let i = 0; i < 6; i++) { const w = (sw - 80) * (0.55 + 0.4 * ((i * 37) % 10) / 10); c.globalAlpha = Math.min(1, Math.max(0, k * 6 - i)); c.fillRect(60, 50 + i * 38, w, 14); }
+                c.globalAlpha = 1;
+                return;
+            }
+        }
+
+        // ---------- Aiuti per le pose e gli effetti degli esercizi ----------
+        const b3Memo = {};
+        const memo = (k, f) => b3Memo[k] || (b3Memo[k] = f());
+        const b3q = (x, n) => Math.round(x * n) / n;
+        function b3Arms(aL, aR) { return P({ aL, aR: aR || null, lL: LEG_SOFT }); }
+        function b3Open(ch) {
+            return memo('open' + (ch || 0), () => HP(ch ? Object.assign(clonePose(B3P.stand), { chX: ch }) : B3P.stand, { at: [0.3, -0.12, 0.1], n: [0, 0, 1], f: [0.1, -1, 0] }, 'mir'));
+        }
+        function b3SeatPalms(d) { return memo('sp' + d, () => HP(B3P.seat, { at: [d / 2, 0.36, 0.3], n: [-1, 0, 0], f: [0, 0.4, 1] }, 'mir')); }
+        function b3SeatRest() { return { at: 'CosciaL', off: [0, 0.035, 0], n: [0, -1, 0], f: [0, 0, 1] }; }
+        function b3KucherHand() { return { at: [0.06, -0.05, 0.38], n: [-1, 0, 0], f: [0, -1, 0.2], pole: [0.25, 0, 0.3] }; }
+        function b3Kucher() { return memo('kucher', () => HP(B3P.kucher, b3KucherHand(), 'mir')); }
+        // massaggio tibetano: una mano tiene il braccio teso, l'altra lo strofina
+        function b3Tibet(side, cap) {
+            const o = side === 'R' ? 'L' : 'R', sg = side === 'R' ? -1 : 1;
+            const held = { at: [0.2 * sg, 0.2, 0.33], n: [0, -1, 0], f: [-0.25 * sg, -0.1, 1] };
+            const us = [[0, 0.05, 'out'], [0.6, 0.3, 'out'], [1.2, 0.5, 'out'], [1.8, 0.7, 'out'], [2.4, 0.9, 'out'], [3.0, 0.99, 'out'], [3.3, 0.97, 'in'], [3.9, 0.75, 'in'], [4.5, 0.5, 'in'], [5.1, 0.28, 'in'], [5.7, 0.06, 'in'], [6, 0.05, 'out']];
+            return { per: 6, cap, keys: us.map(([t, u, sd]) => [t, { b: B3P.stand, [side]: held, [o]: { arm: side, u, side: sd, gap: 0.05 }, order: [side, o] }]),
+                fx: S => { fxOrb(S.A('Laogong' + o), 0.035, C_WARM, 0.75); fxFlow([S.J('sh' + side), S.J('el' + side), S.J('wr' + side), S.A('Dito' + side)], C_WARM, { speed: 0.2, a: 0.45, w: 0.012 }); } };
+        }
+        function b3TibetPull() {
+            const held = { at: [-0.2, 0.2, 0.33], n: [0, -1, 0], f: [0.25, -0.1, 1] };
+            const neck = { at: 'Dazhui', off: [-0.03, 0.07, 0.03], n: [0, -1, 0] };
+            const arm = (u, sd) => ({ arm: 'R', u, side: sd, gap: 0.09 });
+            const k = (t, g) => [t, { b: B3P.stand, R: held, L: g, order: ['R', 'L'] }];
+            return { per: 10, br: [[0, 'in'], [0.4, 'out']], keys: [k(0, neck), k(1, arm(0.12, 'out')), k(2, arm(0.42, 'out')), k(3, arm(0.72, 'out')), k(4, arm(0.98, 'out')), k(4.6, arm(0.95, 'in')), k(6, arm(0.62, 'in')), k(7.8, arm(0.3, 'in')), k(9.2, arm(0.06, 'in')), k(10, neck)],
+                capFn: ts => ts < 4 ? 'Inspirando «tira» la sensazione dal collo lungo l\'esterno del braccio fino alle dita.' : 'Espirando spingila dentro, risalendo lungo l\'interno del braccio.',
+                fx: S => { const pts = [S.A('Dazhui'), S.J('shR'), S.J('elR'), S.J('wrR'), S.A('DitoR')]; if (S.ts < 4) fxFlow(pts, C_ATT, { speed: 0.4, w: 0.015 }); else fxFlow(pts.slice(1).reverse(), C_IN, { speed: 0.3, w: 0.015 }); fxOrb(S.A('LaogongL'), 0.03, C_ATT, 0.7); } };
+        }
+        // marcia sul posto: flessione dell'anca e del ginocchio della gamba sollevata
+        function b3March(hipF, kneeF, per) {
+            const up = [-hipF, 0.07, kneeF, 0], arms = s => [s * 0.35, 0, 0.1, -0.35, 0, 0];
+            const pL = P({ lL: up, lR: LEG_SOFT, aL: arms(1), aR: arms(-1), support: 'max' });
+            const pR = P({ lL: LEG_SOFT, lR: up, aL: arms(-1), aR: arms(1), support: 'max' });
+            const mid = P({ lL: LEG_SOFT, support: 'max' });
+            return [[0, pL], [per * 0.25, mid], [per * 0.5, pR], [per * 0.75, mid], [per, pL]];
+        }
+        function b3PalmFlow(S, inn) {
+            const out = inn === 'L' ? 'R' : 'L', si = inn === 'L' ? 1 : -1;
+            fxIn(S.A('Laogong' + inn), S.dirM(si * 0.7, 0.2, 0.7), C_IN);
+            fxFlow(pathOf(S, ['Laogong' + inn, 'j:el' + inn, 'j:sh' + inn, 'Dazhui', 'j:sh' + out, 'j:el' + out, 'Laogong' + out]), C_ATT, { speed: 0.3, w: 0.012 });
+            fxOut(S.A('Laogong' + out), S.dirM(-si * 0.7, 0.2, 0.7), C_OUT);
+        }
+        function b3BellArms(i) {
+            const fw = i === 1 ? -0.38 : i === 2 ? 0.18 : -0.12, bk = i === 1 ? 0.18 : i === 2 ? -0.38 : -0.12;
+            return P({ aL: [fw, 0, 0.36, -0.25, 0, 0], aR: [bk, 0, 0.36, -0.25, 0, 0], lL: LEG_SOFT });
+        }
+        function b3BellLow(S, k, rot) {
+            const apex = S.A('TestaCentro'), fl = S.A('DitoL'), fr = S.A('DitoR');
+            const base = apex.clone(); base.y = (fl.y + fr.y) / 2 - 0.03;
+            const r = Math.max(Math.hypot(fl.x - apex.x, fl.z - apex.z), Math.hypot(fr.x - apex.x, fr.z - apex.z)) + 0.07;
+            fxCone(apex, base, r, 0x9fd8ff, rot);
+            B3X.cone.material.opacity = 0.1 * k; B3X.coneW.material.opacity = 0.25 * k;
+        }
+        function b3BellUp(dx, dz) {
+            return memo('bu' + dx + ',' + dz, () => HP(B3P.stand, { at: [0.26 + dx, 1.0, 0.06 + dz], n: [-1, -0.5, 0], f: [-0.2, 1, 0] }, { at: [-0.26 + dx, 1.0, 0.06 + dz], n: [1, -0.5, 0], f: [0.2, 1, 0] }));
+        }
+        function b3BellUpFx(S, k) {
+            const apex = S.A('Huiyin'), a = S.A('LaogongL'), b = S.A('LaogongR'), base = a.clone().lerp(b, 0.5);
+            fxCone(apex, base, a.distanceTo(b) / 2 + 0.08, 0xc9b3ff, S.clock * 0.2);
+            B3X.cone.material.opacity = 0.09 * k; B3X.coneW.material.opacity = 0.22 * k;
+            fxRay(S.A('TestaCentro'), apex, 0.004 + 0.002 * Math.sin(S.clock * 3), C_ATT, 0.5 * k);
+        }
+        function b3Dragon(i) {
+            return memo('dragon' + i, () => {
+                const b = clonePose(B3P.horse);
+                if (i) { b.lL = [-0.5, 0.32, 0.85, 0.22]; b.lR = b.lL.slice(); b.spX = -0.04; b.chX = -0.04; }
+                return HP(b, { at: [0.27, 0.42, 0.33], n: [0, 1, 0], f: [-0.2, 0, 1], pole: [0.32, 0.12, 0.08] }, 'mir');
+            });
+        }
+        // cerchio sull'addome lungo il colon: dal basso a destra, su, a sinistra, giù (senso orario visto da davanti)
+        function b3CircleKeys(per) {
+            return memo('circle' + per, () => {
+                const keys = [], N = 8;
+                for (let i = 0; i <= N; i++) {
+                    const th = (215 - i * 45) * Math.PI / 180;
+                    keys.push([per * i / N, HP(B3P.seat, b3SeatRest(), { at: [0.075 * Math.cos(th), 0.13 + 0.07 * Math.sin(th), 0.125], n: [0, 0, -1], f: [0.3, 1, 0] })]);
+                }
+                return keys;
+            });
+        }
+        function b3CircleFx(S) {
+            const pts = [];
+            for (let i = 0; i <= 16; i++) { const th = (215 - i * 22.5) * Math.PI / 180; pts.push(S.L(0.075 * Math.cos(th), 0.13 + 0.07 * Math.sin(th), 0.105)); }
+            fxFlow(pts, C_ATT, { speed: 0.12, w: 0.004, size: 0.02, a: 0.5 });
+            fxOrb(S.A('LaogongR'), 0.022, C_ATT, 0.8);
+        }
+        function b3CocoonFx(S, dy, rot) { fxShell(S.root().add(S.dirM(0, -0.08 + dy, 0.02)), 0.48, 1.02, 0.42, 0xb7f0d0, 0.1, rot); }
+        function b3Palming() {
+            return memo('palming', () => {
+                const b = clonePose(B3P.seat); b.spX = 0.62; b.chX = 0.08; b.nkX = 0.32;
+                return HP(b, { at: 'OcchioL', fr: 'a', off: [0, 0, 0.032], n: [0, 0, -1], f: [0, 1, 0.1], pole: [0.22, 0.02, 0.5] }, 'mir');
+            });
+        }
+        const b3PRub = dy => memo('prub' + dy, () => HP(B3P.stand, { at: [0.006, 0.36 + dy, 0.27], n: [-1, 0, 0], f: [0, 0.5, 1] }, { at: [-0.006, 0.36 - dy, 0.27], n: [1, 0, 0], f: [0, 0.5, 1] }));
+        const b3PReach = z => memo('preach' + z, () => HP(B3P.stand, null, { at: [-0.1, 0.42, z], n: [0, 0, 1], f: [0, 1, 0.2] }));
+        // pompaggio verticale: l'insegnante, al fianco destro dell'allievo, scende dalla testa alle cosce
+        function b3VP(level) {
+            return memo('vp' + level, () => {
+                if (level === 'head') return HP(B3P.stand, { of: 'm', at: 'Nuca', fr: 'a', off: [0, 0, -0.03], n: [0, 0, 1] }, { of: 'm', at: 'Parietale', fr: 'a', off: [0, 0.035, 0.02], n: [0, -1, 0] });
+                if (level === 'waist') return HP(B3P.bend, { of: 'm', at: 'Mingmen', off: [0, 0, -0.08], n: [0, 0, 1] }, { of: 'm', at: 'Shenque', off: [0, 0, 0.08], n: [0, 0, -1] });
+                return HP(B3P.squat, { of: 'm', at: [-0.02, -0.33, -0.13], n: [0, 0, 1] }, { of: 'm', at: [-0.02, -0.33, 0.16], n: [0, 0, -1] });
+            });
+        }
+        const b3HeadP = pull => memo('hp' + pull, () => HP(B3P.stand, { of: 'm', at: 'Fronte', fr: 'a', off: [0, 0, 0.025 + pull], n: [0, 0, -1] }, { of: 'm', at: 'Nuca', fr: 'a', off: [0, 0, -0.025], n: [0, 0, 1] }));
+        const b3HeadDiag = i => memo('hd' + i, () => HP(B3P.stand, { of: 'm', at: i ? 'TempiaL' : 'OccipiteL', n: 'in', gap: 0.03 }, { of: 'm', at: i ? 'OccipiteR' : 'TempiaR', n: 'in', gap: 0.03 }));
+        // pompaggio orizzontale: l'insegnante in ginocchio al fianco sinistro dell'allievo disteso
+        function b3HP(k) {
+            return memo('hpump' + k, () => {
+                const h = (at, ox, oy, oz) => ({ of: 'm', at, off: [ox, oy, oz], n: [0, 0, 1] });
+                const two = (at, oy, oz, dx) => HP(B3P.bendDeep, h(at, 0.05 + (dx || 0), oy, oz), h(at, -0.03 + (dx || 0), oy, oz));
+                if (typeof k === 'number') { const a = k * Math.PI / 2; return HP(B3P.bendDeep, h('Mingmen', 0.05 + 0.03 * Math.cos(a), 0.03 * Math.sin(a), -0.07), h('Mingmen', -0.03 - 0.03 * Math.cos(a), -0.03 * Math.sin(a), -0.07)); }
+                if (k === 'flank') return two('Mingmen', 0, -0.07, 0.14);
+                if (k === 'high') return two('Mingmen', 0, -0.4, 0.12);
+                if (k === 'thor') return two('Du_thor', 0, -0.07);
+                if (k === 'neck') return two('Dazhui', 0, -0.07);
+                return two('Baihui', 0.04, -0.06);
+            });
+        }
+        const b3Rays = h => memo('rays' + h, () => HP(B3P.stand, { at: [0.05, 0.22, 0.32], n: [0, 1, 0], f: [-0.2, 0, 1] }, { at: [0.03, h, 0.33], n: [1, 0, 0], f: [0, -1, 0.15] }));
+        function b3Sun(S, k) {
+            const p = S.root().add(S.dirM(1.05, 1.0, 1.15));
+            B3X.sun.position.copy(p); B3X.sun.material.opacity = 0.95 * k; B3X.sun.visible = true;
+            B3X.sunHalo.position.copy(p); B3X.sunHalo.scale.setScalar(1 + 0.08 * Math.sin(S.clock * 1.5)); B3X.sunHalo.material.opacity = 0.2 * k; B3X.sunHalo.visible = true;
+            fxFlow([p, p.clone().lerp(S.A('Shanzhong'), 0.5), S.A('Shanzhong')], 0xffc35a, { speed: 0.25, spread: 'in', w: 0.05, a: 0.6 * k });
+        }
+        function b3EhKeys() {
+            return memo('eh', () => [[0, b3Arms([0, 0, 0.08, -0.12, 0, 0])], [2, b3Arms([0, 0, 1.45, -0.1, 0, 0])], [4, b3Arms([-1.45, -0.5, -0.45, -0.15, 0, 0])], [6, b3Arms([-2.95, 0, -0.12, -0.05, 0, 0])], [8, b3Arms([0, 0, 0.08, -0.12, 0, 0])]]);
+        }
+        // contatto delle mani virtuali con pareti e soffitto della stanza (lato 2,6 m, altezza 2,5 m)
+        function b3WallTouch(S) {
+            ['DitoL', 'DitoR'].forEach(n => {
+                const p = S.A(n, 'g');
+                if (Math.abs(p.x) > 1.16) fxFlash(b3v(Math.sign(p.x) * 1.3, p.y, p.z), b3v(1, 0, 0), 0.9, C_ATT, 0.75);
+                if (p.y > 2.3) fxFlash(b3v(p.x, 2.5, p.z), b3v(0, 1, 0), 0.9, C_ATT, 0.75);
+            });
+        }
+        function b3GhostWalk(S, G) {
+            const ts = S.ts, R = 0.62;
+            if (ts < 1.5) { G.x = 0; G.z = R * smooth(ts / 1.5); G.ry = 0; }
+            else { const a = (ts - 1.5) / (S.Ph.per - 1.5) * Math.PI * 2; G.x = R * Math.sin(a); G.z = R * Math.cos(a); G.ry = a + Math.PI / 2; }
+            setSkeletonOf(G, keyPoseAt(b3March(0.45, 0.85, 1.1), b3.clock % 1.1), true);
+        }
+        function b3GhostGrow(S, G) {
+            const up = smooth(Math.min(1, S.ts / 4)) * 0.32, wide = S.ts > 4 ? smooth(Math.min(1, (S.ts - 4) / 3.5)) * 2.2 : 0;
+            G.root.scale.set(1 + wide, 1 + up, 1 + wide);
+            G.root.position.y *= 1 + up;
+            G.mat.opacity = 0.22 * (1 - 0.6 * wide / 2.2);
+        }
+        function b3WaxModel(S, G) {
+            const ts = S.ts, k = x => smooth(Math.max(0, Math.min(1, x)));
+            G.mat.color.setHex(0xffb066);
+            if (ts < 4) G.J.shR.scale.y = 1 + 0.7 * k(ts / 3);
+            else if (ts < 8) { G.J.shR.scale.y = 1.7 - 0.7 * k(ts - 4); G.J.hipL.scale.y = 1 - 0.35 * k((ts - 4.5) / 3); }
+            else if (ts < 12) { G.J.hipL.scale.y = 0.65 + 0.35 * k(ts - 8); const s = 1 + 0.7 * k((ts - 8.5) / 3); G.root.scale.set(s, 1, s); }
+            else { const s = 1.7 - 1.48 * k((ts - 12) / 3); G.root.scale.set(s, Math.min(1, s), s); }
+        }
+        function b3WaxFloat(S, G) {
+            G.mat.color.setHex(0xffb066);
+            const ts = S.ts, base = mainFig.root.position;
+            let x = 0, y, z;
+            if (ts < 3) { const k = smooth(ts / 3); y = 0.45 * k; z = 0.6 * k; }
+            else { const a = (ts - 3) / 9 * Math.PI * 2; x = 0.6 * Math.sin(a); z = 0.6 * Math.cos(a); y = 0.45 + 0.08 * Math.sin(a * 2); }
+            G.root.position.set(base.x + x, base.y + y, base.z + z);
+        }
+        function b3WaxBack(S, G) {
+            G.mat.color.setHex(0xffb066);
+            const k = smooth(Math.min(1, S.ts / 4)), base = mainFig.root.position;
+            G.root.position.set(base.x, base.y + 0.45 * (1 - k), base.z + 0.6 * (1 - k));
+            G.mat.opacity = 0.22 * (S.ts < 4 ? 1 : Math.max(0, 1 - (S.ts - 4) / 3));
+        }
+        function b3Off(k) {
+            return k < 0.4 ? { m: 'white', k: b3q(1 - k / 0.4, 20) } : k < 0.7 ? { m: 'line', k: b3q(1 - (k - 0.4) / 0.3, 20) } : { m: 'point', k: b3q(1 - (k - 0.7) / 0.3, 20) };
+        }
+        // esercizio con lo schermo interiore: seduti nella posizione del cocchiere, con la benda
+        function b3Scr(phases) {
+            return { seat: true, blind: true, eyes: 'closed', cam: [0.55, 1.25, 3.0, 1.2], phases: phases.map(p => Object.assign({ keys: [[0, b3Kucher()]] }, p, { fx: p.scr ? (S => { fxScreen(S, p.scr(S)); if (p.fx) p.fx(S); }) : p.fx })) };
+        }
+        function b3SheetKeys() {
+            return memo('sheet', () => {
+                const b = clonePose(B3P.seat); b.spX = 0.3; b.nkX = 0.25;
+                const k = (t, dx, dz) => [t, HP(b, { at: [0.2, 0.12, 0.36], n: [0, -1, 0], f: [-0.2, 0, 1] }, { at: [-0.05 + dx, 0.17, 0.47 + dz], n: [0, -1, 0], f: [0.2, 0, 1] })];
+                return [k(0, -0.06, 0), k(1.5, 0.06, 0), k(3, -0.06, 0), k(4.5, 0.06, 0), k(6, 0, -0.05), k(7.5, 0, 0.05), k(9, 0, -0.05), k(10.5, 0, 0.05), k(12, -0.06, 0)];
+            });
+        }
+        function b3Sheet(S, col) {
+            const p = S.L(-0.05, 0, 0.47); p.y = 0.702;
+            B3X.sheet.position.copy(p); B3X.sheet.material.color.set(col); B3X.sheet.visible = true;
+        }
+        function b3Cup(z) { return memo('cup' + z, () => { const b = clonePose(B3P.seat); b.nkX = 0.1; return HP(b, b3SeatRest(), { at: [-0.03, 0.6, z], n: [1, 0, 0], f: [0.2, 0.3, 1] }); }); }
+        function b3CupProp(S) { B3X.cup.position.copy(S.A('LaogongR')).addScaledVector(S.handN('R'), 0.05); B3X.cup.visible = true; }
+        function b3Read() {
+            return memo('read', () => { const b = clonePose(B3P.seat); b.spX = 0.32; b.nkX = 0.35; return HP(b, { at: [0.16, 0.11, 0.42], n: [0, -1, 0], f: [0, 0, 1] }, { at: [-0.25, 0.11, 0.42], n: [0, -1, 0], f: [0, 0, 1] }); });
+        }
+
+        // ---------- Pose di base ----------
+        const B3P = {
+            stand: P({ lL: LEG_SOFT }),
+            seat: P({ lL: [-1.5, 0.12, 1.5, 0], aL: [-0.3, -0.2, 0.12, -1.0, 0, 0.3] }),
+            kucher: P({ lL: [-1.45, 0.16, 1.45, 0.05], spX: 0.36, nkX: 0.3, aL: [-0.6, -0.3, 0.18, -1.2, 0, 0.2] }),
+            horse: P({ lL: [-0.62, 0.32, 1.05, 0.22], spX: 0.04 }),
+            prone: P({ rootRx: Math.PI / 2, rootY: 0.72, nkY: 1.25, aL: [0, 0, 0.1, -0.05, 0, 0], lL: [0, 0.06, 0, 0] }),
+            supine: P({ rootRx: -Math.PI / 2, rootY: 0.72, aL: [0, 0, 0.16, -0.05, 0, 0], lL: [0, 0.06, 0, 0] }),
+            bendDeep: P({ lL: [-0.3, 0.09, 0.6, 0], spX: 0.5 }),
+            kneel: P({ rootY: 0.6, lL: [0.02, 0.1, 1.55, 0], aL: [-0.3, 0, 0.12, -0.6, 0, 0] }),
+            squat: P({ lL: [-0.95, 0.25, 1.6, 0.15], spX: 0.42 }),
+            bend: P({ lL: [-0.38, 0.07, 0.76, 0], spX: 0.25 })
+        };
+        // specchia un bersaglio da una mano all'altra
+        function b3Mir(g) {
+            const m = Object.assign({}, g);
+            const fx = v => Array.isArray(v) ? [-v[0], v[1], v[2]] : v;
+            ['at', 'off', 'n', 'f', 'pole'].forEach(k => { m[k] = fx(g[k]); });
+            if (typeof g.at === 'string') m.at = g.at.replace(/L$/, '§').replace(/R$/, 'L').replace(/§$/, 'R');
+            if (g.arm) m.arm = g.arm === 'L' ? 'R' : 'L';
+            return m;
+        }
+        const HP = (b, L, R, x) => Object.assign({ b, L, R: R === 'mir' ? b3Mir(L) : R }, x || {});
+        const gBall = (d, y, z) => ({ at: [d / 2, y === undefined ? 0.14 : y, z || 0.3], n: [-1, 0, 0], f: [0, 0.35, 1] });
+        const gRub = dy => ({ at: [0.006, 0.2 + dy, 0.27], n: [-1, 0, 0], f: [0, 0.5, 1] });
+        const gSide = { at: [0.27, -0.12, 0.06], n: [-1, 0, 0.3] };
+        const ball = (d, y) => HP(B3P.stand, gBall(d, y), 'mir');
+        const rub = dy => HP(B3P.stand, gRub(dy), b3Mir(gRub(-dy)));
+        const CAM = { stand: [0.45, 1.3, 3.4, 0.95], near: [0.55, 1.35, 2.6, 1.05], seat: [0.75, 1.28, 2.8, 0.8], pair: [1.25, 1.22, 4.6, 0.95], room: [0.6, 1.17, 5.6, 1.15], floor: [0.95, 1.0, 3.7, 0.4], back: [2.75, 1.3, 2.9, 0.85], wide: [0.5, 1.25, 5.2, 1.0] };
+
+        // percorso di una sensazione nel corpo, da ancore e giunti
+        const pathOf = (S, names, who) => names.map(n => (n.startsWith('j:') ? S.J(n.slice(2), who) : S.A(n, who)));
+        const floorUnder = (S, n) => { const p = S.A(n); p.y = -0.25; return p; };
+        function fxDown(S, c, side) { // dalla testa ai piedi e nella terra
+            ['L', 'R'].filter(sd => !side || sd === side).forEach(sd => fxFlow(pathOf(S, ['TestaCentro', 'Plesso', 'Guanyuan', 'Huiyin', 'j:kn' + sd, 'Yongquan' + sd]).concat([floorUnder(S, 'Yongquan' + sd)]), c, { speed: 0.3 }));
+        }
+        function fxUp(S, c, side) {
+            ['L', 'R'].filter(sd => !side || sd === side).forEach(sd => fxFlow([floorUnder(S, 'Yongquan' + sd)].concat(pathOf(S, ['Yongquan' + sd, 'j:kn' + sd, 'Huiyin', 'Guanyuan', 'Plesso', 'TestaCentro', 'Baihui'])).concat([S.A('Baihui').add(S.dirM(0, 0.35, 0))]), c, { speed: 0.3 }));
+        }
+        const breath = (S, inn, out, k) => k < 0.45 ? inn : out;
+
+        // ---------- Esercizi ----------
+        // fase: { per (secondi del ciclo), from (inizio del ciclo ripetuto), once (non ripete; con la pratica guidata si stira sul sotto-passo),
+        //         dur (durata in anteprima), keys, pk (compagno), gk (fantasma), br (respiro), eyes, blind, tint, cap, capFn, fx, prop }
+        const B3 = {
+            prep0: { name: 'Posizione dell\'osservatore', cam: CAM.stand, phases: [
+                { per: 6, keys: [[0, B3P.stand]], cap: 'In piedi, occhi aperti, respiro naturale: osserva le sensazioni senza giudicarle.' },
+                { per: 6, keys: [[0, B3P.stand]], cap: 'Quando senti qualcosa, rispondi tra te «C\'è». Niente immagini forzate, solo sensazioni.',
+                  fx: S => { const a = 0.3 + 0.3 * Math.sin(S.clock * 2); ['LaogongL', 'LaogongR', 'YongquanL', 'YongquanR'].forEach(n => fxOrb(S.A(n), 0.03, C_ATT, a)); } }
+            ] },
+            end: { name: 'Chiusura', cam: CAM.stand, phases: [
+                { per: 6, keys: [[0, B3P.stand]], cap: 'Torna al respiro naturale. Nota come ti senti rispetto all\'inizio.' },
+                { per: 1, keys: [[0, P({ aL: [0, 0, 0.12, -0.15, 0.45, 0], lL: [-0.25, 0.07, 0.5, 0], lR: LEG_SOFT, support: 'max' })], [0.25, P({ aL: [0, 0, 0.12, -0.15, -0.45, 0], lL: LEG_SOFT })], [0.5, P({ aL: [0, 0, 0.12, -0.15, 0.45, 0], lL: LEG_SOFT, lR: [-0.25, 0.07, 0.5, 0], support: 'max' })], [0.75, P({ aL: [0, 0, 0.12, -0.15, -0.45, 0], lL: LEG_SOFT })], [1, P({ aL: [0, 0, 0.12, -0.15, 0.45, 0], lL: [-0.25, 0.07, 0.5, 0], lR: LEG_SOFT, support: 'max' })]], cap: 'Scuoti mani e piedi. Se compaiono mal di testa o pressione agli occhi, la prossima volta accorcia.' }
+            ] },
+
+            // ===== 1ª Stupen =====
+            s1_hands: { cam: CAM.near, phases: [
+                { per: 12, from: 4, dur: 14, keys: [[0, rub(0.03)], [1, rub(-0.03)], [2, rub(0.03)], [3, rub(-0.03)], [4, ball(0.2)], [6.5, ball(0.13)], [8, HP(B3P.stand, { at: [0.02, 0.27, 0.3], n: [0, -1, 0], f: [-0.3, 0, 1] }, { at: [-0.02, 0.06, 0.3], n: [0, 1, 0], f: [0.3, 0, 1] })], [10, ball(0.26)], [12, ball(0.2)]],
+                  cap: 'Palla: strofina i palmi finché sono caldi, poi allontanali piano e senti la palla; falla ruotare.',
+                  fx: S => {
+                      const a = S.A('LaogongL'), b = S.A('LaogongR');
+                      if (S.ts < 4) { fxOrb(a.clone().lerp(b, 0.5), 0.03 + 0.01 * Math.sin(S.clock * 20), C_WARM, 0.8); return; }
+                      const c = a.clone().lerp(b, 0.5), r = a.distanceTo(b) * 0.46;
+                      fxShell(c, r, r, r, C_ATT, 0.22, S.clock * 0.8); fxOrb(c, r * 0.35, C_ATT, 0.5);
+                  } },
+                { per: 6, dur: 12, keys: [[0, ball(0.08, 0.18)], [3, ball(0.34, 0.18)], [6, ball(0.08, 0.18)]],
+                  cap: 'Fisarmonica: avvicina e allontana i palmi, come a comprimere e tirare una molla.',
+                  fx: S => {
+                      const a = S.A('LaogongL'), b = S.A('LaogongR'), d = b.clone().sub(a), u = d.clone().normalize();
+                      const v1 = new THREE.Vector3(0, 1, 0).cross(u).normalize(), v2 = u.clone().cross(v1);
+                      const pts = []; for (let i = 0; i <= 64; i++) { const t = i / 64, th = t * Math.PI * 14; pts.push(a.clone().addScaledVector(d, t).addScaledVector(v1, Math.cos(th) * 0.045).addScaledVector(v2, Math.sin(th) * 0.045)); }
+                      fxFlow(pts, C_ATT, { speed: 0.04, w: 0, size: 0.022 });
+                  } },
+                { per: 12, dur: 12, keys: [[0, ball(0.18, 0.2)], [5, ball(0.18, 0.2)], [6.5, HP(B3P.stand, { at: [0.06, 0.18, 0.32], n: [0, 1, 0], f: [-0.2, 0, 1] }, { at: [0.02, 0.36, 0.33], n: [1, 0, 0], f: [0, -1, 0.15] })], [12, HP(B3P.stand, { at: [0.06, 0.18, 0.32], n: [0, 1, 0], f: [-0.2, 0, 1] }, { at: [0.02, 0.36, 0.33], n: [1, 0, 0], f: [0, -1, 0.15] })]],
+                  cap: 'Raggio: un raggio va da un palmo all\'altro e torna; poi con l\'indice disegna un cerchio sul palmo.',
+                  fx: S => {
+                      const a = S.A('LaogongL'), b = S.A('LaogongR');
+                      if (S.ts < 5.5) { fxRay(a, b, 0.004, C_ATT, 0.35); fxOrb(a.clone().lerp(b, 0.5 + 0.5 * Math.sin(S.clock * 3)), 0.018, 0xffffff, 0.95); return; }
+                      const n = S.handN('L'), e1 = new THREE.Vector3(1, 0, 0).cross(n).normalize(), e2 = n.clone().cross(e1);
+                      const th = S.clock * 2.5, p = a.clone().addScaledVector(e1, Math.cos(th) * 0.025).addScaledVector(e2, Math.sin(th) * 0.025);
+                      fxRay(S.A('DitoR'), p, 0.003, C_ATT, 0.7); fxOrb(p, 0.012, 0xffffff, 0.95);
+                  } }
+            ] },
+            s1_tibet: { cam: [0.95, 1.33, 2.8, 1.05], phases: [
+                b3Tibet('R', 'Strofina il braccio destro: lato esterno dalla spalla alle dita, lato interno dalle dita alla spalla, fino al calore.'),
+                b3Tibet('L', 'Ora il braccio sinistro, allo stesso modo.'),
+                b3TibetPull(),
+                { per: 8, cam: CAM.back, br: [[0, 'in'], [0.62, 'out']],
+                  keys: [[0, HP(B3P.stand, { at: 'Coccige', off: [0.055, 0.02, -0.04], n: [0, 0, 1] }, 'mir')], [0.8, HP(B3P.stand, { at: 'Coccige', off: [0.055, -0.03, -0.04], n: [0, 0, 1] }, 'mir')], [1.6, HP(B3P.stand, { at: 'Coccige', off: [0.055, 0.02, -0.04], n: [0, 0, 1] }, 'mir')], [2.4, HP(B3P.stand, { at: 'Coccige', off: [0.055, -0.03, -0.04], n: [0, 0, 1] }, 'mir')], [3.4, HP(B3P.stand, { at: 'Coccige', off: [0.06, 0, -0.05], n: [0, 0.6, 0.8] }, 'mir')], [5, HP(B3P.stand, { at: 'RenoL', off: [0, 0, -0.04], n: [0, 0, 1] }, 'mir')], [6, HP(B3P.stand, { at: 'RenoL', off: [0, 0.02, -0.04], n: [0, 0, 1] }, 'mir')], [8, HP(B3P.stand, { at: 'Coccige', off: [0.055, 0.02, -0.04], n: [0, 0, 1] }, 'mir')]],
+                  cap: 'Massaggia il coccige, raccogli la sensazione come in due coppe e spingila fino ai reni; espira con decisione.',
+                  fx: S => { if (S.ts < 3.4) fxOrb(S.A('Coccige'), 0.05, C_WARM, 0.55); else if (S.ts < 6.2) fxFlow(pathOf(S, ['Coccige', 'Mingmen', 'RenoL']), C_WARM, { speed: 0.6 }), fxFlow(pathOf(S, ['Coccige', 'Mingmen', 'RenoR']), C_WARM, { speed: 0.6 }); } }
+            ] },
+            s1_heavy_st: { cam: CAM.stand, phases: [
+                { per: 6, from: 3, keys: [[0, B3P.stand], [3, P({ lL: [-0.24, 0.07, 0.48, 0], aL: [0, 0, 0.05, -0.08, 0, 0], nkX: 0.1 })], [4.5, P({ lL: [-0.28, 0.07, 0.56, 0], aL: [0, 0, 0.05, -0.08, 0, 0], nkX: 0.12 })], [6, P({ lL: [-0.24, 0.07, 0.48, 0], aL: [0, 0, 0.05, -0.08, 0, 0], nkX: 0.1 })]], tint: [0x101a3a, 0.5],
+                  cap: '«Che il corpo diventi pesante»: la pesantezza scende verso il pavimento.', fx: S => fxDown(S, C_HEAVY) },
+                { per: 6, from: 3, keys: [[0, B3P.stand], [3, P({ lL: [-0.02, 0.07, 0.04, 0], aL: [0, 0, 0.3, -0.2, 0, 0], chX: -0.06, nkX: -0.06 })], [4.5, P({ lL: [-0.01, 0.07, 0.02, 0], aL: [0, 0, 0.36, -0.25, 0, 0], chX: -0.07, nkX: -0.07 })], [6, P({ lL: [-0.02, 0.07, 0.04, 0], aL: [0, 0, 0.3, -0.2, 0, 0], chX: -0.06, nkX: -0.06 })]], tint: [0x3a3010, 0.5],
+                  cap: '«Che il corpo diventi leggero»: la leggerezza sale, come se stessi per sollevarti.', fx: S => fxUp(S, C_LIGHT) },
+                { per: 12, keys: [[0, B3P.stand]],
+                  capFn: ts => ts < 6 ? 'Metà superiore pesante, metà inferiore leggera.' : 'Ora al contrario: metà superiore leggera, inferiore pesante.',
+                  fx: S => {
+                      const top = pathOf(S, ['Baihui', 'TestaCentro', 'Plesso', 'Guanyuan']), low = sd => [floorUnder(S, 'Yongquan' + sd)].concat(pathOf(S, ['Yongquan' + sd, 'j:kn' + sd, 'Huiyin']));
+                      if (S.ts < 6) { fxFlow(top, C_HEAVY, { speed: 0.3 }); ['L', 'R'].forEach(sd => fxFlow(low(sd), C_LIGHT, { speed: 0.3 })); }
+                      else { fxFlow(top.slice().reverse(), C_LIGHT, { speed: 0.3 }); ['L', 'R'].forEach(sd => fxFlow(low(sd).reverse(), C_HEAVY, { speed: 0.3 })); }
+                  } },
+                { per: 12, keys: [[0, B3P.stand]],
+                  capFn: ts => ts < 6 ? 'Metà sinistra pesante, metà destra leggera.' : 'Ora al contrario: sinistra leggera, destra pesante.',
+                  fx: S => { const h = S.ts < 6 ? 'L' : 'R', l = h === 'L' ? 'R' : 'L'; fxDown(S, C_HEAVY, h); fxUp(S, C_LIGHT, l); } }
+            ] },
+            s1_heavy_dyn: { cam: CAM.stand, phases: [
+                { per: 2.4, dur: 10, keys: b3March(0.5, 0.95, 2.4), tint: [0x101a3a, 0.4], cap: 'Cammina evocando la pesantezza: passi pesanti e stabili, come premuti a terra.', fx: S => fxDown(S, C_HEAVY) },
+                { per: 1.3, dur: 10, keys: b3March(0.85, 1.25, 1.3), tint: [0x3a3010, 0.4], cap: 'Poi la leggerezza, il «vento veloce»: passi leggeri e agili.', fx: S => fxUp(S, C_LIGHT) }
+            ] },
+            s1_palms: { seat: true, cam: CAM.seat, phases: [
+                { per: 8, keys: [[0, b3SeatPalms(0.26)], [4, b3SeatPalms(0.22)], [8, b3SeatPalms(0.26)]], br: [[0, 'in'], [0.45, 'out']],
+                  cap: 'Palmi uno di fronte all\'altro: il sinistro «inspira», il destro «espira».', fx: S => b3PalmFlow(S, 'L') },
+                { per: 8, keys: [[0, b3SeatPalms(0.26)], [4, b3SeatPalms(0.22)], [8, b3SeatPalms(0.26)]], br: [[0, 'in'], [0.45, 'out']],
+                  cap: 'Inverti: il destro inspira, il sinistro espira.', fx: S => b3PalmFlow(S, 'R') },
+                { per: 10, keys: [[0, b3SeatPalms(0.3)]],
+                  capFn: ts => 'Dita: a destra inspira, a sinistra espira · ' + ['pollice', 'indice', 'medio', 'anulare', 'mignolo'][Math.floor(ts / 2) % 5],
+                  fx: S => { fxIn(S.A('DitoR'), S.dirM(-0.4, 0.2, 1), C_IN); fxOut(S.A('DitoL'), S.dirM(0.4, 0.2, 1), C_OUT); } }
+            ] },
+            s1_three: { cam: CAM.stand, phases: [
+                { per: 9, br: [[0, 'in'], [0.44, 'pause'], [0.5, 'out']],
+                  keys: [[0, b3Open()], [4, b3Open(-0.05)], [4.5, b3Open(-0.05)], [9, b3Open()]],
+                  cap: 'Inspira dai palmi e dalla bocca fino al plesso solare; espira dal perineo e dalle piante dei piedi.',
+                  fx: S => {
+                      if (S.ts < 4) {
+                          fxIn(S.A('LaogongL'), S.dirM(0.5, 0.1, 1), C_IN); fxIn(S.A('LaogongR'), S.dirM(-0.5, 0.1, 1), C_IN); fxIn(S.A('Bocca'), S.dirM(0, 0.15, 1), C_IN);
+                          fxFlow(pathOf(S, ['LaogongL', 'j:elL', 'j:shL', 'Plesso']), C_IN, { speed: 0.5 }); fxFlow(pathOf(S, ['LaogongR', 'j:elR', 'j:shR', 'Plesso']), C_IN, { speed: 0.5 }); fxFlow(pathOf(S, ['Bocca', 'Ren_neck', 'Plesso']), C_IN, { speed: 0.5 });
+                      } else if (S.ts < 4.5) fxOrb(S.A('Plesso'), 0.06, C_ATT, 0.9);
+                      else {
+                          ['L', 'R'].forEach(sd => { fxFlow(pathOf(S, ['Plesso', 'Guanyuan', 'Huiyin', 'j:kn' + sd, 'Yongquan' + sd]).concat([floorUnder(S, 'Yongquan' + sd)]), C_OUT, { speed: 0.45 }); });
+                          fxOut(S.A('Huiyin'), S.dirM(0, -1, 0), C_OUT);
+                      }
+                  } }
+            ] },
+            s1_bell_low: { cam: [0.5, 1.28, 3.7, 0.95], phases: [
+                { per: 6, keys: [[0, P({ aL: [-0.12, 0, 0.36, -0.25, 0, 0], lL: LEG_SOFT })]],
+                  cap: 'Campana rivolta in basso: il vertice al centro della testa, la base alla punta delle dita.',
+                  fx: S => b3BellLow(S, Math.min(1, S.u / 2), 0) },
+                { per: 8, keys: [[0, b3BellArms(0)], [2, b3BellArms(1)], [4, b3BellArms(2)], [6, b3BellArms(3)], [8, b3BellArms(0)]],
+                  cap: 'Fai ruotare lentamente il bordo della campana con le mani, prima in un senso poi nell\'altro.',
+                  fx: S => b3BellLow(S, 1, Math.sin(S.clock * 0.35) * 3) }
+            ] },
+            s1_bell_up: { cam: [0.5, 1.22, 3.9, 1.05], phases: [
+                { per: 6, keys: [[0, b3BellUp(0, 0)]], cap: 'Campana rivolta in alto: il vertice al centro del perineo, la base sopra la testa.', fx: S => b3BellUpFx(S, Math.min(1, S.u / 2)) },
+                { per: 10, keys: [[0, b3BellUp(0, 0)], [2, b3BellUp(0, 0.09)], [4, b3BellUp(0, -0.09)], [6, b3BellUp(0.09, 0)], [8, b3BellUp(-0.09, 0)], [10, b3BellUp(0, 0)]],
+                  cap: 'Sposta con le mani il campo attorno alla testa: avanti, indietro, ai lati, a semicerchio.', fx: S => b3BellUpFx(S, 1) }
+            ] },
+            s1_dragon: { cam: [0.22, 1.28, 3.5, 0.85], phases: [
+                { per: 6, keys: [[0, b3Dragon(0)]], cap: 'Posizione del cavaliere, palmi in su all\'altezza delle spalle, lingua al palato, respiro dalla bocca.' },
+                { per: 8, br: [[0, 'in'], [0.45, 'out']], keys: [[0, b3Dragon(0)], [3.6, b3Dragon(1)], [8, b3Dragon(0)]],
+                  capFn: ts => ts < 3.6 ? 'Inspira: l\'energia entra dalle piante dei piedi e dal perineo e sale fino al diaframma.' : 'Espira: sale ancora ed esce dai palmi e dalla bocca; bacino e colonna seguono con un\'onda morbida.',
+                  fx: S => {
+                      if (S.ts < 3.6) { ['L', 'R'].forEach(sd => fxFlow([floorUnder(S, 'Yongquan' + sd)].concat(pathOf(S, ['Yongquan' + sd, 'j:kn' + sd, 'Huiyin', 'Guanyuan', 'Plesso'])), C_IN, { speed: 0.45 })); fxIn(S.A('Huiyin'), S.dirM(0, -1, 0), C_IN); }
+                      else { ['L', 'R'].forEach(sd => { fxFlow(pathOf(S, ['Plesso', 'j:sh' + sd, 'j:el' + sd, 'Laogong' + sd]), C_OUT, { speed: 0.45 }); fxOut(S.A('Laogong' + sd), S.dirM(0, 1, 0.2), C_OUT); }); fxFlow(pathOf(S, ['Plesso', 'Ren_neck', 'Bocca']), C_OUT, { speed: 0.45 }); fxOut(S.A('Bocca'), S.dirM(0, 0.2, 1), C_OUT); }
+                  } }
+            ] },
+            s1_circle: { seat: true, cam: [0.2, 1.38, 2.3, 0.72], phases: [
+                { per: 6, keys: b3CircleKeys(6), cap: 'Porta la sensazione nella zona iliaca destra e falla girare in senso orario sull\'addome.', fx: S => b3CircleFx(S) },
+                { per: 15, keys: b3CircleKeys(6), warp: u => { const c = u % 15; return c < 6 ? c * 2 : c < 12 ? 12 + (c - 6) * 0.5 : 15; },
+                  capFn: ts => 'Accelera, rallenta, fermala in un punto. Puoi accompagnarla con un vero massaggio in senso orario.', fx: S => b3CircleFx(S) }
+            ] },
+            s1_splash: { cam: [0.35, 1.3, 3.0, 1.05], phases: [
+                { per: 10, once: true, eyes: 'closed', keys: [[0, B3P.stand]],
+                  cap: 'Occhi chiusi: raccogli la sensazione sotto l\'ombelico e falla salire lungo la colonna fino al collo.',
+                  fx: S => {
+                      const k = S.k, path = new THREE.CatmullRomCurve3(pathOf(S, ['Guanyuan', 'Coccige', 'Mingmen', 'Du_lumb', 'Du_thor', 'Dazhui', 'TestaCentro']));
+                      const f = k < 0.25 ? 0 : k < 0.85 ? (k - 0.25) / 0.6 * 0.86 : 0.86 + (k - 0.85) / 0.15 * 0.14;
+                      const r = k < 0.25 ? 0.02 + 0.04 * k / 0.25 : k > 0.7 && k < 0.85 ? 0.06 + 0.04 * (k - 0.7) / 0.15 : 0.06;
+                      fxOrb(path.getPoint(Math.min(1, f)), r, C_ATT, 0.9);
+                  } },
+                { per: 10, once: true, keys: [[0, P({ lL: LEG_SOFT, nkX: -0.05 })]],
+                  cap: 'Quando arriva alla testa apri di colpo gli occhi e «versa fuori» l\'energia con lo sguardo; guarda lontano.',
+                  fx: S => {
+                      const burst = S.k < 0.15, fwd = S.dirM(0, 0.05, 1);
+                      ['OcchioL', 'OcchioR'].forEach(n => { const p = S.A(n); fxFlow([p, p.clone().addScaledVector(fwd, 0.8), p.clone().addScaledVector(fwd, 2.2)], burst ? 0xffffff : C_OUT, { spread: 'out', w: burst ? 0.06 : 0.02, speed: burst ? 1.4 : 0.35, a: burst ? 1 : 0.6 }); });
+                  } }
+            ] },
+            s1_cocoon: { cam: CAM.stand, phases: [
+                { per: 8, keys: [[0, HP(B3P.stand, { at: [0.1, 0.36, 0.24], n: [0, 0, -1] }, 'mir')], [2, HP(B3P.stand, { at: [0.3, 0.1, 0.03], n: [-1, 0, 0] }, 'mir')], [4, HP(B3P.stand, { at: [0.24, 0.78, 0.04], n: [-1, -0.2, 0] }, 'mir')], [6, HP(B3P.stand, { at: [0.1, 0.04, 0.22], n: [0, 0, -1] }, 'mir')], [8, HP(B3P.stand, { at: [0.1, 0.36, 0.24], n: [0, 0, -1] }, 'mir')]],
+                  cap: 'Mani a 10–15 cm dal corpo: carezze e piccoli colpetti tutt\'intorno, finché senti una densità elastica.',
+                  fx: S => { b3CocoonFx(S, 0, S.clock * 0.3); ['LaogongL', 'LaogongR'].forEach(n => fxOrb(S.A(n), 0.025, C_ATT, 0.6)); } },
+                { per: 8, keys: [[0, ball(0.22, 0.2)]], cap: 'Fai ruotare il bozzolo in un senso e nell\'altro, spostalo in alto e in basso.',
+                  fx: S => b3CocoonFx(S, 0.1 * Math.sin(S.clock * 0.8), S.clock * (Math.sin(S.clock * 0.2) > 0 ? 1.2 : -1.2)) }
+            ] },
+            s1_eyes: { seat: true, table: true, cam: [1.05, 1.3, 2.7, 0.85], phases: [
+                { per: 8, keys: [[0, b3Palming()]], cap: 'Palming: palmi caldi sugli occhi aperti, senza premere; guarda il buio caldo.',
+                  fx: S => ['LaogongL', 'LaogongR'].forEach(n => fxOrb(S.A(n), 0.03, C_WARM, 0.35 + 0.15 * Math.sin(S.clock * 2))) },
+                { per: 5, keys: [[0, b3Palming()]], cap: 'Una piccola palla sale dal collo nella testa, si divide in due ed entra negli occhi.',
+                  fx: S => {
+                      const k = S.t, c = S.A('TestaCentro');
+                      if (k < 0.4) fxOrb(S.A('Dazhui').lerp(c, k / 0.4), 0.025, C_ATT, 0.9);
+                      else if (k < 0.85) ['OcchioL', 'OcchioR'].forEach(n => fxOrb(c.clone().lerp(S.A(n), (k - 0.4) / 0.45), 0.018, C_ATT, 0.9));
+                  } }
+            ] },
+            s1_field: { partner: { x: 0, z: 1.75, ry: Math.PI }, labels: [['m', 'allievo'], ['p', 'insegnante']], cam: [1.15, 1.2, 5.6, 1.0], phases: [
+                { per: 12, keys: [[0, B3P.stand]],
+                  pk: [[0, b3PRub(0.03)], [1, b3PRub(-0.03)], [2, b3PRub(0.03)], [3.2, b3PReach(0.4)], [5.5, b3PReach(0.47)], [7, b3PReach(0.36)], [8.5, b3PReach(0.47)], [10, b3PReach(0.36)], [12, b3PRub(0.03)]],
+                  cap: 'L\'insegnante strofina le mani, poi con il palmo verso l\'allievo si avvicina dondolando la mano finché sente il «bordo denso» del campo.',
+                  fx: S => {
+                      const c = S.root().add(S.dirM(0, 0.1, 0)), p = S.A('LaogongR', 'p'), r = c.distanceTo(p);
+                      fxShell(c, r, r * 0.9, r, C_ATT, 0.07, S.clock * 0.1);
+                      if (S.ts > 3.2) fxFlash(p, p.clone().sub(c), 0.6 + 0.4 * Math.sin(S.clock * 4), C_ATT, 0.5);
+                  } }
+            ] },
+            s1_vpump: { partner: { x: -0.5, z: 0.04, ry: Math.PI / 2 }, labels: [['m', 'allievo'], ['p', 'insegnante']], cam: [1.05, 1.25, 3.9, 0.95], phases: [
+                { per: 10, keys: [[0, B3P.stand]],
+                  pk: [[0, b3VP('head')], [2, b3VP('head')], [5, b3VP('waist')], [7, b3VP('thigh')], [10, b3VP('head')]],
+                  cap: 'Con i palmi sulla testa dell\'allievo, l\'insegnante accompagna un flusso verticale dalla testa ai piedi e ritorno.',
+                  fx: S => {
+                      const down = S.ts > 2 && S.ts < 7;
+                      if (S.ts > 2) fxFlow(down ? pathOf(S, ['Baihui', 'TestaCentro', 'Plesso', 'Guanyuan', 'Huiyin']).concat([S.A('YongquanL').lerp(S.A('YongquanR'), 0.5)]) : [S.A('YongquanL').lerp(S.A('YongquanR'), 0.5)].concat(pathOf(S, ['Huiyin', 'Guanyuan', 'Plesso', 'TestaCentro', 'Baihui'])), C_ATT, { speed: 0.5 });
+                      fxRay(S.A('LaogongL', 'p'), S.A('LaogongR', 'p'), 0.004, C_ATT, 0.3);
+                  } }
+            ] },
+            s1_head: { seat: true, partner: { x: 0.6, z: -0.3, ry: -Math.PI / 2 }, labels: [['m', 'allievo'], ['p', 'insegnante']], cam: [0.95, 1.22, 3.3, 0.95], phases: [
+                { per: 10, keys: [[0, B3P.seat]],
+                  pk: [[0, b3HeadP(0)], [2.5, b3HeadP(0.15)], [5, b3HeadP(0)], [7.5, b3HeadP(0.15)], [10, b3HeadP(0)]],
+                  cap: 'Palmo sinistro sulla fronte, destro sulla nuca: si crea un «cordone» e lo si tende allontanando la mano sinistra.',
+                  fx: S => { const a = S.A('LaogongL', 'p'), b = S.A('LaogongR', 'p'); fxRay(a, b, 0.006 + 0.004 * Math.sin(S.clock * 3), C_ATT, 0.55); fxOrb(S.A('TestaCentro'), 0.03, C_ATT, 0.6); } },
+                { per: 10, keys: [[0, B3P.seat]], partner: { x: 0, z: -0.95, ry: 0 },
+                  pk: [[0, b3HeadDiag(0)], [4.5, b3HeadDiag(0)], [5.5, b3HeadDiag(1)], [9.5, b3HeadDiag(1)], [10, b3HeadDiag(0)]],
+                  capFn: ts => ts < 5 ? 'Diagonale: dalla protuberanza occipitale sinistra alla tempia destra, e ritorno.' : 'Poi si scambiano le mani: dall\'occipitale destra alla tempia sinistra.',
+                  fx: S => fxRay(S.A('LaogongL', 'p'), S.A('LaogongR', 'p'), 0.006, C_ATT, 0.5) }
+            ] },
+            s1_hpump: { bed: true, partner: { x: 0.55, z: 0.15, ry: -Math.PI / 2 }, labels: [['m', 'allievo'], ['p', 'insegnante']], cam: [0.95, 1.12, 3.9, 0.85], phases: [
+                { per: 10, keys: [[0, B3P.prone]],
+                  pk: [[0, b3HP(0)], [1.25, b3HP(1)], [2.5, b3HP(2)], [3.75, b3HP(3)], [5, b3HP(0)], [6, b3HP('flank')], [7.6, b3HP('high')], [8.6, b3HP('flank')], [10, b3HP(0)]],
+                  cap: 'L\'operatore attiva la zona sotto l\'ombelico con movimenti a lisciare, poi solleva l\'energia con gesti morbidi «a fontanella».',
+                  fx: S => { const c = S.A('Mingmen'); if (S.ts < 5) fxOrb(c, 0.05, C_ATT, 0.5); else fxFlow([c, c.clone().lerp(S.A('LaogongL', 'p').lerp(S.A('LaogongR', 'p'), 0.5), 0.6), S.A('LaogongL', 'p').lerp(S.A('LaogongR', 'p'), 0.5)], C_IN, { speed: 0.7, spread: 'out', w: 0.025 }); } },
+                { per: 8, keys: [[0, B3P.prone]], partnerAt: t => ({ x: 0.55, z: t < 6.5 ? 0.12 + 0.66 * smooth(t / 6.5) : 0.78 - 0.66 * smooth((t - 6.5) / 1.5), ry: -Math.PI / 2 }),
+                  pk: [[0, b3HP(0)], [3, b3HP('thor')], [5, b3HP('neck')], [6.5, b3HP('head')], [8, b3HP(0)]],
+                  cap: 'Stabilito il contatto, dirige il flusso lungo la colonna fino alla testa.',
+                  fx: S => fxFlow(pathOf(S, ['Coccige', 'Mingmen', 'Du_lumb', 'Du_thor', 'Dazhui', 'Fengfu', 'Baihui']), C_ATT, { speed: 0.4 }) },
+                { per: 8, snap: true, keys: [[0, HP(B3P.supine, { at: [0.1, 0.98, 0.12], n: [0, -0.4, -1] }, 'mir')], [4, HP(B3P.supine, { at: [0.08, 0.42, 0.16], n: [0, 0, -1] }, 'mir')], [6, HP(B3P.supine, { at: [0.05, 0.13, 0.13], n: [0, 0, -1] }, 'mir')], [8, HP(B3P.supine, { at: [0.1, 0.98, 0.12], n: [0, -0.4, -1] }, 'mir')]],
+                  pk: [[0, P({ lL: LEG_SOFT, aL: [-0.2, 0, 0.12, -0.5, 0, 0] })]],
+                  cap: 'Poi l\'allievo si gira sulla schiena e porta il flusso dalla testa all\'ombelico.',
+                  fx: S => fxFlow(pathOf(S, ['Baihui', 'Yintang', 'Ren_neck', 'Shanzhong', 'Plesso', 'Shenque']), C_ATT, { speed: 0.4 }) }
+            ] },
+            s1_ray_pair: { partner: { x: 0.1, z: 1.35, ry: Math.PI }, labels: [['m', 'proietta'], ['p', 'riceve']], cam: [1.4, 1.22, 4.5, 1.05], phases: [
+                { per: 8, keys: [[0, HP(B3P.stand, null, { at: [-0.1, 0.4, 0.5], n: [1, 0, 0], f: [0.15, 0, 1] })]],
+                  pk: [[0, HP(B3P.stand, { at: [0.16, 0.36, 0.34], n: [0, 0, 1], f: [0, 1, 0] }, null)]],
+                  capFn: ts => ts < 4.5 ? 'Attenzione sui polpastrelli: un raggio sottile va verso il palmo del compagno.' : 'Il compagno dice «C\'è» quando sente puntura o calore. Poi la distanza aumenta.',
+                  fx: S => { const a = S.A('DitoR'), b = S.A('LaogongL', 'p'); fxRay(a, b, 0.003, C_ATT, 0.55); fxOrb(a.clone().lerp(b, (S.clock * 0.6) % 1), 0.015, 0xffffff, 0.9); if (S.ts > 4.5) fxFlash(b, S.dirM(0, 0, 1), 0.5, C_ATT, 0.7); } }
+            ] },
+
+            // ===== Preparatorio =====
+            p_shar: { alias: 's1_hands', only: [0] },
+            p_move: { cam: CAM.near, phases: [
+                { per: 10, keys: [[0, ball(0.2)]], cap: 'Porta la palla con l\'attenzione nel corpo: dal palmo al braccio, alle spalle, all\'altro braccio. Si muove solo su tuo comando.',
+                  fx: S => { const a = S.A('LaogongL'), b = S.A('LaogongR'), c = a.clone().lerp(b, 0.5); const path = new THREE.CatmullRomCurve3([c, b].concat(pathOf(S, ['j:elR', 'j:shR', 'Shanzhong', 'j:shL', 'j:elL', 'LaogongL'])).concat([c]), true); fxOrb(path.getPoint(S.t), 0.04, C_ATT, 0.9); } }
+            ] },
+            p_rays: { cam: [0.6, 1.35, 2.3, 1.1], phases: [
+                { per: 12, keys: [[0, b3Rays(0.48)], [6, b3Rays(0.38)], [12, b3Rays(0.48)]],
+                  capFn: ts => 'Con il «raggio» disegna sul palmo ' + (ts < 4 ? 'un quadrato' : ts < 8 ? 'un triangolo' : 'un cerchio') + '; cambia la distanza.',
+                  fx: S => {
+                      const a = S.A('LaogongL'), n = S.handN('L'), e1 = new THREE.Vector3(1, 0, 0).cross(n).normalize(), e2 = n.clone().cross(e1), f = (S.ts % 4) / 4, r = 0.028;
+                      let x, y;
+                      if (S.ts < 4) { const s = Math.floor(f * 4), g = f * 4 - s, c = [[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]; x = c[s][0] + (c[s + 1][0] - c[s][0]) * g; y = c[s][1] + (c[s + 1][1] - c[s][1]) * g; }
+                      else if (S.ts < 8) { const s = Math.floor(f * 3), g = f * 3 - s, c = [[0, 1.1], [1, -0.7], [-1, -0.7], [0, 1.1]]; x = c[s][0] + (c[s + 1][0] - c[s][0]) * g; y = c[s][1] + (c[s + 1][1] - c[s][1]) * g; }
+                      else { x = Math.cos(f * Math.PI * 2); y = Math.sin(f * Math.PI * 2); }
+                      const p = a.clone().addScaledVector(e1, x * r).addScaledVector(e2, y * r);
+                      fxRay(S.A('DitoR'), p, 0.003, C_ATT, 0.7); fxOrb(p, 0.01, 0xffffff, 0.95);
+                  } }
+            ] },
+            p_breath: { cam: CAM.stand, phases: [
+                { per: 9, br: [[0, 'in'], [0.44, 'out']], keys: [[0, b3Open()]],
+                  capFn: ts => ts < 4 ? 'Inspirando l\'energia entra fino al plesso solare.' : 'Espirando scende lungo le gambe ed esce nella terra.',
+                  fx: S => { if (S.ts < 4) [[0, 0.1, 1], [1, 0.2, 0.2], [-1, 0.2, 0.2], [0, 1, 0.2]].forEach(d => fxIn(S.A('Plesso'), S.dirM(...d), C_IN)); else ['L', 'R'].forEach(sd => fxFlow(pathOf(S, ['Plesso', 'Guanyuan', 'Huiyin', 'j:kn' + sd, 'Yongquan' + sd]).concat([floorUnder(S, 'Yongquan' + sd)]), C_OUT, { speed: 0.45 })); } },
+                { per: 9, br: [[0, 'in'], [0.44, 'out']], keys: [[0, b3Open()]],
+                  capFn: ts => ts < 4 ? 'Inspira dalla terra, su per le gambe, fino al plesso solare.' : 'Espira facendo uscire l\'energia dalle mani.',
+                  fx: S => { if (S.ts < 4) ['L', 'R'].forEach(sd => fxFlow([floorUnder(S, 'Yongquan' + sd)].concat(pathOf(S, ['Yongquan' + sd, 'j:kn' + sd, 'Huiyin', 'Guanyuan', 'Plesso'])), C_IN, { speed: 0.45 })); else ['L', 'R'].forEach(sd => { fxFlow(pathOf(S, ['Plesso', 'j:sh' + sd, 'j:el' + sd, 'Laogong' + sd]), C_OUT, { speed: 0.45 }); fxOut(S.A('Laogong' + sd), S.dirM(sd === 'L' ? 0.5 : -0.5, -0.4, 0.6), C_OUT); }); } }
+            ] },
+            p_sky: { cam: [0.45, 1.33, 4.4, 1.0], phases: [
+                { per: 27, keys: [[0, HP(B3P.stand, { at: [0.18, 0.1, 0.25], n: [0, 1, 0], f: [-0.3, 0, 1] }, 'mir')]],
+                  capFn: ts => ts < 9 ? 'Attenzione sopra la testa: tre respiri lenti.' : ts < 18 ? 'Attenzione sotto i piedi: tre respiri, il peso scende nel pavimento.' : 'Attenzione all\'ombelico: senti l\'asse verticale che unisce sopra e sotto.',
+                  fx: S => {
+                      const top = S.A('Baihui').add(S.dirM(0, 0.3, 0)), bot = S.root(); bot.y = -0.12; const mid = S.A('Shenque');
+                      fxRay(top, bot, 0.003, C_ATT, 0.18);
+                      fxOrb(S.ts < 9 ? top : S.ts < 18 ? bot : mid, 0.05 + 0.01 * Math.sin(S.clock * 2), C_ATT, 0.9);
+                  } }
+            ] },
+            p_volume: { cam: CAM.wide, phases: [
+                { per: 18, keys: [[0, B3P.stand]],
+                  capFn: ts => ts < 6 ? 'Pensare solo a sé stringe lo spazio percepito (Yin).' : ts < 12 ? 'Pensare al mondo, al cosmo, al proprio Paese lo allarga (Yang).' : 'Pensare alla famiglia e agli altri: equilibrio Yin-Yang.',
+                  fx: S => { const tgt = S.ts < 6 ? 0.55 : S.ts < 12 ? 1.5 : 0.95; b3.vol = (b3.vol || 0.8) + (tgt - (b3.vol || 0.8)) * 0.04; const c = S.root().add(S.dirM(0, -0.05, 0)); fxShell(c, b3.vol, b3.vol, b3.vol, C_ATT, 0.09, S.clock * 0.1); } }
+            ] },
+            p_heavy: { alias: 's1_heavy_st', only: [0, 1] },
+            p_splash: { alias: 's1_splash' },
+            // ===== 2ª Stupen =====
+            s2_kucher: { seat: true, cam: [0.85, 1.28, 2.9, 0.8], phases: [
+                { per: 6, keys: [[0, b3Kucher()]], cap: 'Seduti sul bordo della sedia: piedi alla larghezza delle spalle, schiena bassa dritta, testa un po\' abbassata, mani tra le cosce.' },
+                { per: 6, keys: [[0, b3Kucher()]], eyes: 'closed', blind: true, cap: 'Rilassa spalle, collo e mandibola; chiudi gli occhi o metti una benda morbida.' }
+            ] },
+            s2_positive: { cam: CAM.stand, phases: [
+                { per: 6, keys: [[0, B3P.stand], [2, P({ aL: [-2.7, 0, -0.5, -0.15, 0, 0], lL: LEG_SOFT, spX: -0.1, chX: -0.08, nkX: -0.3 })], [4, P({ aL: [-2.75, 0, -0.6, -0.1, 0, 0], lL: LEG_SOFT, spX: -0.12, chX: -0.08, nkX: -0.32 })], [6, B3P.stand]],
+                  cap: 'Braccia in alto e di lato: stirati, inarca un poco la schiena e sbadiglia con piacere.' },
+                { per: 8, keys: [[0, B3P.stand]], cap: 'Fai il sorriso più grande che puoi e immagina davanti a te un grande sole caldo e affettuoso.', fx: S => b3Sun(S, 1) },
+                { per: 10, br: [[0, 'in'], [0.4, 'out']], deep: true, keys: [[0, B3P.stand], [4, P({ lL: LEG_SOFT, chX: -0.05, aL: [0, 0, 0.16, -0.12, 0, 0] })], [10, B3P.stand]],
+                  cap: 'Senti di essere sereno, sano e forte, tra persone amiche; due o tre respiri profondi.',
+                  fx: S => { b3Sun(S, 0.7); fxShell(S.root().add(S.dirM(0, -0.07, 0.02)), 0.5, 1.02, 0.44, 0xffc35a, 0.05 + 0.04 * S.lung, 0); } },
+                { per: 8, eyes: 'closed', keys: [[0, B3P.stand]], cap: 'Un minuto di silenzio per entrare nello stato di lavoro.' }
+            ] },
+            s2_ehands: { ghost: 'arms', room: true, cam: CAM.room, phases: [
+                { per: 8, keys: b3EhKeys(), cap: 'Con le braccia vere: aprile ai lati, incrociale davanti, sollevale, abbassale. Memorizza le sensazioni in ogni posizione.' },
+                { per: 8, keys: [[0, B3P.stand]], gk: b3EhKeys(), cap: 'Ora ripeti gli stessi movimenti solo con le braccia «virtuali», tenendo ferme quelle vere.' },
+                { per: 10, keys: [[0, B3P.stand]], gk: [[0, b3Arms([0, 0, 1.45, -0.1, 0, 0])], [2.5, b3Arms([0, 0, 1.45, -0.05, 0, 0])], [4.5, b3Arms([-2.95, 0, -0.12, -0.05, 0, 0])], [6.5, b3Arms([0, 0, 0.08, -0.12, 0, 0], [0, 0, 1.5, -0.05, 0, 0])], [9, b3Arms([0, 0, 0.08, -0.12, 0, 0], [0, 0, 1.5, -0.05, 0, 0])], [10, b3Arms([0, 0, 1.45, -0.1, 0, 0])]],
+                  gscale: ts => { const s = ts < 0.5 ? 1 : ts < 2.5 ? 1 + 0.8 * smooth((ts - 0.5) / 2) : ts < 4.5 ? 1.8 - 0.25 * smooth((ts - 2.5) / 2) : 1.55 + 0.25 * smooth(Math.min(1, (ts - 4.5) / 2)); return [ts > 6 ? 1 : s, s]; },
+                  capFn: ts => ts < 4.5 ? 'Allunga le mani virtuali e tocca le pareti della stanza.' : ts < 6.5 ? 'Ora tocca il soffitto.' : 'Mano virtuale destra alla parete destra, senza girare la testa: descrivi ciò che senti.',
+                  fx: S => b3WallTouch(S) }
+            ] },
+            s2_fantom: { ghost: 'arms', room: true, cam: CAM.room, phases: [
+                { per: 6, from: 3, keys: [[0, B3P.stand]], gk: [[0, B3P.stand], [3, b3Arms([0, 0, 0.08, -0.12, 0, 0], [0, 0, 1.5, -0.05, 0, 0])], [6, b3Arms([0, 0, 0.08, -0.12, 0, 0], [0, 0, 1.5, -0.05, 0, 0])]], gscale: ts => [1, 1 + 0.8 * smooth(Math.min(1, ts / 3))],
+                  cap: 'Mano virtuale destra verso la parete destra, senza girare la testa: caldo o freddo, liscio o ruvido, vicino o lontano.', fx: S => b3WallTouch(S) },
+                { per: 6, from: 3, keys: [[0, B3P.stand]], gk: [[0, B3P.stand], [3, b3Arms([0, 0, 1.5, -0.05, 0, 0], [0, 0, 0.08, -0.12, 0, 0])], [6, b3Arms([0, 0, 1.5, -0.05, 0, 0], [0, 0, 0.08, -0.12, 0, 0])]], gscale: ts => [1 + 0.8 * smooth(Math.min(1, ts / 3)), 1],
+                  cap: 'Ora la mano virtuale sinistra verso la parete sinistra.', fx: S => b3WallTouch(S) },
+                { per: 12, ghost: 'all', keys: [[0, B3P.stand]], gfx: b3GhostWalk,
+                  cap: 'Senti il pavimento, fai un passo avanti con il piede virtuale e cammina mentalmente per la stanza.' },
+                { per: 10, ghost: 'all', keys: [[0, B3P.stand]], gk: [[0, B3P.stand]], gfx: b3GhostGrow,
+                  capFn: ts => ts < 4 ? 'Allunga il collo virtuale fino a toccare il soffitto.' : 'Poi riempi tutta la stanza con il corpo virtuale e senti tutte le superfici insieme.' }
+            ] },
+            s2_dark: b3Scr([{ per: 8, cap: 'Osserva lo spazio scuro davanti agli occhi chiusi e descrivi ciò che compare: luci, macchie, forme.', scr: S => ({ m: 'dark', t: b3q(S.clock, 8) }) }]),
+            s2_screen: b3Scr([
+                { per: 6, cap: 'Guarda lo spazio scuro davanti a te e nota cosa compare: buio, puntini, nebbia.', scr: S => ({ m: 'dark', t: b3q(S.clock, 8) }) },
+                { per: 3, from: 2, cap: 'Punto! Un punto bianco luminoso.', scr: S => ({ m: 'point', k: b3q(Math.min(1, S.ts / 2), 20) }) },
+                { per: 3, from: 2, cap: 'Linea! Il punto si allunga in una linea bianca orizzontale.', scr: S => ({ m: 'line', k: b3q(Math.min(1, S.ts / 2), 20) }) },
+                { per: 3, from: 2, cap: 'Schermo! La linea si apre in uno schermo bianco, luminoso e stabile.', scr: S => ({ m: 'white', k: b3q(Math.min(1, S.ts / 2), 20) }) },
+                { per: 6, cap: 'Caricalo: senti salire la sensazione lungo la colonna fino alla testa e «lanciala» sullo schermo.', scr: S => ({ m: 'white', a: b3q(0.75 + 0.25 * Math.max(0, Math.sin(S.ts / 6 * Math.PI * 2 - 1.2)), 20) }),
+                  fx: S => { const k = S.t; const path = new THREE.CatmullRomCurve3(pathOf(S, ['Guanyuan', 'Coccige', 'Mingmen', 'Du_lumb', 'Du_thor', 'Dazhui', 'TestaCentro'])); if (k < 0.7) fxOrb(path.getPoint(k / 0.7), 0.04, C_ATT, 0.9); else fxOrb(S.A('TestaCentro').lerp(B3X.screen.position, (k - 0.7) / 0.3), 0.04, C_ATT, 0.9); } },
+                { per: 8, keys: [[0, HP(B3P.kucher, b3KucherHand(), { at: [-0.05, 0.36, 0.42], n: [0, 0, -1], f: [0, 1, 0.2] })]], cap: 'Prova di risposta: metti la mano davanti a te, chiedi che la sua immagine compaia sullo schermo e muovi le dita.', scr: S => ({ m: 'hand', t: b3q(S.clock, 10) }) },
+                { per: 4, once: true, cap: 'Spegnimento: schermo, linea, punto; poi togli la benda.', scr: S => b3Off(S.k) }
+            ]),
+            s2_paint: b3Scr([['#ffffff', '#2f6fd8', 'blu'], ['#2f6fd8', '#d63a3a', 'rosso'], ['#d63a3a', '#3aa655', 'verde'], ['#3aa655', '#ffffff', 'bianco']].map(([c0, c, nm]) => ({ per: 5, from: 3, cap: `Lo schermo diventa tutto ${nm}: quando c'è, di' tra te «C'è!».`, scr: S => ({ m: 'color', c0, c, k: b3q(Math.min(1, S.ts / 3), 20) }) }))),
+            s2_table: b3Scr([
+                { per: 6, cap: 'Sullo schermo bianco disegna una cornice nera e scrivi al centro il numero 1.', scr: S => ({ m: 'table', n: 3, fill: 0 }) },
+                { per: 8, from: 6, cap: 'Dividila in nove caselle e riempile con numeri di una cifra.', scr: S => ({ m: 'table', n: 3, fill: b3q(Math.min(1, S.ts / 6), 9) }) },
+                { per: 6, cap: 'Leggi la tabella riga per riga, a voce bassa.', scr: S => ({ m: 'table', n: 3, row: Math.floor(S.ts / 2) % 3 }) },
+                { per: 10, from: 6, cap: 'Se è facile prova quattro per quattro; se è sfocata va bene così: migliora con le sedute.', scr: S => ({ m: 'table', n: 4, fill: b3q(Math.min(1, S.ts / 5), 16), row: S.ts > 6 ? Math.floor((S.ts - 6) / 1) % 4 : undefined }) }
+            ]),
+            s2_cells: b3Scr([{ per: 6, cap: 'Colora ogni casella con un colore diverso e «leggi» i colori riga per riga.', scr: S => ({ m: 'cells', n: 3, row: Math.floor(S.ts / 2) % 3 }) }]),
+            s2_images: b3Scr([{ per: 6, cap: 'Nella griglia metti figure semplici colorate e descrivile casella per casella.', scr: S => ({ m: 'images', n: 3, row: Math.floor(S.ts / 2) % 3 }) }]),
+            s2_cube: b3Scr([
+                { per: 4, from: 3, cap: 'Sullo schermo compare un cubo: la faccia davanti è rossa, quella sopra blu, quella a destra verde.', scr: S => ({ m: 'cube', ang: 0.6, k: b3q(Math.min(1, S.ts / 2), 20) }) },
+                { per: 8, cap: 'Fallo ruotare lentamente e descrivi ogni faccia che compare.', scr: S => ({ m: 'cube', ang: b3q(S.clock * 0.7, 15) }) }
+            ]),
+            s2_plot: b3Scr([{ per: 10, cap: 'Richiama una scena dalla memoria, animala e modificala con l\'immaginazione (qui un esempio).', scr: S => ({ m: 'plot', t: b3q(S.clock, 12) }) }]),
+            s2_inner: b3Scr([
+                { per: 8, cap: 'Sullo schermo l\'immagine della mano: contorno, ossa delle dita, vasi.', scr: S => ({ m: 'xray', t: b3q(S.clock, 8) }) },
+                { per: 8, cap: 'Poi l\'attenzione va a un organo. È un\'immagine immaginata: nessun valore diagnostico.', scr: S => ({ m: 'heart', t: b3q(S.clock, 12) }) }
+            ]),
+            s2_wax: { seat: true, blind: true, eyes: 'closed', ghost: 'all', cam: [0.7, 1.22, 3.6, 0.95], phases: [
+                { per: 8, keys: [[0, b3Kucher()]], tint: S => [0x6a3008, 0.5 + 0.3 * Math.sin(S.clock * 1.5)], cap: 'Immagina che tutto il corpo sia fatto di un\'energia densa e calda, simile alla cera.' },
+                { per: 16, keys: [[0, b3Kucher()]], gk: 'main', gfx: b3WaxModel, tint: [0x6a3008, 0.4],
+                  capFn: ts => ts < 4 ? 'Modella: «allunga» un braccio di cera oltre quello fisico.' : ts < 8 ? '«Accorcia» una gamba di cera.' : ts < 12 ? '«Espandi» il busto fino a riempire la stanza.' : '«Comprimi» tutto il corpo fino a renderlo piccolo come una palla.' },
+                { per: 12, keys: [[0, b3Kucher()]], gk: 'main', gfx: b3WaxFloat, tint: [0x6a3008, 0.3], cap: 'Proiezione: il corpo di cera si stacca e si muove nello spazio. Con disturbi dissociativi o forte ansia questa fase va saltata.' },
+                { per: 8, keys: [[0, b3Kucher()]], gk: 'main', gfx: b3WaxBack, tint: S => [0x6a3008, 0.3 + 0.4 * Math.max(0, Math.sin(S.ts / 8 * Math.PI))], cap: 'Integrazione: riporta il corpo di cera dentro quello fisico e «fondi» le due strutture.' }
+            ] },
+            s2_colors: { seat: true, table: true, blind: true, eyes: 'closed', cam: [1.1, 1.18, 2.9, 0.9], phases: [
+                { per: 12, keys: b3SheetKeys(), cap: 'Benda sugli occhi: muovi lentamente la mano sopra il foglio colorato e guarda se sullo schermo compare un colore.',
+                  prop: S => b3Sheet(S, B3_COLS[Math.floor(S.u / 12) % 4]),
+                  fx: S => { fxScreen(S, { m: 'swatch', c: B3_COLS[Math.floor(S.u / 12) % 4], k: b3q(Math.max(0, Math.min(1, (S.ts - 3) / 5)), 20) }); fxPeek(S, B3X.sheet.position.clone()); } }
+            ] },
+            s2_depth: { seat: true, blind: true, eyes: 'closed', cam: [1.3, 1.22, 3.0, 1.0], phases: [
+                { per: 12, keys: [[0, b3Cup(0.22)], [5, b3Cup(0.55)], [7, b3Cup(0.55)], [12, b3Cup(0.22)]],
+                  cap: 'Con la benda, avvicina un oggetto al viso, poi allontanalo lentamente: descrivi come cambia la sua immagine sullo schermo.',
+                  prop: S => b3CupProp(S),
+                  fx: S => { const d = S.A('OcchioR').distanceTo(B3X.cup.position); fxScreen(S, { m: 'cup', blur: Math.round(Math.max(0, (d - 0.18) * 14)) }); fxPeek(S, B3X.cup.position.clone()); } }
+            ] },
+            s2_off: b3Scr([
+                { per: 4, once: true, cap: 'Schermo, linea, punto: lo schermo si richiude e il punto svanisce.', scr: S => b3Off(S.k) },
+                { per: 6, blind: false, eyes: 'open', keys: [[0, b3Kucher()], [2, B3P.seat]], cap: 'Togli la benda e apri gli occhi con calma, guardando lontano per qualche secondo.' }
+            ]),
+
+            // ===== 3ª Stupen =====
+            s3_direct: { seat: true, table: true, blind: true, eyes: 'closed', cam: [1.1, 1.18, 2.9, 0.9], phases: [
+                { per: 10, keys: [[0, b3Read()]], cap: 'Con la maschera si cerca di leggere un testo e di riconoscere colori e oggetti.',
+                  prop: S => b3Sheet(S, '#f5f5f4'), fx: S => { fxScreen(S, { m: 'text', k: b3q(Math.min(1, S.ts / 8), 20) }); fxPeek(S, B3X.sheet.position.clone()); } }
+            ] }
+        };
+
+        // ---------- Guida: anteprima in ciclo oppure sincronia con la pratica guidata ----------
+        const B3_SESSION_ONLY = ['prep0', 'end', 's2_off'];
+        const B3_NOTE = {
+            s1_splash: 'Da evitare con glaucoma, problemi di retina o pressione alta non controllata.',
+            s1_bell_low: 'Con pressione alta il metodo stesso chiede di limitarsi a 1–2 minuti.',
+            s1_bell_up: 'Con pressione alta il metodo stesso chiede di limitarsi a 1–2 minuti.',
+            s1_field: 'Per il metodo il campo arriva a 7 m o più: nessuno strumento lo ha mai misurato.',
+            s1_head: 'Le affermazioni che circolano su epifisi e onde cerebrali non hanno dati.',
+            s1_eyes: 'Il palming riposa gli occhi; non ci sono prove che migliori la vista.',
+            s1_hpump: 'Non sostituisce le cure: nelle riacutizzazioni di una malattia serve il medico.',
+            s1_ray_pair: 'Per verificarlo davvero, chi riceve deve avere gli occhi chiusi e non sapere quando parte il raggio.',
+            p_sky: 'Versione laica: l\'invocazione religiosa dell\'originale è omessa.',
+            s2_fantom: 'Come immaginazione spaziale è valido; le «percezioni» delle stanze vicine non sono mai state verificate.',
+            s2_wax: 'Con disturbi dissociativi, psicosi o forte ansia la fase di proiezione va saltata.',
+            s2_inner: 'Non è una diagnosi: per qualsiasi sintomo serve il medico.',
+            s2_colors: 'In rosso tratteggiato la linea di vista che resta libera sotto la benda, lungo il naso. Per una prova seria il foglio va in una busta opaca sigillata.',
+            s2_depth: 'In rosso tratteggiato la linea di vista che resta libera sotto la benda: un oggetto vicino al viso e sotto il naso si vede.',
+            s3_direct: 'In rosso tratteggiato la linea di vista sotto la maschera. Con busta opaca sigillata e nessuno spiraglio la lettura non è riuscita.'
+        };
+        const b3 = { sel: 's1_hands', sync: true, fx: true, peek: true, id: null, ph: 0, u: 0, clock: 0, lastPh: -1, S: null, snap: false, vol: null };
+        let partnerFig = null, ghostFig = null, camTween = null, b3Lab = null;
+        function b3Def(id) {
+            const E = B3[id];
+            if (!E) return null;
+            if (!E.alias) return E;
+            if (!E._res) { const A = B3[E.alias]; E._res = Object.assign({}, A, { phases: E.only ? A.phases.filter((_, i) => E.only.includes(i)) : A.phases }); }
+            return E._res;
+        }
+        function b3Mode() { return !!threeContainer && (threeContainer.id === 'bron-3d' || (current3DPosture.startsWith('b:') && !lzjDrive)); }
+        function b3Figs() {
+            if (partnerFig) return;
+            partnerFig = buildFigure(new THREE.MeshStandardMaterial({ color: 0xa07a58, roughness: 0.6 }), new THREE.MeshStandardMaterial({ color: 0x6b5340, roughness: 0.5 }));
+            threeScene.add(partnerFig.root); partnerFig.root.visible = false;
+            const gm = new THREE.MeshBasicMaterial({ color: 0x9fe3ff, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false });
+            ghostFig = buildFigure(gm, gm); ghostFig.mat = gm;
+            ghostFig.eyes.forEach(e => { e.visible = false; });
+            threeScene.add(ghostFig.root); ghostFig.root.visible = false;
+            b3Lab = ['m', 'p'].map(() => { const el = document.createElement('div'); el.className = 'acu-label b3-role'; el.style.display = 'none'; threeHost.appendChild(el); return el; });
+        }
+        function b3Name(id) {
+            const x = BRON_EX.find(e => e.id === id), E = B3[id];
+            if (x) return `${BRON_LEVELS[x.lvl][0]} · ${x.it}`;
+            return E && E.name ? E.name : '';
+        }
+        function b3Enter(id, E) {
+            b3.id = id; b3.ph = 0; b3.u = 0; b3.lastPh = -1; b3.vol = null; b3.snap = true;
+            b3Figs();
+            if (E.partner) Object.assign(partnerFig, { x: E.partner.x, z: E.partner.z, ry: E.partner.ry });
+            if (E.cam) camTween = { theta: E.cam[0], phi: E.cam[1], r: E.cam[2], ty: E.cam[3] };
+            const t = document.getElementById('b3-title'), n = document.getElementById('b3-note');
+            if (t) t.textContent = b3Name(id);
+            if (n) n.textContent = B3_NOTE[id] || '';
+            const sel = document.getElementById('b3-sel');
+            if (sel && B3[id] && !B3_SESSION_ONLY.includes(id)) sel.value = id;
+        }
+        function b3Leave() {
+            b3.id = null; b3.S = null;
+            if (B3X) B3X.all.forEach(o => { o.visible = false; });
+            if (partnerFig) { partnerFig.root.visible = false; ghostFig.root.visible = false; b3Lab.forEach(el => { el.style.display = 'none'; }); }
+            if (mainFig) { mainFig.blind.visible = false; mainFig.eyes.forEach(e => { e.scale.y = 0.7; }); }
+            if (bodyMats.length) bodyMats[0].emissive.setHex(0);
+            camTween = { theta: 0.35, phi: 1.25, r: 3.6, ty: 0.95 };
+        }
+        // risoluzione delle mani guidate (una volta per fase; le pose che dipendono dal manichino principale per istante)
+        function b3Keys(F, keys, Ph) {
+            return keys.map(([t, sp]) => {
+                if (!sp || sp.b === undefined) return [t, sp];
+                const dep = (sp.L && sp.L.of) || (sp.R && sp.R.of);
+                if (!dep && sp._r) return [t, sp._r];
+                if (dep) { setSkeletonOf(mainFig, keyPoseAt(Ph._k, t), true); mainFig.root.updateMatrixWorld(true); }
+                if (F === partnerFig && Ph.partnerAt) Object.assign(partnerFig, Ph.partnerAt(t));
+                const r = b3SolvePose(F, sp);
+                if (!dep) sp._r = r;
+                return [t, r];
+            });
+        }
+        function b3Resolve(Ph, E) {
+            if (Ph._k) return;
+            Ph._k = b3Keys(mainFig, Ph.keys, Ph);
+            const pl = Ph.partner || E.partner;
+            if (pl) Object.assign(partnerFig, { x: pl.x, z: pl.z, ry: pl.ry });
+            if (Ph.pk) Ph._pk = b3Keys(partnerFig, Ph.pk, Ph);
+            if (Ph.gk && Ph.gk !== 'main') Ph._gk = b3Keys(ghostFig, Ph.gk, Ph);
+        }
+        function b3Frame(dt) {
+            if (!B3X) B3X = b3FxInit();
+            const inBron = threeContainer.id === 'bron-3d';
+            const st = BRON_SESSIONS[bs.kind][bs.idx];
+            const synced = inBron && b3.sync && !!b3Def(st[0]);
+            const id = synced ? st[0] : inBron ? b3.sel : current3DPosture.slice(2);
+            const E = b3Def(id) || b3Def('s1_hands');
+            if (id !== b3.id) b3Enter(id, E);
+            b3.clock += dt;
+            let ph, u, cap = null, subDur = null;
+            if (synced && bs.running) {
+                const si = Math.max(0, bs.sub);
+                ph = Math.min(si, E.phases.length - 1);
+                const s0 = st[3][si][0], s1 = st[3][si + 1] ? st[3][si + 1][0] : st[2];
+                u = Math.max(0, bs.t - s0); subDur = s1 - s0; cap = st[3][si][1];
+                b3.ph = ph; b3.u = u;
+            } else {
+                b3.u += dt;
+                const P0 = E.phases[b3.ph] || E.phases[0];
+                if (b3.u > (P0.dur || Math.max(P0.per, 8))) { b3.ph = (b3.ph + 1) % E.phases.length; b3.u = 0; }
+                ph = Math.min(b3.ph, E.phases.length - 1); u = b3.u;
+            }
+            const Ph = E.phases[ph];
+            if (ph !== b3.lastPh) {
+                b3.lastPh = ph;
+                if (Ph.snap) b3.snap = true;
+                if (Ph.cam || b3.phCam) { const c = Ph.cam || E.cam; camTween = { theta: c[0], phi: c[1], r: c[2], ty: c[3] }; }
+                b3.phCam = !!Ph.cam;
+            }
+            b3Resolve(Ph, E);
+            let ts;
+            if (Ph.warp) ts = Ph.warp(u) % Ph.per;
+            else if (Ph.once) ts = Math.min(Ph.per, subDur ? u / subDur * Ph.per : u);
+            else { const f = Ph.from || 0; ts = u < Ph.per ? u : f + ((u - f) % (Ph.per - f)); }
+            const pose = keyPoseAt(Ph._k, ts);
+            let lung;
+            if (Ph.br) {
+                const t = ts / Ph.per; let cur = Ph.br[0];
+                for (const b of Ph.br) if (t >= b[0]) cur = b;
+                const i = Ph.br.indexOf(cur), nx = Ph.br[i + 1] ? Ph.br[i + 1][0] : 1, fr = (t - cur[0]) / (nx - cur[0]);
+                lung = cur[1] === 'in' ? smooth(fr) : cur[1] === 'out' ? 1 - smooth(fr) : 1;
+            } else lung = 0.5 + 0.5 * Math.sin(b3.clock * Math.PI * 2 / 5);
+            b3.S = { E, Ph, ts, t: ts / Ph.per, k: ts / Ph.per, u, lung, cap: cap || (Ph.capFn ? Ph.capFn(ts) : Ph.cap) || '', inBron };
+            return { pose, lung: Ph.deep ? Math.min(1.6, lung * 1.6) : lung };
+        }
+        function b3Ctx(Sx) {
+            const fig = w => w === 'p' ? partnerFig : w === 'g' ? ghostFig : mainFig;
+            const qM = mainFig.root.getWorldQuaternion(new THREE.Quaternion());
+            return Object.assign({}, Sx, {
+                clock: b3.clock,
+                A: (n, w) => fig(w).ANCH[n].getWorldPosition(new THREE.Vector3()),
+                J: (n, w) => fig(w).J[n].getWorldPosition(new THREE.Vector3()),
+                L: (x, y, z, w) => fig(w).root.localToWorld(new THREE.Vector3(x, y, z)),
+                root: w => fig(w).root.position.clone(),
+                dirM: (x, y, z) => new THREE.Vector3(x, y, z).applyQuaternion(qM),
+                handN: (sd, w) => new THREE.Vector3(0, 0, 1).applyQuaternion(fig(w).J['hand' + sd].getWorldQuaternion(new THREE.Quaternion()))
+            });
+        }
+        // dopo la posa del manichino: compagno, «fantasma», oggetti di scena, effetti, didascalie
+        function b3After() {
+            const X = B3X, Sx = b3.S;
+            if (!Sx) return;
+            const { E, Ph } = Sx;
+            X.all.forEach(o => { o.visible = false; });
+            X.no = X.nr = X.nl = X.nf = 0;
+            mainFig.root.updateMatrixWorld(true);
+            const S = b3Ctx(Sx);
+            // compagno
+            const showP = !!E.partner && !!Ph._pk;
+            partnerFig.root.visible = showP;
+            if (showP) {
+                const pl = Ph.partnerAt ? Ph.partnerAt(Sx.ts) : Ph.partner || E.partner;
+                Object.assign(partnerFig, { x: pl.x, z: pl.z, ry: pl.ry });
+                setSkeletonOf(partnerFig, keyPoseAt(Ph._pk, Sx.ts), true); partnerFig.root.updateMatrixWorld(true);
+            }
+            // «fantasma»: braccia o corpo virtuale
+            const gmode = Ph.ghost || E.ghost, showG = !!gmode && !!(Ph.gk || Ph.gfx);
+            ghostFig.root.visible = showG;
+            if (showG) {
+                const G = ghostFig;
+                G.x = 0; G.z = 0; G.ry = 0;
+                G.root.scale.set(1, 1, 1); ['shL', 'shR', 'hipL', 'hipR'].forEach(k => G.J[k].scale.set(1, 1, 1));
+                G.mat.opacity = 0.22; G.mat.color.setHex(0x9fe3ff);
+                setSkeletonOf(G, Ph.gk === 'main' || !Ph._gk ? curPose : keyPoseAt(Ph._gk, Sx.ts), true);
+                const all = gmode === 'all';
+                G.parts.torso.concat(G.parts.head, G.parts.legs).forEach(o => { o.visible = all; });
+                if (Ph.gscale) { const s = Ph.gscale(Sx.ts); G.J.shL.scale.y = s[0]; G.J.shR.scale.y = s[1]; }
+                if (Ph.gfx) Ph.gfx(S, G);
+                G.root.updateMatrixWorld(true);
+            }
+            // occhi, benda, tinta del corpo
+            const blind = Ph.blind !== undefined ? Ph.blind : !!E.blind, eyes = Ph.eyes || E.eyes || 'open';
+            mainFig.blind.visible = blind;
+            mainFig.eyes.forEach(e => { e.scale.y = eyes === 'closed' ? 0.12 : 0.7; });
+            const tint = typeof Ph.tint === 'function' ? Ph.tint(S) : Ph.tint;
+            bodyMats[0].emissive.setHex(tint ? tint[0] : 0); bodyMats[0].emissiveIntensity = tint ? tint[1] : 1;
+            // oggetti di scena
+            const flag = k => Ph[k] !== undefined ? Ph[k] : !!E[k], rp = mainFig.root.position;
+            if (flag('seat')) { X.chair.visible = true; X.chair.position.set(rp.x, 0, rp.z + 0.06); }
+            if (flag('table')) { X.table.visible = true; X.table.position.set(rp.x, 0, rp.z + 0.66); }
+            if (flag('bed')) { X.bed.visible = true; X.bed.position.set(rp.x, 0, rp.z - 0.05); }
+            if (flag('room')) X.room.visible = true;
+            if (Ph.prop) Ph.prop(S);
+            if (b3.fx && Ph.fx) Ph.fx(S);
+            // etichette dei ruoli e didascalia
+            const W = threeContainer.clientWidth, H = threeContainer.clientHeight, v = new THREE.Vector3();
+            b3Lab.forEach((el, i) => {
+                const L = E.labels && E.labels[i];
+                if (!L || (L[0] === 'p' && !showP)) { el.style.display = 'none'; return; }
+                (L[0] === 'p' ? partnerFig : mainFig).ANCH.Baihui.getWorldPosition(v); v.y += 0.12; v.project(threeCamera);
+                el.textContent = L[1]; el.style.display = 'block';
+                el.style.left = ((v.x + 1) / 2 * W) + 'px'; el.style.top = ((1 - v.y) / 2 * H) + 'px';
+            });
+            const sub = document.getElementById(Sx.inBron ? 'bron-3d-sub' : 'sub-3d');
+            if (sub && sub.textContent !== Sx.cap) sub.textContent = Sx.cap;
+        }
+        let b3Queue = null;
+        function b3Precompute() {
+            if (b3Queue || !mainFig) return;
+            b3Figs();
+            const ids = [];
+            [bs.kind].concat(Object.keys(BRON_SESSIONS)).forEach(k => BRON_SESSIONS[k].forEach(st => { if (!ids.includes(st[0]) && b3Def(st[0])) ids.push(st[0]); }));
+            Object.keys(B3).forEach(id => { if (!ids.includes(id) && b3Def(id)) ids.push(id); });
+            b3Queue = [];
+            ids.forEach(id => { const E = b3Def(id); E.phases.forEach(Ph => { if (!Ph._k) b3Queue.push([Ph, E]); }); });
+            // almeno una fase per giro: con il 3D sempre in movimento il browser non ha mai «tempo libero»
+            const idle = window.requestIdleCallback ? f => requestIdleCallback(f, { timeout: 700 }) : f => setTimeout(() => f({ timeRemaining: () => 0 }), 250);
+            const step = dl => {
+                do { const [Ph, E] = b3Queue.shift(); if (!Ph._k) b3Resolve(Ph, E); } while (b3Queue.length && dl.timeRemaining() > 4);
+                if (b3Queue.length) idle(step);
+            };
+            if (b3Queue.length) idle(step);
+        }
+        function b3CamStep() {
+            if (!camTween) return;
+            const c = camOrbit, k = 0.07;
+            c.theta += (camTween.theta - c.theta) * k; c.phi += (camTween.phi - c.phi) * k; c.r += (camTween.r - c.r) * k; c.target.y += (camTween.ty - c.target.y) * k;
+            if (Math.abs(camTween.theta - c.theta) + Math.abs(camTween.phi - c.phi) + Math.abs(camTween.r - c.r) + Math.abs(camTween.ty - c.target.y) < 0.003) camTween = null;
+        }
+
+        // ---------- Interfaccia ----------
+        function b3BuildSelect() {
+            const sel = document.getElementById('b3-sel');
+            const opts = ['prep', 's1', 's2', 's3'].map(lv => {
+                const items = BRON_EX.filter(x => x.lvl === lv && B3[x.id] && !B3_SESSION_ONLY.includes(x.id));
+                return items.length ? `<optgroup label="${BRON_LEVELS[lv][0]}">${items.map(x => `<option value="${x.id}">${x.it}</option>`).join('')}</optgroup>` : '';
+            }).join('');
+            if (sel) { sel.innerHTML = opts; sel.value = b3.sel; }
+            const sel3 = document.getElementById('select-3d-posture');
+            if (sel3 && !sel3.querySelector('optgroup[data-b3]')) sel3.insertAdjacentHTML('beforeend', `<optgroup data-b3 label="Metodo Bronnikov (anteprima in loop)">${BRON_EX.filter(x => B3[x.id]).map(x => `<option value="b:${x.id}">${BRON_LEVELS[x.lvl][0]} · ${x.it}</option>`).join('')}</optgroup>`);
+        }
+        function b3SetSync(on) { b3.sync = on; const c = document.getElementById('b3-sync'); if (c) c.checked = on; }
+        function b3Select(id) { b3SetSync(false); b3.sel = id; b3.id = null; }
+        function b3Show(id) {
+            switchTab('bronnikov');
+            b3Select(id);
+            const s = document.getElementById('b3-sel'); if (s) s.value = id;
+            setTimeout(() => document.getElementById('bron-3d').scrollIntoView({ block: 'center', behavior: 'smooth' }), 150);
+        }
 
         // ==========================================
         // WEB AUDIO API SOUND SYNTHESIZER ENGINE
@@ -4489,8 +5796,8 @@
             if (btn) btn.classList.add('active');
 
             if (tabId === 'ontologia' && !radarChartInstance) renderRadarChart();
-            if (tabId === 'model3d') setTimeout(init3DMannequin, 50);
-            if (tabId === 'bronnikov') { renderBronnikov(); bsRender(true); }
+            if (tabId === 'model3d') setTimeout(() => init3DMannequin(), 50);
+            if (tabId === 'bronnikov') { renderBronnikov(); bsRender(true); setTimeout(() => { init3DMannequin(document.getElementById('bron-3d')); setTimeout(b3Precompute, 400); }, 50); }
             if (tabId === 'audio') setTimeout(() => { loopAudioVisualizer(); }, 50);
             if (tabId === 'simulatore') setTimeout(initSimCanvas, 50);
             if (tabId === 'neuro') {
@@ -4697,6 +6004,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             initLzjPlayer();
             renderBronnikov();
+            b3BuildSelect();
             bsLoop();
             renderFace();
             ztLoop();
